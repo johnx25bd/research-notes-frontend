@@ -1,24 +1,32 @@
-"use client"
-
-import { useState } from "react"
 import { LayoutShell } from "@/components/layout-shell"
-import { NoteRow } from "@/components/note-row"
+import { RecentNotesSection } from "@/components/recent-notes-section"
 import { RandomNoteButton } from "@/components/random-note-button"
-import { notes, tags } from "@/lib/mock-data"
+import { getAllNotes } from "@/lib/vault"
 import Link from "next/link"
+import { NoteRow } from "@/components/note-row"
 
-const NOTES_PER_PAGE = 5
+export default async function HomePage() {
+  const notes = await getAllNotes()
 
-export default function HomePage() {
+  // Featured notes (where featured: true)
   const featuredNotes = notes.filter((note) => note.featured).slice(0, 4)
 
-  const allRecentNotes = [...notes].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+  // Recently tended (sort by lastTended from git)
+  const allRecentNotes = [...notes].sort((a, b) =>
+    new Date(b.lastTended).getTime() - new Date(a.lastTended).getTime()
+  )
 
-  const [visibleCount, setVisibleCount] = useState(NOTES_PER_PAGE)
-  const recentNotes = allRecentNotes.slice(0, visibleCount)
-  const hasMore = visibleCount < allRecentNotes.length
-
-  const topThemes = tags.slice(0, 6)
+  // Top tags (compute from all notes)
+  const tagCounts = new Map<string, number>()
+  notes.forEach(note => {
+    note.tags.forEach(tag => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1)
+    })
+  })
+  const topThemes = Array.from(tagCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6)
+    .map(([tag]) => tag)
 
   return (
     <LayoutShell>
@@ -47,29 +55,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="mb-16">
-          <h2
-            className="section-header text-sm tracking-[0.15em] opacity-60 mb-1"
-            style={{ fontFamily: "var(--font-ui)" }}
-          >
-            Latest Revisions
-          </h2>
-          <div className="space-y-0">
-            {recentNotes.map((note) => (
-              <NoteRow key={note.slug} note={note} showStatus={false} />
-            ))}
-          </div>
-
-          {hasMore && (
-            <button
-              onClick={() => setVisibleCount((prev) => prev + NOTES_PER_PAGE)}
-              className="mt-6 text-sm text-muted-foreground hover:text-foreground transition-colors"
-              style={{ fontFamily: "var(--font-ui)" }}
-            >
-              Load more notes...
-            </button>
-          )}
-        </section>
+        <RecentNotesSection notes={allRecentNotes} />
 
         <section className="mb-16">
           <h2 className="section-header text-xs mb-4" style={{ fontFamily: "var(--font-ui)" }}>
@@ -78,18 +64,18 @@ export default function HomePage() {
           <div className="flex flex-wrap gap-x-4 gap-y-2" style={{ fontFamily: "var(--font-ui)" }}>
             {topThemes.map((tag) => (
               <Link
-                key={tag.name}
-                href={`/tags/${tag.name}`}
+                key={tag}
+                href={`/tags/${tag}`}
                 className="text-sm text-muted-foreground/80 hover:text-foreground transition-colors"
               >
-                {tag.name}
+                {tag}
               </Link>
             ))}
           </div>
         </section>
 
         <section className="pt-8 border-t border-border/50">
-          <RandomNoteButton />
+          <RandomNoteButton noteSlugs={notes.map(n => n.slug)} />
         </section>
       </div>
     </LayoutShell>
