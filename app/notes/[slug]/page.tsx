@@ -4,9 +4,12 @@ import { StatusBadge } from "@/components/status-badge"
 import { NoteContent } from "@/components/note-content"
 import { NoteConnections } from "@/components/note-connections"
 import { TagChip } from "@/components/tag-chip"
-import { getNoteBySlug, notes } from "@/lib/mock-data"
+import { getAllNotes, getNoteBySlug } from "@/lib/vault"
+import { processMarkdown } from "@/lib/markdown"
+import { computeBacklinks } from "@/lib/backlinks"
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const notes = await getAllNotes()
   return notes.map((note) => ({ slug: note.slug }))
 }
 
@@ -16,11 +19,30 @@ interface NotePageProps {
 
 export default async function NotePage({ params }: NotePageProps) {
   const { slug } = await params
-  const note = getNoteBySlug(slug)
+  const note = await getNoteBySlug(slug)
 
   if (!note) {
     notFound()
   }
+
+  // Get all notes for backlinks and related notes
+  const allNotes = await getAllNotes()
+
+  // Process markdown to HTML
+  const html = await processMarkdown(
+    note.content,
+    allNotes.map(n => n.slug)
+  )
+
+  // Compute backlinks
+  const backlinksMap = computeBacklinks(allNotes)
+  const backlinks = backlinksMap[note.slug] || []
+
+  // Find related notes (share tags)
+  const related = allNotes
+    .filter(n => n.slug !== note.slug)
+    .filter(n => n.tags.some(tag => note.tags.includes(tag)))
+    .slice(0, 5)
 
   return (
     <LayoutShell>
@@ -36,7 +58,7 @@ export default async function NotePage({ params }: NotePageProps) {
               <span className="text-border">·</span>
               <span>
                 Last tended{" "}
-                {new Date(note.updatedAt).toLocaleDateString("en-US", {
+                {new Date(note.lastTended).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "short",
                   day: "numeric",
@@ -54,10 +76,14 @@ export default async function NotePage({ params }: NotePageProps) {
 
           {/* Main content */}
           <div className="prose text-foreground">
-            <NoteContent content={note.content} />
+            <NoteContent html={html} />
           </div>
 
-          <NoteConnections note={note} />
+          <NoteConnections
+            backlinks={backlinks}
+            relatedNotes={related}
+            allNotes={allNotes}
+          />
         </div>
       </article>
     </LayoutShell>
