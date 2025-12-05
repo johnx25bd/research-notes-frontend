@@ -2,14 +2,17 @@
 
 import { useRouter } from "next/navigation"
 import { Shuffle } from "lucide-react"
-import { getRandomNote } from "@/lib/mock-data"
 
-export function RandomNoteButton() {
+interface RandomNoteButtonProps {
+  noteSlugs: string[]
+}
+
+export function RandomNoteButton({ noteSlugs }: RandomNoteButtonProps) {
   const router = useRouter()
 
   const handleClick = () => {
-    const note = getRandomNote()
-    router.push(`/notes/${note.slug}`)
+    const randomSlug = noteSlugs[Math.floor(Math.random() * noteSlugs.length)]
+    router.push(`/notes/${randomSlug}`)
   }
 
   return (
