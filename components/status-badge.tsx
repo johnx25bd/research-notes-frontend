@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils"
-import type { NoteStatus } from "@/lib/mock-data"
+import type { Note } from "@/lib/vault"
+
+type NoteStatus = Note['status']
 
 interface StatusBadgeProps {
   status: NoteStatus
@@ -7,15 +9,15 @@ interface StatusBadgeProps {
 }
 
 const statusConfig: Record<NoteStatus, { label: string; className: string }> = {
-  seed: {
+  fragment: {
     label: "Fragment",
     className: "text-muted-foreground/80 bg-muted/60",
   },
-  budding: {
+  working: {
     label: "Working",
     className: "text-muted-foreground/80 bg-muted/60",
   },
-  evergreen: {
+  stable: {
     label: "Stable",
     className: "text-primary/70 bg-primary/5",
   },
