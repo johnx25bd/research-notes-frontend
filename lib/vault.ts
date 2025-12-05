@@ -3,7 +3,8 @@ import path from 'path';
 import matter from 'gray-matter';
 import { getGitDate } from './git';
 
-const VAULT_PATH = path.join(process.cwd(), '..', 'research-notes', 'notes');
+// Use absolute path to research notes vault
+const VAULT_PATH = path.join('/Users/x25bd/Projects/obsidian/research-notes', 'notes');
 
 export interface Note {
   slug: string;
