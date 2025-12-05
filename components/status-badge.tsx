@@ -8,7 +8,7 @@ interface StatusBadgeProps {
   className?: string
 }
 
-const statusConfig: Record<NoteStatus, { label: string; className: string }> = {
+const statusConfig: Record<string, { label: string; className: string }> = {
   fragment: {
     label: "Fragment",
     className: "text-muted-foreground/80 bg-muted/60",
@@ -18,6 +18,19 @@ const statusConfig: Record<NoteStatus, { label: string; className: string }> = {
     className: "text-muted-foreground/80 bg-muted/60",
   },
   stable: {
+    label: "Stable",
+    className: "text-primary/70 bg-primary/5",
+  },
+  // Legacy status values (backward compatibility)
+  seed: {
+    label: "Fragment",
+    className: "text-muted-foreground/80 bg-muted/60",
+  },
+  budding: {
+    label: "Working",
+    className: "text-muted-foreground/80 bg-muted/60",
+  },
+  evergreen: {
     label: "Stable",
     className: "text-primary/70 bg-primary/5",
   },

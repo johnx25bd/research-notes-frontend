@@ -1,6 +1,5 @@
 import { LayoutShell } from "@/components/layout-shell"
 import { RecentNotesSection } from "@/components/recent-notes-section"
-import { RandomNoteButton } from "@/components/random-note-button"
 import { getAllNotes } from "@/lib/vault"
 import Link from "next/link"
 import { NoteRow } from "@/components/note-row"
@@ -29,7 +28,7 @@ export default async function HomePage() {
     .map(([tag]) => tag)
 
   return (
-    <LayoutShell>
+    <LayoutShell noteSlugs={notes.map(n => n.slug)}>
       <div className="max-w-2xl mx-auto px-6 py-10">
         <section className="mb-20">
           <h1 className="text-3xl sm:text-4xl font-normal text-foreground mb-4 animate-fade-in-up text-balance">
@@ -72,10 +71,6 @@ export default async function HomePage() {
               </Link>
             ))}
           </div>
-        </section>
-
-        <section className="pt-8 border-t border-border/50">
-          <RandomNoteButton noteSlugs={notes.map(n => n.slug)} />
         </section>
       </div>
     </LayoutShell>

@@ -4,14 +4,15 @@ import { Footer } from "./footer"
 
 interface LayoutShellProps {
   children: React.ReactNode
+  noteSlugs?: string[]
 }
 
-export function LayoutShell({ children }: LayoutShellProps) {
+export function LayoutShell({ children, noteSlugs }: LayoutShellProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">{children}</main>
-      <Footer />
+      <Footer noteSlugs={noteSlugs} />
     </div>
   )
 }
