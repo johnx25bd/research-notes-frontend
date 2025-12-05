@@ -1,18 +1,30 @@
 "use client"
 
 import { useTheme } from "./theme-provider"
-import { Sun, Moon } from "lucide-react"
+import { Sun, Moon, BookOpen } from "lucide-react"
 
 export function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme()
+  const { theme, cycleTheme } = useTheme()
+
+  const getIcon = () => {
+    if (theme === "light") return <Sun className="h-3.5 w-3.5" />
+    if (theme === "dark") return <Moon className="h-3.5 w-3.5" />
+    return <BookOpen className="h-3.5 w-3.5" />
+  }
+
+  const getLabel = () => {
+    if (theme === "light") return "Switch to dark mode"
+    if (theme === "dark") return "Switch to reading mode"
+    return "Switch to light mode"
+  }
 
   return (
     <button
-      onClick={toggleTheme}
-      className="p-2 rounded-md text-muted-foreground hover:text-primary hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+      onClick={cycleTheme}
+      className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+      aria-label={getLabel()}
     >
-      {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+      {getIcon()}
     </button>
   )
 }

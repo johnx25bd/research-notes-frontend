@@ -14,8 +14,9 @@ interface TagChipProps {
 
 export function TagChip({ tag, count, href, active, onClick, className }: TagChipProps) {
   const baseClasses = cn(
-    "inline-flex items-center text-xs text-muted-foreground transition-colors hover:text-foreground",
-    active && "text-foreground",
+    "inline-flex items-center text-xs px-1.5 py-0.5 rounded transition-colors",
+    "text-muted-foreground/60 border border-current/20 hover:text-muted-foreground hover:border-current/40",
+    active && "text-muted-foreground border-current/40",
     className,
   )
 
@@ -28,7 +29,7 @@ export function TagChip({ tag, count, href, active, onClick, className }: TagChi
 
   if (href) {
     return (
-      <Link href={href} className={baseClasses} style={{ fontFamily: "var(--font-ui)" }}>
+      <Link href={href} className={baseClasses} style={{ fontFamily: "var(--font-ui)", fontSize: "0.65rem" }}>
         {content}
       </Link>
     )
@@ -36,14 +37,14 @@ export function TagChip({ tag, count, href, active, onClick, className }: TagChi
 
   if (onClick) {
     return (
-      <button onClick={onClick} className={baseClasses} style={{ fontFamily: "var(--font-ui)" }}>
+      <button onClick={onClick} className={baseClasses} style={{ fontFamily: "var(--font-ui)", fontSize: "0.65rem" }}>
         {content}
       </button>
     )
   }
 
   return (
-    <span className={baseClasses} style={{ fontFamily: "var(--font-ui)" }}>
+    <span className={baseClasses} style={{ fontFamily: "var(--font-ui)", fontSize: "0.65rem" }}>
       {content}
     </span>
   )

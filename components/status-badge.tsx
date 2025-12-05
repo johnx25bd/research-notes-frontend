@@ -8,16 +8,16 @@ interface StatusBadgeProps {
 
 const statusConfig: Record<NoteStatus, { label: string; className: string }> = {
   seed: {
-    label: "Seed",
-    className: "text-muted-foreground bg-muted",
+    label: "Fragment",
+    className: "text-muted-foreground/80 bg-muted/60",
   },
   budding: {
-    label: "Budding",
-    className: "text-muted-foreground bg-muted",
+    label: "Working",
+    className: "text-muted-foreground/80 bg-muted/60",
   },
   evergreen: {
-    label: "Evergreen",
-    className: "text-primary/80 bg-primary/10",
+    label: "Stable",
+    className: "text-primary/70 bg-primary/5",
   },
 }
 
@@ -26,8 +26,8 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
 
   return (
     <span
-      className={cn("inline-flex items-center px-2 py-0.5 text-xs rounded-full", config.className, className)}
-      style={{ fontFamily: "var(--font-ui)" }}
+      className={cn("inline-flex items-center px-1.5 py-0.5 text-xs rounded-full", config.className, className)}
+      style={{ fontFamily: "var(--font-ui)", fontSize: "0.65rem" }}
     >
       {config.label}
     </span>

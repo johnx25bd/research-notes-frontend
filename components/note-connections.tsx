@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { NoteRow } from "./note-row"
 import { getNoteBySlug } from "@/lib/mock-data"
 import type { Note } from "@/lib/mock-data"
 
@@ -12,62 +12,42 @@ export function NoteConnections({ note }: NoteConnectionsProps) {
 
   if (!hasBacklinks && !hasRelated) return null
 
+  const backlinkNotes = note.backlinks.map((slug) => getNoteBySlug(slug)).filter((n): n is Note => n !== undefined)
+
+  const relatedNoteObjects = note.relatedNotes
+    .map((slug) => getNoteBySlug(slug))
+    .filter((n): n is Note => n !== undefined)
+
   return (
-    <section className="mt-16 pt-8 border-t border-border/50">
-      <h2 className="text-lg font-medium text-foreground mb-6">Connections</h2>
+    <section className="mt-16 pt-8" style={{ borderTop: "1px solid var(--entry-divider)" }}>
+      <h2 className="section-header text-sm mb-6" style={{ fontFamily: "var(--font-ui)" }}>
+        Connections
+      </h2>
 
       <div className="space-y-8">
         {hasBacklinks && (
           <div>
-            <h3
-              className="text-xs uppercase tracking-wider text-muted-foreground mb-3"
-              style={{ fontFamily: "var(--font-ui)" }}
-            >
-              Linked from
+            <h3 className="section-header text-xs mb-4" style={{ fontFamily: "var(--font-ui)" }}>
+              Linked From
             </h3>
-            <ul className="space-y-2">
-              {note.backlinks.map((slug) => {
-                const linkedNote = getNoteBySlug(slug)
-                return linkedNote ? (
-                  <li key={slug}>
-                    <Link
-                      href={`/notes/${slug}`}
-                      className="text-primary hover:underline decoration-primary/30 underline-offset-2"
-                    >
-                      {linkedNote.title}
-                    </Link>
-                    <span className="text-muted-foreground"> — {linkedNote.summary}</span>
-                  </li>
-                ) : null
-              })}
-            </ul>
+            <div className="space-y-0">
+              {backlinkNotes.map((linkedNote) => (
+                <NoteRow key={linkedNote.slug} note={linkedNote} showDate={false} />
+              ))}
+            </div>
           </div>
         )}
 
         {hasRelated && (
           <div>
-            <h3
-              className="text-xs uppercase tracking-wider text-muted-foreground mb-3"
-              style={{ fontFamily: "var(--font-ui)" }}
-            >
-              Related notes
+            <h3 className="section-header text-xs mb-4" style={{ fontFamily: "var(--font-ui)" }}>
+              Related Notes
             </h3>
-            <ul className="space-y-2">
-              {note.relatedNotes.map((slug) => {
-                const relatedNote = getNoteBySlug(slug)
-                return relatedNote ? (
-                  <li key={slug}>
-                    <Link
-                      href={`/notes/${slug}`}
-                      className="text-primary hover:underline decoration-primary/30 underline-offset-2"
-                    >
-                      {relatedNote.title}
-                    </Link>
-                    <span className="text-muted-foreground"> — {relatedNote.summary}</span>
-                  </li>
-                ) : null
-              })}
-            </ul>
+            <div className="space-y-0">
+              {relatedNoteObjects.map((relatedNote) => (
+                <NoteRow key={relatedNote.slug} note={relatedNote} showDate={false} />
+              ))}
+            </div>
           </div>
         )}
       </div>

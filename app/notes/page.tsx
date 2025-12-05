@@ -31,9 +31,9 @@ export default function NotesPage() {
 
   const statuses: { value: NoteStatus | null; label: string }[] = [
     { value: null, label: "All" },
-    { value: "seed", label: "Seeds" },
-    { value: "budding", label: "Budding" },
-    { value: "evergreen", label: "Evergreen" },
+    { value: "seed", label: "Fragment" },
+    { value: "budding", label: "Working" },
+    { value: "evergreen", label: "Stable" },
   ]
 
   return (

@@ -24,8 +24,8 @@ export default async function NotePage({ params }: NotePageProps) {
 
   return (
     <LayoutShell>
-      <article className="max-w-2xl mx-auto px-6 py-16">
-        <div className="compass-line pl-8 lg:pl-0">
+      <article className="max-w-2xl mx-auto px-6 py-10">
+        <div className="compass-line">
           <header className="mb-10 animate-fade-in-up">
             <h1 className="text-3xl sm:text-4xl font-normal text-foreground mb-4 text-balance">{note.title}</h1>
             <div
@@ -42,17 +42,14 @@ export default async function NotePage({ params }: NotePageProps) {
                   day: "numeric",
                 })}
               </span>
-              {note.tags.length > 0 && (
-                <>
-                  <span className="text-border">·</span>
-                  <div className="flex gap-2">
-                    {note.tags.slice(0, 3).map((tag) => (
-                      <TagChip key={tag} tag={tag} href={`/tags/${tag}`} />
-                    ))}
-                  </div>
-                </>
-              )}
             </div>
+            {note.tags.length > 0 && (
+              <div className="flex gap-2 mt-3">
+                {note.tags.slice(0, 3).map((tag) => (
+                  <TagChip key={tag} tag={tag} href={`/tags/${tag}`} />
+                ))}
+              </div>
+            )}
           </header>
 
           {/* Main content */}
