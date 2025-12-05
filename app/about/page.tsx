@@ -32,13 +32,13 @@ export default function AboutPage() {
           <p>Each note has a status indicating its maturity:</p>
           <ul>
             <li>
-              <strong>Seed</strong> — A nascent idea, barely formed
+              <strong>Fragment</strong> — A nascent idea, barely formed
             </li>
             <li>
-              <strong>Budding</strong> — Taking shape but not complete
+              <strong>Working</strong> — Taking shape but not complete
             </li>
             <li>
-              <strong>Evergreen</strong> — Mature, well-developed, and relatively stable
+              <strong>Stable</strong> — Mature, well-developed, and relatively stable
             </li>
           </ul>
 
