@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import { LayoutShell } from "@/components/layout-shell"
 import { StatusBadge } from "@/components/status-badge"
-import { NoteContent } from "@/components/note-content"
+import { NoteContentInteractive } from "@/components/note-content-interactive"
 import { NoteConnections } from "@/components/note-connections"
 import { TagChip } from "@/components/tag-chip"
 import { getAllNotes, getNoteBySlug } from "@/lib/vault"
@@ -76,7 +76,7 @@ export default async function NotePage({ params }: NotePageProps) {
 
           {/* Main content */}
           <div className="prose text-foreground">
-            <NoteContent html={html} />
+            <NoteContentInteractive html={html} allNotes={allNotes} />
           </div>
 
           <NoteConnections
