@@ -1,21 +1,21 @@
 import { NoteRow } from "./note-row"
-import { getNoteBySlug } from "@/lib/mock-data"
-import type { Note } from "@/lib/mock-data"
+import type { Note } from "@/lib/vault"
 
 interface NoteConnectionsProps {
-  note: Note
+  backlinks: string[]
+  relatedNotes: Note[]
+  allNotes: Note[]
 }
 
-export function NoteConnections({ note }: NoteConnectionsProps) {
-  const hasBacklinks = note.backlinks.length > 0
-  const hasRelated = note.relatedNotes.length > 0
+export function NoteConnections({ backlinks, relatedNotes, allNotes }: NoteConnectionsProps) {
+  const hasBacklinks = backlinks.length > 0
+  const hasRelated = relatedNotes.length > 0
 
   if (!hasBacklinks && !hasRelated) return null
 
-  const backlinkNotes = note.backlinks.map((slug) => getNoteBySlug(slug)).filter((n): n is Note => n !== undefined)
-
-  const relatedNoteObjects = note.relatedNotes
-    .map((slug) => getNoteBySlug(slug))
+  // Get backlink note objects
+  const backlinkNotes = backlinks
+    .map((slug) => allNotes.find(n => n.slug === slug))
     .filter((n): n is Note => n !== undefined)
 
   return (
@@ -44,7 +44,7 @@ export function NoteConnections({ note }: NoteConnectionsProps) {
               Related Notes
             </h3>
             <div className="space-y-0">
-              {relatedNoteObjects.map((relatedNote) => (
+              {relatedNotes.map((relatedNote) => (
                 <NoteRow key={relatedNote.slug} note={relatedNote} showDate={false} />
               ))}
             </div>

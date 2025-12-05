@@ -10,7 +10,7 @@ export interface Note {
   slug: string;
   title: string;
   summary?: string;
-  status: 'seed' | 'budding' | 'evergreen';
+  status: 'fragment' | 'working' | 'stable';
   lastTended: string;  // From git
   tags: string[];
   content: string;
@@ -42,7 +42,7 @@ export async function getAllNotes(): Promise<Note[]> {
           slug,
           title: data.title || path.basename(file, '.md'),
           summary: data.summary || data.description || '',
-          status: data.status || 'seed',
+          status: data.status || 'fragment',
           lastTended,
           tags: Array.isArray(data.tags) ? data.tags : [],
           content,
