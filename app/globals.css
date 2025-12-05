@@ -283,40 +283,34 @@
   padding-left: 0;
 }
 
-@media (min-width: 1024px) {
-  .compass-line {
-    padding-left: 0;
-  }
+/* Meridian line aligned exactly with header tick at calc(-1.25rem + 6px) */
+.compass-line::before {
+  content: "";
+  position: absolute;
+  left: calc(-1.25rem + 6px);
+  top: calc(1.25rem + 8px);
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--meridian) 0%, var(--meridian) 75%, transparent 100%);
+}
 
-  /* Meridian line aligned exactly with header tick at calc(-1.25rem + 6px) */
-  .compass-line::before {
-    content: "";
-    position: absolute;
-    left: calc(-1.25rem + 6px);
-    top: calc(1.25rem + 8px);
-    bottom: 0;
-    width: 1px;
-    background: linear-gradient(to bottom, var(--meridian) 0%, var(--meridian) 75%, transparent 100%);
-  }
-
-  /* Origin circle centered on meridian line (subtract half of 11px width = 5px) */
-  .compass-line::after {
-    content: "";
-    position: absolute;
-    left: calc(-1.25rem + 6px - 5px);
-    top: calc(0.35rem + 8px);
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    border: 1px solid var(--meridian-accent);
-    background: radial-gradient(
-      circle,
-      var(--meridian-accent) 0%,
-      var(--meridian-accent) 18%,
-      transparent 18%,
-      transparent 100%
-    );
-  }
+/* Origin circle centered on meridian line (subtract half of 11px width = 5px) */
+.compass-line::after {
+  content: "";
+  position: absolute;
+  left: calc(-1.25rem + 6px - 5px);
+  top: calc(0.35rem + 8px);
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid var(--meridian-accent);
+  background: radial-gradient(
+    circle,
+    var(--meridian-accent) 0%,
+    var(--meridian-accent) 18%,
+    transparent 18%,
+    transparent 100%
+  );
 }
 
 /* Removed with-meridian class - no longer used on any page */
