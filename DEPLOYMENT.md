@@ -1,144 +1,122 @@
-# Deployment Automation Setup
+# Deployment Workflow
 
-This document describes the automated deployment pipeline for the Research Notes frontend.
+Simple workflow for publishing notes to your digital garden.
 
 ## Overview
 
-When you push changes to the Research Notes vault, GitHub Actions automatically:
-1. Validates all notes for required frontmatter and broken links
-2. Builds the Next.js site
-3. Deploys to Vercel
+1. **Write** notes in Obsidian (`/Users/x25bd/Projects/obsidian/research-notes`)
+2. **Sync** notes to frontend repo with `./scripts/sync-vault.sh`
+3. **Review** changes with `git status`
+4. **Commit** with a meaningful message
+5. **Push** to trigger automatic Vercel deployment
 
-## Prerequisites
+## Publishing Notes
 
-### Vercel Account Setup
+### Step 1: Edit in Obsidian
 
-1. Create a Vercel account at https://vercel.com
-2. Create a new project linked to the `research-notes-frontend` repository
-3. Get your deployment credentials:
-   - **Vercel Token**: Go to Account Settings → Tokens → Create Token
-   - **Vercel Org ID**: Found in your organization settings
-   - **Vercel Project ID**: Found in project settings
-
-### GitHub Secrets Configuration
-
-In your Research Notes vault repository, add these secrets:
-
-1. Go to Settings → Secrets and variables → Actions
-2. Add the following repository secrets:
-   - `VERCEL_TOKEN`: Your Vercel deployment token
-   - `VERCEL_ORG_ID`: Your Vercel organization ID
-   - `VERCEL_PROJECT_ID`: Your Vercel project ID
-
-## Validation Script
-
-The `scripts/validate.ts` script checks notes before deployment:
-
-### Error Conditions (Build Fails)
-- Missing title in frontmatter
-
-### Warning Conditions (Build Continues)
-- Missing status field (seed/budding/evergreen)
-- Sensitive keywords detected (password, api key, secret, etc.)
-
-### Info Conditions (Build Continues)
-- Broken wikilinks to non-existent notes
-
-### Running Locally
-
-```bash
-# Run validation
-pnpm validate
-
-# Run validation and build
-pnpm build
+Write and edit your notes in Obsidian as usual. The vault is located at:
+```
+/Users/x25bd/Projects/obsidian/research-notes
 ```
 
-## Publishing Workflow
+### Step 2: Sync to Frontend
 
-### Quick Publish (Recommended)
-
-Use the convenience script in your vault:
-
+From the frontend repo:
 ```bash
-# From anywhere
-~/Projects/obsidian/research-notes/scripts/publish.sh
-
-# Or with a custom message
-~/Projects/obsidian/research-notes/scripts/publish.sh "Add new note on Web3"
+cd /Users/x25bd/Code/johnx/front
+./scripts/sync-vault.sh
 ```
 
-### Manual Publish
+This copies notes from your Obsidian vault to `./content/notes/` in the frontend repo.
+
+### Step 3: Review Changes
 
 ```bash
-cd ~/Projects/obsidian/research-notes
-git add .
-git commit -m "Update notes"
+git status
+git diff content/
+```
+
+### Step 4: Commit
+
+```bash
+git add content/
+git commit -m "Add new note on Web3 design principles"
+```
+
+### Step 5: Push
+
+```bash
 git push
 ```
 
-### Monitor Deployment
+Vercel will automatically build and deploy your changes (~2 minutes).
 
-After pushing, monitor the deployment:
+## Validation
 
+The build includes automatic validation that checks:
+- ✅ Required frontmatter fields (title, status)
+- ⚠️  Sensitive keywords in content
+- ℹ️  Broken wikilinks
+
+Run validation locally before committing:
 ```bash
-# Watch GitHub Actions workflow
-gh run watch
-
-# Or check GitHub Actions tab in your vault repository
+pnpm validate
 ```
 
-## Deployment Process
+If validation fails with errors, the build will fail and won't deploy.
 
-1. **Push to Vault**: You push changes to the Research Notes vault
-2. **GitHub Actions Triggered**: Workflow starts automatically
-3. **Validation**: Script checks all notes for errors
-4. **Build**: Next.js builds the static site
-5. **Deploy**: Site deploys to Vercel
-6. **Live**: Changes appear at your production URL (~2 minutes total)
+## Build Process
+
+When you push to GitHub:
+
+1. **Vercel triggered** - Detects push to main branch
+2. **Install dependencies** - `pnpm install`
+3. **Validate notes** - `pnpm validate` (checks all notes)
+4. **Build site** - `pnpm build` (processes markdown, generates static pages)
+5. **Deploy** - Site goes live at your production URL
+
+Markdown processing happens during build:
+- Parses frontmatter (title, status, tags, etc.)
+- Converts markdown to HTML with remark/rehype
+- Processes wikilinks `[[Note Title]]` → clickable links with hover previews
+- Handles callouts and GFM features
+
+## File Structure
+
+```
+research-notes-frontend/
+├── content/              # Synced from Obsidian (git tracked)
+│   ├── notes/           # Markdown files
+│   └── attachments/     # Images, PDFs, etc.
+├── scripts/
+│   ├── sync-vault.sh    # Sync script
+│   └── validate.ts      # Validation script
+├── lib/
+│   └── vault.ts         # Reads notes from content/notes/
+└── app/
+    └── notes/[slug]/    # Note pages
+```
 
 ## Troubleshooting
 
-### Build Fails with Validation Errors
+### Build fails with validation errors
 
-Check the GitHub Actions logs for specific errors:
-- Missing frontmatter fields
-- Broken wikilinks
-- Sensitive content
+Check the error message and fix the note(s):
+- Missing title in frontmatter
+- Invalid status value
+- Run `pnpm validate` locally to see all issues
 
-Fix the issues in your notes and push again.
+### Notes not appearing
 
-### Deployment Fails
+1. Did you run `./scripts/sync-vault.sh`?
+2. Did you commit the `content/` directory?
+3. Check Vercel build logs for errors
 
-1. Verify GitHub secrets are set correctly
-2. Check Vercel project settings
-3. Review GitHub Actions logs for specific errors
-
-### Local Development
-
-The frontend development server doesn't require Vercel:
+### Local development
 
 ```bash
-cd /path/to/research-notes-frontend
-pnpm dev
+./scripts/sync-vault.sh  # Sync latest notes
+pnpm dev                 # Start dev server
 ```
 
-## Files Modified
-
-### Frontend Repository
-- `scripts/validate.ts` - Validation script
-- `package.json` - Added validate script
-- `vercel.json` - Vercel deployment configuration
-- `DEPLOYMENT.md` - This file
-
-### Vault Repository
-- `.github/workflows/deploy.yml` - GitHub Actions workflow
-- `scripts/publish.sh` - One-command publishing script
-
-## Workflow Triggers
-
-The GitHub Actions workflow triggers on:
-- Pushes to `main` branch
-- Changes to `notes/**`, `attachments/**`, or `meta/**` directories
-
-Changes to other files (like README.md or .obsidian config) won't trigger deployment.
+Visit http://localhost:3000
