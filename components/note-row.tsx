@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { StatusBadge } from "./status-badge"
-import type { Note } from "@/lib/mock-data"
+import type { Note } from "@/lib/vault"
 
 interface NoteRowProps {
   note: Note
@@ -26,7 +26,7 @@ export function NoteRow({ note, showDate = true, showStatus = true }: NoteRowPro
         </div>
         {showDate && (
           <span className="text-xs text-muted-foreground shrink-0 mt-1" style={{ fontFamily: "var(--font-ui)" }}>
-            {new Date(note.updatedAt).toLocaleDateString("en-US", {
+            {new Date(note.lastTended).toLocaleDateString("en-US", {
               month: "short",
               day: "numeric",
             })}
