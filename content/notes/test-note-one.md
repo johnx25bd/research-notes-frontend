@@ -1,14 +1,16 @@
 ---
 title: Test Note One
 status: seed
-tags: [testing, digital-garden]
+tags:
+  - testing
+  - digital-garden
 created: 2025-12-05
-featured: true
+featured: false
 ---
 
 # Test Note One
 
-This is the first test note. It links to [[Test Note Two]] to test wikilinks.
+[[Don't overfill]] This is the first test note. It links to [[Test Note Two]] to test wikilinks.
 
 ## Content
 

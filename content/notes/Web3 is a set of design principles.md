@@ -1,3 +1,11 @@
+---
+title: Web3 is a set of design principles
+status: working
+tags:
+  - web3
+created: 2025-12-05
+featured: true
+---
   
 Since 2017 I’ve been captivated (and at times a bit repulsed) by Web3 tools and networks — blockchains, smart contracts, p2p data systems, cryptocurrencies, and the communities that are building them. What even is Web3? It’s become such an emotionally loaded term, I’ve intentionally avoided using it, or only bashfully use it in private settings. But I still find it useful, and want to lay my thinking out, as framing for my current research (which I’m sharing more of soon). 
 
