@@ -30,7 +30,8 @@ git pull origin main
 # Run smart sync
 echo ""
 echo "🔍 Finding notes to publish..."
-python3 scripts/smart-sync.py
+# Use the same Python that has PyYAML installed
+/Users/x25bd/.pyenv/versions/3.8.10/bin/python3 scripts/smart-sync.py
 
 # Check if there are changes
 if [[ -z $(git status --porcelain content/) ]]; then
