@@ -5,16 +5,17 @@ import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 import wikiLinkPlugin from 'remark-wiki-link';
 import rehypeCallouts from 'rehype-callouts';
+import rehypeExternalLinks from 'rehype-external-links';
 
 export async function processMarkdown(
   markdown: string,
-  availableNotes: string[] = []
+  availableNoteTitles: string[] = []
 ): Promise<string> {
   const processor = unified()
     .use(remarkParse)
     .use(remarkGfm) // Tables, strikethrough, task lists
     .use(wikiLinkPlugin, {
-      permalinks: availableNotes,
+      permalinks: availableNoteTitles, // Now expects note titles, not slugs
       pageResolver: (name: string) => {
         // Convert page name to slug format (lowercase, spaces to hyphens)
         const slug = name.toLowerCase().replace(/\s+/g, '-');
@@ -22,11 +23,15 @@ export async function processMarkdown(
       },
       hrefTemplate: (permalink: string) => `/notes/${permalink}`,
       wikiLinkClassName: 'internal-link',
-      newClassName: 'broken-link',
+      newClassName: 'broken-link', // Unpublished links get this class
       aliasDivider: '|' // Obsidian uses | for aliases, not :
     })
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeCallouts)
+    .use(rehypeExternalLinks, {
+      target: '_blank',
+      rel: ['noopener', 'noreferrer']
+    })
     .use(rehypeStringify, { allowDangerousHtml: true });
 
   const result = await processor.process(markdown);

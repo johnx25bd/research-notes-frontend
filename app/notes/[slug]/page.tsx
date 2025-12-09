@@ -61,10 +61,10 @@ export default async function NotePage({ params }: NotePageProps) {
   // Get all notes for backlinks and related notes
   const allNotes = await getAllNotes()
 
-  // Process markdown to HTML
+  // Process markdown to HTML with available note titles (for wikilink resolution)
   const html = await processMarkdown(
     note.content,
-    allNotes.map(n => n.slug)
+    allNotes.map(n => n.title)
   )
 
   // Compute backlinks
