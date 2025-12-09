@@ -5,7 +5,7 @@ created: 2025-12-05
 featured: true
 tags:
   - principles
-summary: Overfilling causes problems.
+source_note: obsidian://open?vault=xo&file=Notes%2FDukkha
 ---
 
 

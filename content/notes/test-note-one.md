@@ -10,7 +10,7 @@ featured: false
 
 # Test Note One
 
-[[Don't overfill]] This is the first test note. It links to [[Test Note Two]] to test wikilinks.
+This is the first test note. It links to [[Test Note Two]] to test wikilinks.
 
 ## Content
 
