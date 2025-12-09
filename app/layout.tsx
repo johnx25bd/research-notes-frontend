@@ -9,10 +9,42 @@ const lora = Lora({ subsets: ["latin"], variable: "--font-lora" })
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" })
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://johnx.co'
+
 export const metadata: Metadata = {
-  title: "Garden — A Digital Garden",
-  description: "A network of evergreen notes and ideas",
-    generator: 'v0.app'
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "johnx — Research Notes",
+    template: "%s | johnx",
+  },
+  description: "A digital garden of research notes, ideas, and explorations. Notes that grow and evolve over time.",
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: siteUrl,
+    siteName: 'johnx Research Notes',
+    title: 'johnx — Research Notes',
+    description: 'A digital garden of research notes, ideas, and explorations',
+    images: [
+      {
+        url: `${siteUrl}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: 'johnx Research Notes',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'johnx — Research Notes',
+    description: 'A digital garden of research notes, ideas, and explorations',
+    images: [`${siteUrl}/og-image.png`],
+    creator: '@x25bd',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export const viewport = {

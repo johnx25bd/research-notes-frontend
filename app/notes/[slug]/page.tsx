@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
 import { LayoutShell } from "@/components/layout-shell"
 import { StatusBadge } from "@/components/status-badge"
 import { NoteContentInteractive } from "@/components/note-content-interactive"
@@ -8,9 +9,41 @@ import { getAllNotes, getNoteBySlug } from "@/lib/vault"
 import { processMarkdown } from "@/lib/markdown"
 import { computeBacklinks } from "@/lib/backlinks"
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://johnx.co'
+
 export async function generateStaticParams() {
   const notes = await getAllNotes()
   return notes.map((note) => ({ slug: note.slug }))
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const note = await getNoteBySlug(slug)
+
+  if (!note) {
+    return {
+      title: 'Note Not Found',
+    }
+  }
+
+  return {
+    title: note.title,
+    description: note.summary || `Research note: ${note.title}`,
+    openGraph: {
+      title: note.title,
+      description: note.summary || `Research note: ${note.title}`,
+      type: 'article',
+      publishedTime: note.lastTended,
+      modifiedTime: note.lastTended,
+      tags: note.tags,
+      url: `${siteUrl}/notes/${slug}`,
+    },
+    twitter: {
+      card: 'summary',
+      title: note.title,
+      description: note.summary || `Research note: ${note.title}`,
+    },
+  }
 }
 
 interface NotePageProps {
