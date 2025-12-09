@@ -9,7 +9,7 @@
 # @raycast.mode fullOutput
 #
 # Optional parameters:
-# @raycast.icon 📝
+# @raycast.icon △
 # @raycast.packageName Research Notes
 # @raycast.description Two-stage sync: xo vault → research-notes → frontend repo
 

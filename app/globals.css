@@ -348,3 +348,35 @@
 .note-entry:last-child {
   border-bottom: 1px solid var(--entry-divider);
 }
+
+/* Wikilink styles */
+.prose a.internal-link {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-color: rgba(47, 111, 130, 0.3);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.prose a.internal-link:hover {
+  text-decoration-color: var(--primary);
+}
+
+/* Broken links (unpublished notes) - styled as muted text, not clickable */
+.prose a.broken-link {
+  color: var(--muted-foreground);
+  text-decoration: none;
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.7;
+}
+
+.prose a.broken-link::before {
+  content: "[[";
+  opacity: 0.5;
+}
+
+.prose a.broken-link::after {
+  content: "]]";
+  opacity: 0.5;
+}
