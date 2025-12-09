@@ -1,6 +1,8 @@
 #!/bin/bash
 # Raycast Script Command for Publishing Research Notes
 #
+# Two-vault architecture: xo → research-notes → frontend
+#
 # Required parameters:
 # @raycast.schemaVersion 1
 # @raycast.title Publish Research Notes
@@ -9,7 +11,7 @@
 # Optional parameters:
 # @raycast.icon 📝
 # @raycast.packageName Research Notes
-# @raycast.description Sync notes tagged with #to-publish and create a PR
+# @raycast.description Two-stage sync: xo vault → research-notes → frontend repo
 
 set -e
 
@@ -19,7 +21,8 @@ BRANCH_PREFIX="content/publish"
 
 cd "$REPO_DIR"
 
-echo "🔄 Publishing research notes..."
+echo "🔄 Two-vault publishing workflow"
+echo "================================"
 echo ""
 
 # Ensure we're on main and up to date
@@ -27,11 +30,18 @@ echo "📥 Updating main branch..."
 git checkout main
 git pull origin main
 
-# Run smart sync
+# STAGE 1: xo vault → research-notes vault
 echo ""
-echo "🔍 Finding notes to publish..."
+echo "📝 STAGE 1: Syncing xo → research-notes"
+echo "---------------------------------------"
 # Use the same Python that has PyYAML installed
 /Users/x25bd/.pyenv/versions/3.8.10/bin/python3 scripts/smart-sync.py
+
+# STAGE 2: research-notes vault → frontend repo
+echo ""
+echo "📦 STAGE 2: Syncing research-notes → frontend"
+echo "---------------------------------------------"
+./scripts/sync-vault.sh
 
 # Check if there are changes
 if [[ -z $(git status --porcelain content/) ]]; then
@@ -61,7 +71,9 @@ NEW_NOTES=$(git diff --cached --name-only --diff-filter=A content/notes/ | sed '
 MODIFIED_NOTES=$(git diff --cached --name-only --diff-filter=M content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
 
 # Build commit message
-COMMIT_MSG="content: Publish research notes"
+COMMIT_MSG="content: Publish notes from xo vault
+
+Two-vault sync: xo → research-notes → frontend"
 
 if [[ -n "$NEW_NOTES" ]]; then
   COMMIT_MSG="${COMMIT_MSG}
