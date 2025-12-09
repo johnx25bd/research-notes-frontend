@@ -1,1 +1,0 @@
-[[Web3 is a set of design principles]]
