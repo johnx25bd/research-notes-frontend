@@ -25,21 +25,30 @@ echo "🔄 Two-vault publishing workflow"
 echo "================================"
 echo ""
 
-# Ensure we're on main and up to date
-echo "📥 Updating main branch..."
-CURRENT_BRANCH=$(git branch --show-current)
+# Check for uncommitted changes
+echo "📋 Checking working tree..."
+if ! git diff-index --quiet HEAD --; then
+  echo "❌ You have uncommitted changes. Please commit or stash them first."
+  echo ""
+  git status --short
+  exit 1
+fi
 
-if [ "$CURRENT_BRANCH" != "main" ]; then
-  # Try to checkout main, if it fails due to worktree, fetch and reset
-  if ! git checkout main 2>/dev/null; then
-    echo "⚠️  main is in a worktree, using current branch instead"
-    git fetch origin main:main 2>/dev/null || echo "   Fetch failed, continuing with current state"
-  else
-    git pull origin main
-  fi
-else
-  # Already on main, just pull
-  git pull origin main
+# Get current branch and update it
+CURRENT_BRANCH=$(git branch --show-current)
+echo "📍 Current branch: $CURRENT_BRANCH"
+echo ""
+
+# Fetch latest from origin (don't checkout main to avoid worktree conflicts)
+echo "📥 Fetching latest changes..."
+git fetch origin
+
+# If on main, pull latest
+if [ "$CURRENT_BRANCH" = "main" ]; then
+  git pull origin main --ff-only || {
+    echo "❌ Cannot fast-forward main. Please resolve conflicts manually."
+    exit 1
+  }
 fi
 
 # STAGE 1: xo vault → research-notes vault
@@ -155,6 +164,19 @@ if [[ $? -eq 0 ]]; then
   echo ""
   echo "✅ Pull request created successfully!"
   echo "   $PR_URL"
+
+  # Clean up old merged publish branches to prevent bloat
+  echo ""
+  echo "🧹 Cleaning up old publish branches..."
+  OLD_BRANCHES=$(git branch -r --merged origin/main | grep "origin/$BRANCH_PREFIX" | sed 's|origin/||' | head -n -1)
+  if [ -n "$OLD_BRANCHES" ]; then
+    echo "$OLD_BRANCHES" | while read branch; do
+      git push origin --delete "$branch" 2>/dev/null && echo "   Deleted: $branch" || true
+    done
+  else
+    echo "   No old branches to clean up"
+  fi
+
   echo ""
   echo "Opening PR in browser..."
   open "$PR_URL" || echo "Could not open browser automatically. Please visit: $PR_URL"
