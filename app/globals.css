@@ -362,21 +362,10 @@
   text-decoration-color: var(--primary);
 }
 
-/* Broken links (unpublished notes) - styled as muted text, not clickable */
+/* Broken links (unpublished notes) - render as normal text */
 .prose a.broken-link {
-  color: var(--muted-foreground);
+  color: inherit;
   text-decoration: none;
   pointer-events: none;
-  cursor: default;
-  opacity: 0.7;
-}
-
-.prose a.broken-link::before {
-  content: "[[";
-  opacity: 0.5;
-}
-
-.prose a.broken-link::after {
-  content: "]]";
-  opacity: 0.5;
+  cursor: text;
 }
