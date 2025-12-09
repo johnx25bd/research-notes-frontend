@@ -132,17 +132,28 @@ PR_BODY="${PR_BODY}
 - [ ] Check frontmatter is correct
 - [ ] Verify wikilinks work"
 
-gh pr create \
+# Create PR and capture the URL
+PR_URL=$(gh pr create \
   --title "$PR_TITLE" \
   --body "$PR_BODY" \
   --base main \
-  --head "$BRANCH_NAME" \
-  --web
+  --head "$BRANCH_NAME" 2>&1)
 
-echo ""
-echo "✅ Done! PR created and opened in browser."
-echo ""
-echo "Next steps:"
-echo "  1. Review the PR"
-echo "  2. Merge when ready"
-echo "  3. Vercel will auto-deploy"
+if [[ $? -eq 0 ]]; then
+  echo ""
+  echo "✅ Pull request created successfully!"
+  echo "   $PR_URL"
+  echo ""
+  echo "Opening PR in browser..."
+  open "$PR_URL" || echo "Could not open browser automatically. Please visit: $PR_URL"
+  echo ""
+  echo "Next steps:"
+  echo "  1. Review the PR"
+  echo "  2. Merge when ready"
+  echo "  3. Vercel will auto-deploy"
+else
+  echo ""
+  echo "❌ Failed to create pull request:"
+  echo "$PR_URL"
+  exit 1
+fi
