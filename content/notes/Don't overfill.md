@@ -1,13 +1,14 @@
 ---
-title: Don't overfill
+created: 2025-12-09
+published: true
+published_at: '2025-12-09'
+source_note: obsidian://open?vault=xo&file=Notes/Don%27t%20overfill
 status: fragment
-created: 2025-12-05
-featured: true
+summary: null
 tags:
-  - principles
-source_note: obsidian://open?vault=xo&file=Notes%2FDukkha
+- principles
+title: Don't overfill
 ---
-
 
 I'm finding as I age that overfilled things are often a source of problems. 
 
@@ -17,3 +18,4 @@ There's a healthy capacity, and as that capacity gets exceeded, things fall apar
 
 Interestingly, underfilled things also tend to break down over time ...
 
+There's something that I find sits in tension with this principle, though. I'm a pathological overpacker. I learned the importance of [[Be prepared|being prepared]]. 
