@@ -5,14 +5,13 @@ categories:
 - '[[Posts]]'
 created: 2025-12-09
 published: true
-published_at: '2025-12-09'
+published_at: 2025-12-09
 source_note: obsidian://open?vault=xo&file=Notes/Dukkha
-status:
-- fragment
+status: fragment
+summary: On feeling out of step
 tags:
-- 0🌲
-- posts
 - philosophy
+title: Dukkha
 topics: []
 url: null
 ---
