@@ -27,8 +27,20 @@ echo ""
 
 # Ensure we're on main and up to date
 echo "📥 Updating main branch..."
-git checkout main
-git pull origin main
+CURRENT_BRANCH=$(git branch --show-current)
+
+if [ "$CURRENT_BRANCH" != "main" ]; then
+  # Try to checkout main, if it fails due to worktree, fetch and reset
+  if ! git checkout main 2>/dev/null; then
+    echo "⚠️  main is in a worktree, using current branch instead"
+    git fetch origin main:main 2>/dev/null || echo "   Fetch failed, continuing with current state"
+  else
+    git pull origin main
+  fi
+else
+  # Already on main, just pull
+  git pull origin main
+fi
 
 # STAGE 1: xo vault → research-notes vault
 echo ""
