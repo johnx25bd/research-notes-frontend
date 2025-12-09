@@ -16,9 +16,6 @@ export interface Note {
   content: string;
   featured?: boolean;
   filepath: string;
-  published?: boolean;
-  stub?: boolean;
-  source_note?: string;  // Obsidian URI back to source vault
 }
 
 export async function getAllNotes(): Promise<Note[]> {
@@ -50,16 +47,12 @@ export async function getAllNotes(): Promise<Note[]> {
           tags: Array.isArray(data.tags) ? data.tags : [],
           content,
           featured: data.featured || false,
-          filepath: file,
-          published: data.published,
-          stub: data.stub,
-          source_note: data.source_note
+          filepath: file
         };
       })
     );
 
-    // Filter out unpublished notes (stubs and notes with published: false)
-    return notes.filter(n => n !== null && n.published !== false);
+    return notes.filter(n => n !== null);
   } catch (error) {
     // Silently return empty array on error - errors will surface during build
     return [];

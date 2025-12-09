@@ -1,26 +1,21 @@
 #!/usr/bin/env python3
 """
-Smart sync script for two-vault publishing architecture.
+Smart sync script for publishing notes from Obsidian vault.
 
-xo vault (private) → research-notes vault (intermediate) → frontend (public)
-
-Syncs notes with 'to-publish' tag from xo to research-notes, parses wikilinks,
-generates stubs for unpublished references, and adds source_note links back to xo.
+Finds notes tagged with 'to-publish', syncs them to the frontend repo,
+and marks them as published in the source vault.
 """
 
 import os
 import sys
 import yaml
 import shutil
-import re
-import urllib.parse
 from pathlib import Path
 from datetime import datetime
-from typing import List, Dict, Any, Optional, Tuple, Set
+from typing import List, Dict, Any, Optional, Tuple
 
-# Two-vault architecture paths
-XO_VAULT_PATH = Path("/Users/x25bd/Projects/obsidian/xo")
-RESEARCH_NOTES_VAULT_PATH = Path("/Users/x25bd/Projects/obsidian/research-notes")
+VAULT_PATH = Path("/Users/x25bd/Projects/obsidian/research-notes")
+CONTENT_DIR = Path("./content")
 TO_PUBLISH_TAG = "to-publish"
 
 
@@ -57,51 +52,6 @@ def write_frontmatter(file_path: Path, frontmatter: Dict[str, Any], body: str):
         f.write(body)
 
 
-def extract_wikilinks(content: str) -> Set[str]:
-    """Extract all wikilinks from markdown content.
-
-    Supports:
-    - [[Note Name]]
-    - [[Note Name|Display Text]]
-    - [[folder/Note Name]]
-    """
-    # Pattern matches [[...]] but not ![[ (for images)
-    pattern = r'(?<!!)\[\[([^\]|]+)(?:\|[^\]]+)?\]\]'
-    matches = re.findall(pattern, content)
-
-    # Clean up note names (remove path, just get the note name)
-    note_names = set()
-    for match in matches:
-        # Remove folder path if present, get just the note name
-        note_name = match.split('/')[-1].strip()
-        note_names.add(note_name)
-
-    return note_names
-
-
-def create_obsidian_uri(vault_name: str, note_path: str) -> str:
-    """Create an Obsidian URI for opening a note.
-
-    Args:
-        vault_name: Name of the Obsidian vault (e.g., 'xo')
-        note_path: Path to note relative to vault (e.g., 'Notes/My Note')
-
-    Returns:
-        Obsidian URI string
-    """
-    # URL encode the path
-    encoded_path = urllib.parse.quote(note_path)
-    return f"obsidian://open?vault={vault_name}&file={encoded_path}"
-
-
-def find_note_in_vault(vault_path: Path, note_name: str) -> Optional[Path]:
-    """Find a note by name in a vault (searches recursively)."""
-    # Try exact match with .md extension
-    for md_file in vault_path.rglob(f"{note_name}.md"):
-        return md_file
-    return None
-
-
 def has_publish_tag(frontmatter: Optional[Dict[str, Any]]) -> bool:
     """Check if note has to-publish tag."""
     if not frontmatter or 'tags' not in frontmatter:
@@ -117,19 +67,15 @@ def has_publish_tag(frontmatter: Optional[Dict[str, Any]]) -> bool:
 
 
 def find_notes_to_publish() -> List[Path]:
-    """Find all notes in xo vault with to-publish tag."""
+    """Find all notes in vault with to-publish tag."""
     notes_to_publish = []
+    notes_dir = VAULT_PATH / "notes"
 
-    if not XO_VAULT_PATH.exists():
-        print(f"❌ xo vault not found: {XO_VAULT_PATH}")
+    if not notes_dir.exists():
+        print(f"❌ Notes directory not found: {notes_dir}")
         return []
 
-    # Search recursively in the entire xo vault
-    for md_file in XO_VAULT_PATH.rglob("*.md"):
-        # Skip hidden files and .obsidian folder
-        if any(part.startswith('.') for part in md_file.parts):
-            continue
-
+    for md_file in notes_dir.rglob("*.md"):
         frontmatter, _ = parse_frontmatter(md_file)
         if has_publish_tag(frontmatter):
             notes_to_publish.append(md_file)
@@ -137,120 +83,50 @@ def find_notes_to_publish() -> List[Path]:
     return notes_to_publish
 
 
-def create_stub_note(note_name: str, source_note_name: str, dest_dir: Path) -> Path:
+def sync_note(source_path: Path, update_source: bool = True) -> bool:
     """
-    Create a stub note for an unpublished reference.
+    Sync a single note to the frontend repo.
 
     Args:
-        note_name: Name of the referenced note (without .md)
-        source_note_name: Name of the note that referenced it
-        dest_dir: Directory to create stub in
-
-    Returns:
-        Path to created stub note
-    """
-    stub_path = dest_dir / f"{note_name}.md"
-
-    # Create stub frontmatter
-    stub_frontmatter = {
-        'title': note_name,
-        'published': False,
-        'stub': True,
-        'created_by': f'Auto-generated stub (referenced in {source_note_name})',
-        'created_at': datetime.now().strftime('%Y-%m-%d')
-    }
-
-    # Create minimal stub content
-    stub_body = f"This note is referenced but not yet published.\n\nReferenced in: [[{source_note_name}]]\n"
-
-    write_frontmatter(stub_path, stub_frontmatter, stub_body)
-    return stub_path
-
-
-def sync_note(source_path: Path, created_stubs: Set[str], update_source: bool = True) -> bool:
-    """
-    Sync a note from xo vault to research-notes vault.
-
-    Two-vault architecture:
-    1. Copy note from xo to research-notes
-    2. Add source_note obsidian:// URI pointing back to xo
-    3. Parse wikilinks and create stubs for unpublished references
-    4. Mark source note as published
-
-    Args:
-        source_path: Path to note in xo vault
-        created_stubs: Set to track created stub note names
+        source_path: Path to note in vault
         update_source: If True, update source frontmatter to mark as published
 
     Returns:
         True if successful
     """
     try:
-        # Parse frontmatter and content
+        # Parse frontmatter
         frontmatter, body = parse_frontmatter(source_path)
         if not frontmatter:
             print(f"⚠️  Skipping {source_path.name}: No frontmatter")
             return False
 
-        # Calculate relative path from xo vault
-        rel_path = source_path.relative_to(XO_VAULT_PATH)
-
-        # Destination path in research-notes (Notes folder)
-        dest_path = RESEARCH_NOTES_VAULT_PATH / "notes" / source_path.stem
-        dest_path = dest_path.with_suffix('.md')
+        # Determine destination path (preserve directory structure)
+        rel_path = source_path.relative_to(VAULT_PATH / "notes")
+        dest_path = CONTENT_DIR / "notes" / rel_path
         dest_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Create frontmatter for research-notes version
-        research_frontmatter = frontmatter.copy()
+        # Create cleaned frontmatter for published version
+        published_frontmatter = frontmatter.copy()
 
-        # Remove xo-specific tags (to-publish, posts, emoji tags like 0🌲)
-        XO_SPECIFIC_TAGS = {TO_PUBLISH_TAG, 'posts', '0🌲'}
-        if 'tags' in research_frontmatter:
-            tags = research_frontmatter['tags']
+        # Remove to-publish tag
+        if 'tags' in published_frontmatter:
+            tags = published_frontmatter['tags']
             if isinstance(tags, list):
-                research_frontmatter['tags'] = [t for t in tags if t not in XO_SPECIFIC_TAGS]
-            elif tags in XO_SPECIFIC_TAGS:
-                research_frontmatter['tags'] = []
+                published_frontmatter['tags'] = [t for t in tags if t != TO_PUBLISH_TAG]
+            elif tags == TO_PUBLISH_TAG:
+                published_frontmatter['tags'] = []
 
-        # Add published metadata (overwrite null or missing)
-        research_frontmatter['published'] = True
-        if 'published_at' not in research_frontmatter:
-            research_frontmatter['published_at'] = datetime.now().strftime('%Y-%m-%d')
+        # Add published metadata
+        if 'published' not in published_frontmatter:
+            published_frontmatter['published'] = True
+            published_frontmatter['published_at'] = datetime.now().strftime('%Y-%m-%d')
 
-        # Add source_note obsidian:// URI for all notes
-        source_note_uri = create_obsidian_uri('xo', str(rel_path).replace('.md', ''))
-        research_frontmatter['source_note'] = source_note_uri
+        # Write to destination
+        write_frontmatter(dest_path, published_frontmatter, body)
+        print(f"  ✓ Synced: {rel_path}")
 
-        # Extract wikilinks and create stubs for unpublished references
-        wikilinks = extract_wikilinks(body)
-        notes_dir = RESEARCH_NOTES_VAULT_PATH / "notes"
-        notes_dir.mkdir(parents=True, exist_ok=True)
-
-        for linked_note in wikilinks:
-            # Check if note exists in research-notes
-            linked_note_path = notes_dir / f"{linked_note}.md"
-
-            if not linked_note_path.exists():
-                # Check if it exists in xo and has published: true
-                xo_note_path = find_note_in_vault(XO_VAULT_PATH, linked_note)
-
-                should_create_stub = True
-                if xo_note_path:
-                    xo_frontmatter, _ = parse_frontmatter(xo_note_path)
-                    if xo_frontmatter and xo_frontmatter.get('published') == True:
-                        should_create_stub = False
-
-                # Create stub if note doesn't exist or isn't published
-                if should_create_stub and linked_note not in created_stubs:
-                    create_stub_note(linked_note, source_path.stem, notes_dir)
-                    created_stubs.add(linked_note)
-                    print(f"    ⚠️  Created stub for unpublished reference: {linked_note}")
-
-        # Write to research-notes vault
-        write_frontmatter(dest_path, research_frontmatter, body)
-        print(f"  ✓ Synced: {source_path.stem}")
-
-        # Update xo vault to mark as published
+        # Update source vault to mark as published
         if update_source:
             source_frontmatter = frontmatter.copy()
 
@@ -262,73 +138,70 @@ def sync_note(source_path: Path, created_stubs: Set[str], update_source: bool = 
                 elif tags == TO_PUBLISH_TAG:
                     source_frontmatter['tags'] = []
 
-            # Mark as published in xo vault (overwrite null or missing)
+            # Mark as published in source
             source_frontmatter['published'] = True
-            if 'published_at' not in source_frontmatter:
-                source_frontmatter['published_at'] = datetime.now().strftime('%Y-%m-%d')
+            source_frontmatter['published_at'] = datetime.now().strftime('%Y-%m-%d')
 
             write_frontmatter(source_path, source_frontmatter, body)
-            print(f"    → Marked as published in xo vault")
+            print(f"    → Updated source vault")
 
         return True
 
     except Exception as e:
         print(f"❌ Error syncing {source_path.name}: {e}")
-        import traceback
-        traceback.print_exc()
         return False
 
 
+def sync_about_page():
+    """Sync About.md if it exists."""
+    about_path = VAULT_PATH / "About.md"
+    if about_path.exists():
+        dest_path = CONTENT_DIR / "About.md"
+        shutil.copy2(about_path, dest_path)
+        print("  ✓ Synced: About.md")
+        return True
+    return False
+
+
 def main():
-    print("🔄 Two-vault sync: xo → research-notes\n")
-    print(f"Source vault: {XO_VAULT_PATH}")
-    print(f"Destination vault: {RESEARCH_NOTES_VAULT_PATH}\n")
+    print("🔄 Smart sync: Finding notes to publish...\n")
 
-    # Ensure research-notes vault exists
-    if not RESEARCH_NOTES_VAULT_PATH.exists():
-        print(f"❌ research-notes vault not found: {RESEARCH_NOTES_VAULT_PATH}")
-        return 1
+    # Create content directory if needed
+    (CONTENT_DIR / "notes").mkdir(parents=True, exist_ok=True)
 
-    # Create notes directory in research-notes if needed
-    (RESEARCH_NOTES_VAULT_PATH / "notes").mkdir(parents=True, exist_ok=True)
-
-    # Find notes to publish from xo vault
+    # Find notes to publish
     notes_to_publish = find_notes_to_publish()
 
     if not notes_to_publish:
-        print("📭 No notes found with #to-publish tag in xo vault")
+        print("📭 No notes found with #to-publish tag")
         print("\nTo publish a note:")
         print("  1. Add 'to-publish' to the tags in frontmatter")
         print("  2. Run this script again")
         return 0
 
-    print(f"📝 Found {len(notes_to_publish)} note(s) to publish from xo:\n")
+    print(f"📝 Found {len(notes_to_publish)} note(s) to publish:\n")
     for note_path in notes_to_publish:
-        print(f"  • {note_path.stem}")
+        rel_path = note_path.relative_to(VAULT_PATH / "notes")
+        print(f"  • {rel_path}")
 
-    print("\n🚀 Syncing to research-notes vault...\n")
-
-    # Track created stubs across all notes
-    created_stubs: Set[str] = set()
+    print("\n🚀 Publishing...\n")
 
     # Sync each note
     success_count = 0
     for note_path in notes_to_publish:
-        if sync_note(note_path, created_stubs, update_source=True):
+        if sync_note(note_path, update_source=True):
             success_count += 1
 
-    # Summary
-    print(f"\n✅ Synced {success_count}/{len(notes_to_publish)} notes to research-notes")
+    # Sync About.md
+    print()
+    sync_about_page()
 
-    if created_stubs:
-        print(f"\n⚠️  Created {len(created_stubs)} stub note(s) for unpublished references:")
-        for stub_name in sorted(created_stubs):
-            print(f"  • {stub_name} (published: false)")
-
-    print("\n📋 Next steps:")
-    print("  1. Review synced notes in research-notes vault")
-    print("  2. Run sync-vault.sh to publish research-notes → frontend")
-    print("  3. Or use Raycast: 'Publish Research Notes'")
+    print(f"\n✅ Published {success_count}/{len(notes_to_publish)} notes")
+    print(f"\nNext steps:")
+    print(f"  1. Review changes: git status")
+    print(f"  2. Stage changes: git add content/")
+    print(f"  3. Commit: git commit -m 'content: Publish new notes'")
+    print(f"  4. Push: git push")
 
     return 0 if success_count == len(notes_to_publish) else 1
 

@@ -1,17 +1,15 @@
 #!/bin/bash
 # Raycast Script Command for Publishing Research Notes
 #
-# Two-vault architecture: xo → research-notes → frontend
-#
 # Required parameters:
 # @raycast.schemaVersion 1
 # @raycast.title Publish Research Notes
 # @raycast.mode fullOutput
 #
 # Optional parameters:
-# @raycast.icon △
+# @raycast.icon 📝
 # @raycast.packageName Research Notes
-# @raycast.description Two-stage sync: xo vault → research-notes → frontend repo
+# @raycast.description Sync notes tagged with #to-publish and create a PR
 
 set -e
 
@@ -21,48 +19,19 @@ BRANCH_PREFIX="content/publish"
 
 cd "$REPO_DIR"
 
-echo "🔄 Two-vault publishing workflow"
-echo "================================"
+echo "🔄 Publishing research notes..."
 echo ""
 
-# Check for uncommitted changes
-echo "📋 Checking working tree..."
-if ! git diff-index --quiet HEAD --; then
-  echo "❌ You have uncommitted changes. Please commit or stash them first."
-  echo ""
-  git status --short
-  exit 1
-fi
+# Ensure we're on main and up to date
+echo "📥 Updating main branch..."
+git checkout main
+git pull origin main
 
-# Get current branch and update it
-CURRENT_BRANCH=$(git branch --show-current)
-echo "📍 Current branch: $CURRENT_BRANCH"
+# Run smart sync
 echo ""
-
-# Fetch latest from origin (don't checkout main to avoid worktree conflicts)
-echo "📥 Fetching latest changes..."
-git fetch origin
-
-# If on main, pull latest
-if [ "$CURRENT_BRANCH" = "main" ]; then
-  git pull origin main --ff-only || {
-    echo "❌ Cannot fast-forward main. Please resolve conflicts manually."
-    exit 1
-  }
-fi
-
-# STAGE 1: xo vault → research-notes vault
-echo ""
-echo "📝 STAGE 1: Syncing xo → research-notes"
-echo "---------------------------------------"
+echo "🔍 Finding notes to publish..."
 # Use the same Python that has PyYAML installed
 /Users/x25bd/.pyenv/versions/3.8.10/bin/python3 scripts/smart-sync.py
-
-# STAGE 2: research-notes vault → frontend repo
-echo ""
-echo "📦 STAGE 2: Syncing research-notes → frontend"
-echo "---------------------------------------------"
-./scripts/sync-vault.sh
 
 # Check if there are changes
 if [[ -z $(git status --porcelain content/) ]]; then
@@ -92,9 +61,7 @@ NEW_NOTES=$(git diff --cached --name-only --diff-filter=A content/notes/ | sed '
 MODIFIED_NOTES=$(git diff --cached --name-only --diff-filter=M content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
 
 # Build commit message
-COMMIT_MSG="content: Publish notes from xo vault
-
-Two-vault sync: xo → research-notes → frontend"
+COMMIT_MSG="content: Publish research notes"
 
 if [[ -n "$NEW_NOTES" ]]; then
   COMMIT_MSG="${COMMIT_MSG}
@@ -153,41 +120,17 @@ PR_BODY="${PR_BODY}
 - [ ] Check frontmatter is correct
 - [ ] Verify wikilinks work"
 
-# Create PR and capture the URL
-PR_URL=$(gh pr create \
+gh pr create \
   --title "$PR_TITLE" \
   --body "$PR_BODY" \
   --base main \
-  --head "$BRANCH_NAME" 2>&1)
+  --head "$BRANCH_NAME" \
+  --web
 
-if [[ $? -eq 0 ]]; then
-  echo ""
-  echo "✅ Pull request created successfully!"
-  echo "   $PR_URL"
-
-  # Clean up old merged publish branches to prevent bloat
-  echo ""
-  echo "🧹 Cleaning up old publish branches..."
-  OLD_BRANCHES=$(git branch -r --merged origin/main | grep "origin/$BRANCH_PREFIX" | sed 's|origin/||' | head -n -1)
-  if [ -n "$OLD_BRANCHES" ]; then
-    echo "$OLD_BRANCHES" | while read branch; do
-      git push origin --delete "$branch" 2>/dev/null && echo "   Deleted: $branch" || true
-    done
-  else
-    echo "   No old branches to clean up"
-  fi
-
-  echo ""
-  echo "Opening PR in browser..."
-  open "$PR_URL" || echo "Could not open browser automatically. Please visit: $PR_URL"
-  echo ""
-  echo "Next steps:"
-  echo "  1. Review the PR"
-  echo "  2. Merge when ready"
-  echo "  3. Vercel will auto-deploy"
-else
-  echo ""
-  echo "❌ Failed to create pull request:"
-  echo "$PR_URL"
-  exit 1
-fi
+echo ""
+echo "✅ Done! PR created and opened in browser."
+echo ""
+echo "Next steps:"
+echo "  1. Review the PR"
+echo "  2. Merge when ready"
+echo "  3. Vercel will auto-deploy"
