@@ -17,6 +17,12 @@ if [ -d "$VAULT_PATH/attachments" ]; then
   rsync -av --delete "$VAULT_PATH/attachments/" "$CONTENT_DIR/attachments/"
 fi
 
+# Sync About.md if it exists
+if [ -f "$VAULT_PATH/About.md" ]; then
+  rsync -av "$VAULT_PATH/About.md" "$CONTENT_DIR/About.md"
+  echo "  About.md synced"
+fi
+
 echo ""
 echo "✅ Sync complete!"
 echo ""

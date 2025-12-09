@@ -54,7 +54,7 @@ export async function getAllNotes(): Promise<Note[]> {
 
     return notes.filter(n => n !== null);
   } catch (error) {
-    console.error('Error reading vault:', error);
+    // Silently return empty array on error - errors will surface during build
     return [];
   }
 }

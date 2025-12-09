@@ -1,8 +1,7 @@
 import Link from "next/link"
 import { StatusBadge } from "./status-badge"
 import { TagChip } from "./tag-chip"
-import type { Note } from "@/lib/mock-data"
-import { getNoteBySlug } from "@/lib/mock-data"
+import type { Note } from "@/lib/vault"
 
 interface MetadataPanelProps {
   note: Note
@@ -24,7 +23,7 @@ export function MetadataPanel({ note }: MetadataPanelProps) {
           <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Last tended</dt>
             <dd className="text-foreground">
-              {new Date(note.updatedAt).toLocaleDateString("en-US", {
+              {new Date(note.lastTended).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
@@ -45,43 +44,6 @@ export function MetadataPanel({ note }: MetadataPanelProps) {
         )}
       </div>
 
-      {/* Backlinks */}
-      {note.backlinks.length > 0 && (
-        <div className="p-4 rounded-lg bg-muted/50 border border-border">
-          <h3 className="text-sm font-medium text-foreground mb-3">Linked from</h3>
-          <ul className="space-y-2">
-            {note.backlinks.map((slug) => {
-              const linkedNote = getNoteBySlug(slug)
-              return linkedNote ? (
-                <li key={slug}>
-                  <Link href={`/notes/${slug}`} className="text-sm text-primary hover:underline decoration-primary/30">
-                    {linkedNote.title}
-                  </Link>
-                </li>
-              ) : null
-            })}
-          </ul>
-        </div>
-      )}
-
-      {/* Related notes */}
-      {note.relatedNotes.length > 0 && (
-        <div className="p-4 rounded-lg bg-muted/50 border border-border">
-          <h3 className="text-sm font-medium text-foreground mb-3">Related notes</h3>
-          <ul className="space-y-2">
-            {note.relatedNotes.map((slug) => {
-              const relatedNote = getNoteBySlug(slug)
-              return relatedNote ? (
-                <li key={slug}>
-                  <Link href={`/notes/${slug}`} className="text-sm text-primary hover:underline decoration-primary/30">
-                    {relatedNote.title}
-                  </Link>
-                </li>
-              ) : null
-            })}
-          </ul>
-        </div>
-      )}
     </div>
   )
 }

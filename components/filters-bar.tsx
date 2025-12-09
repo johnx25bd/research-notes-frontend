@@ -2,7 +2,9 @@
 
 import { Search } from "lucide-react"
 import { TagChip } from "./tag-chip"
-import type { NoteStatus } from "@/lib/mock-data"
+import type { Note } from "@/lib/vault"
+
+type NoteStatus = Note['status']
 
 interface FiltersBarProps {
   tags: string[]
@@ -16,9 +18,9 @@ interface FiltersBarProps {
 
 const statuses: { value: NoteStatus | null; label: string }[] = [
   { value: null, label: "All" },
-  { value: "seed", label: "Seed" },
-  { value: "developing", label: "Developing" },
-  { value: "evergreen", label: "Evergreen" },
+  { value: "fragment", label: "Fragment" },
+  { value: "working", label: "Working" },
+  { value: "stable", label: "Stable" },
 ]
 
 export function FiltersBar({

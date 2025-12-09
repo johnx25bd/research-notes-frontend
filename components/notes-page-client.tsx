@@ -5,7 +5,7 @@ import { NoteRow } from "@/components/note-row"
 import { Search } from "lucide-react"
 import type { Note } from "@/lib/vault"
 
-type NoteStatus = "seed" | "budding" | "evergreen"
+type NoteStatus = Note['status']
 
 interface NotesPageClientProps {
   notes: Note[]
@@ -36,9 +36,9 @@ export function NotesPageClient({ notes }: NotesPageClientProps) {
 
   const statuses: { value: NoteStatus | null; label: string }[] = [
     { value: null, label: "All" },
-    { value: "seed", label: "Fragment" },
-    { value: "budding", label: "Working" },
-    { value: "evergreen", label: "Stable" },
+    { value: "fragment", label: "Fragment" },
+    { value: "working", label: "Working" },
+    { value: "stable", label: "Stable" },
   ]
 
   return (

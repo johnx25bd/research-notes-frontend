@@ -3,10 +3,11 @@
 import Link from "next/link"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { StatusBadge } from "@/components/status-badge"
-import { getNoteBySlug } from "@/lib/mock-data"
+import type { Note } from "@/lib/vault"
 
 interface NoteLinkProps {
   noteTitle: string
+  allNotes?: Note[]
 }
 
 function slugify(title: string): string {
@@ -16,9 +17,9 @@ function slugify(title: string): string {
     .replace(/(^-|-$)/g, "")
 }
 
-export function NoteLink({ noteTitle }: NoteLinkProps) {
+export function NoteLink({ noteTitle, allNotes = [] }: NoteLinkProps) {
   const slug = slugify(noteTitle)
-  const note = getNoteBySlug(slug)
+  const note = allNotes.find(n => n.slug === slug)
 
   // If note doesn't exist, show as broken link
   if (!note) {

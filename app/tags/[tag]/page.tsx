@@ -2,11 +2,14 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { LayoutShell } from "@/components/layout-shell"
 import { NoteRow } from "@/components/note-row"
-import { tags, getNotesByTag } from "@/lib/mock-data"
+import { getAllNotes } from "@/lib/vault"
 import { ArrowLeft } from "lucide-react"
 
-export function generateStaticParams() {
-  return tags.map((tag) => ({ tag: tag.name }))
+export async function generateStaticParams() {
+  const notes = await getAllNotes()
+  const allTags = new Set<string>()
+  notes.forEach(note => note.tags.forEach(tag => allTags.add(tag)))
+  return Array.from(allTags).map((tag) => ({ tag }))
 }
 
 interface TagPageProps {
@@ -15,13 +18,12 @@ interface TagPageProps {
 
 export default async function TagPage({ params }: TagPageProps) {
   const { tag } = await params
-  const tagInfo = tags.find((t) => t.name === tag)
+  const allNotes = await getAllNotes()
+  const tagNotes = allNotes.filter(note => note.tags.includes(tag))
 
-  if (!tagInfo) {
+  if (tagNotes.length === 0) {
     notFound()
   }
-
-  const tagNotes = getNotesByTag(tag)
 
   return (
     <LayoutShell>
@@ -37,7 +39,7 @@ export default async function TagPage({ params }: TagPageProps) {
 
         <h1 className="text-3xl sm:text-4xl font-normal text-foreground mb-2 animate-fade-in-up">{tag}</h1>
         <p className="text-muted-foreground mb-10" style={{ fontFamily: "var(--font-ui)" }}>
-          {tagInfo.count} {tagInfo.count === 1 ? "note" : "notes"} on this theme
+          {tagNotes.length} {tagNotes.length === 1 ? "note" : "notes"} on this theme
         </p>
 
         <div className="space-y-0">
