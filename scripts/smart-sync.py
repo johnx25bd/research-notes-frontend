@@ -203,12 +203,13 @@ def sync_note(source_path: Path, created_stubs: Set[str], update_source: bool = 
         # Create frontmatter for research-notes version
         research_frontmatter = frontmatter.copy()
 
-        # Remove to-publish tag
+        # Remove xo-specific tags (to-publish, posts, emoji tags like 0🌲)
+        XO_SPECIFIC_TAGS = {TO_PUBLISH_TAG, 'posts', '0🌲'}
         if 'tags' in research_frontmatter:
             tags = research_frontmatter['tags']
             if isinstance(tags, list):
-                research_frontmatter['tags'] = [t for t in tags if t != TO_PUBLISH_TAG]
-            elif tags == TO_PUBLISH_TAG:
+                research_frontmatter['tags'] = [t for t in tags if t not in XO_SPECIFIC_TAGS]
+            elif tags in XO_SPECIFIC_TAGS:
                 research_frontmatter['tags'] = []
 
         # Add published metadata (overwrite null or missing)
