@@ -5,18 +5,23 @@ categories:
 - '[[Posts]]'
 created: 2025-12-09
 published: true
-published_at: '2025-12-09'
+published_at: 2025-12-09
 source_note: obsidian://open?vault=xo&file=Notes/Dukkha
-status:
-- fragment
+status: fragment
+summary: On feeling out of step
 tags:
 - 0🌲
 - posts
 - philosophy
+title: Dukkha
 topics: []
 url: null
 ---
-I'm constantly feeling the impacts of being a step behind — constantly. Life, it seems, is a balancing act, a ongoing exercise in tightening or loosening the strings, tuning in to the intersecting set of needs and wants and goals, and taking the most appropriate action in the moment to move forward. (Inaction is often the most appropriate action.)  
+I'm constantly feeling the impacts of being a step behind — constantly. Life, it seems, is a balancing act, a ongoing exercise in tighten
+# Dukkha
+
+Your research note content here...
+ing or loosening the strings, tuning in to the intersecting set of needs and wants and goals, and taking the most appropriate action in the moment to move forward. (Inaction is often the most appropriate action.)  
 
 Regardless, this "constantly feeling the impacts" is not how I want to live ... 
 
