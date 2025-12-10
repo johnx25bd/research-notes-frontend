@@ -4,8 +4,10 @@ author:
 categories:
 - '[[Posts]]'
 created: 2025-12-09
+featured: true
+featured_order: '2'
 published: true
-published_at: '2025-12-09'
+published_at: 2025-12-09
 source_note: obsidian://open?vault=xo&file=Notes/Web3%20is%20a%20set%20of%20design%20principles
 status: fragment
 summary: A reframing that helps me make sense of a confusing place
@@ -14,7 +16,9 @@ title: Web3 is a set of design principles
 topics: []
 url: https://www.x25bd.com/posts/web3-design-principles
 ---
-Since 2017 I’ve been captivated (and at times a bit repulsed) by Web3 tools and networks — blockchains, smart contracts, p2p data systems, cryptocurrencies, and the communities that are building them. What even is Web3? It’s become such an emotionally loaded term, I’ve intentionally avoided using it, or only bashfully use it in private settings. But I still find it useful, and want to lay my thinking out, as framing for my current research (which I’m sharing more of soon). 
+
+
+Since 2017 I’ve been captivated (and at times a bit repulsed) by Web3 tools and networks [[—]] blockchains, smart contracts, p2p data systems, cryptocurrencies, and the communities that are building them. What even is Web3? It’s become such an emotionally loaded term, I’ve intentionally avoided using it, or only bashfully use it in private settings. But I still find it useful, and want to lay my thinking out, as framing for my current research (which I’m sharing more of soon). 
 
 I’ve come to view Web3 as a set of design principles.
 

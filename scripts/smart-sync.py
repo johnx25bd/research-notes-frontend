@@ -139,6 +139,45 @@ def find_notes_to_publish() -> List[Path]:
     return notes_to_publish
 
 
+def find_modified_published_notes() -> List[Path]:
+    """Find notes in xo with published: true that are newer than research-notes version."""
+    modified_notes = []
+
+    if not XO_VAULT_PATH.exists():
+        return []
+
+    research_notes_dir = RESEARCH_NOTES_VAULT_PATH / "notes"
+    if not research_notes_dir.exists():
+        return []
+
+    # Search for all notes with published: true
+    for md_file in XO_VAULT_PATH.rglob("*.md"):
+        # Skip hidden files, .obsidian folder, and Templates folder
+        if any(part.startswith('.') for part in md_file.parts):
+            continue
+        if 'Templates' in md_file.parts:
+            continue
+
+        frontmatter, _ = parse_frontmatter(md_file)
+        if not frontmatter or frontmatter.get('published') != True:
+            continue
+
+        # Check if note exists in research-notes
+        research_note_path = research_notes_dir / (md_file.stem + '.md')
+        if not research_note_path.exists():
+            continue
+
+        # Compare modification times
+        xo_mtime = md_file.stat().st_mtime
+        research_mtime = research_note_path.stat().st_mtime
+
+        # If xo version is newer, add to list
+        if xo_mtime > research_mtime:
+            modified_notes.append(md_file)
+
+    return modified_notes
+
+
 def create_stub_note(note_name: str, source_note_name: str, dest_dir: Path) -> Path:
     """
     Create a stub note for an unpublished reference.
@@ -294,33 +333,51 @@ def main():
     # Create notes directory in research-notes if needed
     (RESEARCH_NOTES_VAULT_PATH / "notes").mkdir(parents=True, exist_ok=True)
 
-    # Find notes to publish from xo vault
+    # Find new notes to publish (with #to-publish tag)
     notes_to_publish = find_notes_to_publish()
 
-    if not notes_to_publish:
-        print("📭 No notes found with #to-publish tag in xo vault")
-        print("\nTo publish a note:")
+    # Find already-published notes that have been modified
+    modified_notes = find_modified_published_notes()
+
+    # Combine lists (remove duplicates)
+    all_notes_to_sync = list(set(notes_to_publish + modified_notes))
+
+    if not all_notes_to_sync:
+        print("📭 No notes to sync")
+        print("\nTo publish a new note:")
         print("  1. Add 'to-publish' to the tags in frontmatter")
         print("  2. Run this script again")
+        print("\nAlready-published notes are auto-synced when modified in xo vault")
         return 0
 
-    print(f"📝 Found {len(notes_to_publish)} note(s) to publish from xo:\n")
-    for note_path in notes_to_publish:
-        print(f"  • {note_path.stem}")
+    # Report what we found
+    if notes_to_publish:
+        print(f"📝 New notes to publish ({len(notes_to_publish)}):\n")
+        for note_path in notes_to_publish:
+            print(f"  • {note_path.stem}")
+        print()
 
-    print("\n🚀 Syncing to research-notes vault...\n")
+    if modified_notes:
+        print(f"🔄 Modified published notes ({len(modified_notes)}):\n")
+        for note_path in modified_notes:
+            print(f"  • {note_path.stem}")
+        print()
+
+    print("🚀 Syncing to research-notes vault...\n")
 
     # Track created stubs across all notes
     created_stubs: Set[str] = set()
 
     # Sync each note
     success_count = 0
-    for note_path in notes_to_publish:
-        if sync_note(note_path, created_stubs, update_source=True):
+    for note_path in all_notes_to_sync:
+        # Only update source (remove #to-publish) for new notes, not modified ones
+        update_source = note_path in notes_to_publish
+        if sync_note(note_path, created_stubs, update_source=update_source):
             success_count += 1
 
     # Summary
-    print(f"\n✅ Synced {success_count}/{len(notes_to_publish)} notes to research-notes")
+    print(f"\n✅ Synced {success_count}/{len(all_notes_to_sync)} notes to research-notes")
 
     if created_stubs:
         print(f"\n⚠️  Created {len(created_stubs)} stub note(s) for unpublished references:")
@@ -332,7 +389,7 @@ def main():
     print("  2. Run sync-vault.sh to publish research-notes → frontend")
     print("  3. Or use Raycast: 'Publish Research Notes'")
 
-    return 0 if success_count == len(notes_to_publish) else 1
+    return 0 if success_count == len(all_notes_to_sync) else 1
 
 
 if __name__ == "__main__":

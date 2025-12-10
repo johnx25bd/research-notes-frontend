@@ -1,7 +1,9 @@
 ---
 created: 2025-12-10
+featured: true
+featured_order: '3'
 published: true
-published_at: '2025-12-10'
+published_at: 2025-12-10
 socialImage: '[[dutch-boats.png]]'
 source_note: obsidian://open?vault=xo&file=Notes/Notes%20on%20Location%20Proofs
 status: fragment

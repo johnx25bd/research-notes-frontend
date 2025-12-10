@@ -1,14 +1,14 @@
 ---
 created: 2025-12-10
 featured: true
-featured_order: '1'
+featured_order: 1
 published: true
-published_at: null
+published_at: 2025-12-10
 source_note: obsidian://open?vault=xo&file=Notes/What%20I%27m%20doing%20here
 status: fragment
 summary: Motivations and all that
 tags: []
-title: "What I'm doing here"
+title: What I'm doing here
 ---
 This is very much a fragment — it feels important to have an orienting note to kick things off. So, what am I doing here?
 
