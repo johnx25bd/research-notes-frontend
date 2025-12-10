@@ -60,8 +60,8 @@ export async function getAllNotes(): Promise<Note[]> {
       })
     );
 
-    // Filter out unpublished notes (stubs and notes with published: false)
-    return notes.filter(n => n !== null && n.published !== false && !n.stub);
+    // Filter out unpublished notes (only show explicitly published: true)
+    return notes.filter(n => n !== null && n.published === true && !n.stub);
   } catch (error) {
     // Silently return empty array on error - errors will surface during build
     return [];
