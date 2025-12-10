@@ -15,6 +15,7 @@ export interface Note {
   tags: string[];
   content: string;
   featured?: boolean;
+  featured_order?: number;  // For sorting featured notes
   filepath: string;
   published?: boolean;  // Set by smart-sync.py
   stub?: boolean;       // Auto-generated stub notes
@@ -50,6 +51,7 @@ export async function getAllNotes(): Promise<Note[]> {
           tags: Array.isArray(data.tags) ? data.tags : [],
           content,
           featured: data.featured || false,
+          featured_order: data.featured_order,
           filepath: file,
           published: data.published,
           stub: data.stub,

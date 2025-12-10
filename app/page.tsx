@@ -7,8 +7,11 @@ import { NoteRow } from "@/components/note-row"
 export default async function HomePage() {
   const notes = await getAllNotes()
 
-  // Featured notes (where featured: true)
-  const featuredNotes = notes.filter((note) => note.featured).slice(0, 4)
+  // Featured notes (where featured: true), sorted by featured_order
+  const featuredNotes = notes
+    .filter((note) => note.featured)
+    .sort((a, b) => (a.featured_order || 999) - (b.featured_order || 999))
+    .slice(0, 4)
 
   // Recently tended (sort by lastTended from git)
   const allRecentNotes = [...notes].sort((a, b) =>
