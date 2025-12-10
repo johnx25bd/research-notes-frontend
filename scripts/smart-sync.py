@@ -126,8 +126,10 @@ def find_notes_to_publish() -> List[Path]:
 
     # Search recursively in the entire xo vault
     for md_file in XO_VAULT_PATH.rglob("*.md"):
-        # Skip hidden files and .obsidian folder
+        # Skip hidden files, .obsidian folder, and Templates folder
         if any(part.startswith('.') for part in md_file.parts):
+            continue
+        if 'Templates' in md_file.parts:
             continue
 
         frontmatter, _ = parse_frontmatter(md_file)
