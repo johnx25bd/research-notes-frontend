@@ -23,7 +23,8 @@ export function NotesPageClient({ notes }: NotesPageClientProps) {
         }
         if (searchQuery) {
           const query = searchQuery.toLowerCase()
-          const matchesTitle = note.title.toLowerCase().includes(query)
+          const noteTitle = typeof note.title === 'string' ? note.title.toLowerCase() : ''
+          const matchesTitle = noteTitle.includes(query)
           const matchesSummary = note.summary?.toLowerCase().includes(query)
           if (!matchesTitle && !matchesSummary) {
             return false

@@ -22,10 +22,10 @@ export function computeBacklinks(notes: Note[]): BacklinkMap {
       const linkedTitle = match[1].trim().toLowerCase();
 
       // Find target note by title or slug
-      const targetNote = notes.find(n =>
-        n.title.toLowerCase() === linkedTitle ||
-        n.slug === linkedTitle
-      );
+      const targetNote = notes.find(n => {
+        const noteTitle = typeof n.title === 'string' ? n.title.toLowerCase() : '';
+        return noteTitle === linkedTitle || n.slug === linkedTitle;
+      });
 
       if (targetNote && targetNote.slug !== sourceNote.slug) {
         // Add sourceNote as a backlink to targetNote
