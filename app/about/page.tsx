@@ -6,8 +6,8 @@ import { processMarkdown } from '@/lib/markdown'
 
 async function getAboutContent() {
   try {
-    // Read directly from research-notes vault
-    const aboutPath = '/Users/x25bd/Projects/obsidian/research-notes/About.md'
+    // Read from synced content directory
+    const aboutPath = path.join(process.cwd(), 'content', 'About.md')
     const raw = await fs.readFile(aboutPath, 'utf-8')
     const { data, content } = matter(raw)
     const html = await processMarkdown(content, [])

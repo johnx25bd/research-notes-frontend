@@ -125,15 +125,14 @@ PR_BODY="${PR_BODY}
 - [ ] Check frontmatter is correct
 - [ ] Verify wikilinks work"
 
-gh pr create \
+PR_URL=$(gh pr create \
   --title "$PR_TITLE" \
   --body "$PR_BODY" \
   --base main \
-  --head "$BRANCH_NAME" \
-  --web
+  --head "$BRANCH_NAME")
 
 echo ""
-echo "✅ Done! PR created and opened in browser."
+echo "✅ Done! PR created: $PR_URL"
 echo ""
 echo "Next steps:"
 echo "  1. Review the PR"
