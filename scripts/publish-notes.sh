@@ -27,11 +27,16 @@ echo "📥 Updating main branch..."
 git checkout main
 git pull origin main
 
-# Run smart sync
+# Run smart sync (xo → research-notes)
 echo ""
 echo "🔍 Finding notes to publish..."
 # Use the same Python that has PyYAML installed
 /Users/x25bd/.pyenv/versions/3.8.10/bin/python3 scripts/smart-sync.py
+
+# Sync research-notes → frontend/content
+echo ""
+echo "📦 Syncing to frontend..."
+bash scripts/sync-vault.sh
 
 # Check if there are changes
 if [[ -z $(git status --porcelain content/) ]]; then
