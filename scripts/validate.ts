@@ -61,10 +61,10 @@ async function validate() {
 
     matches.forEach(match => {
       const linkedTitle = match[1].trim().toLowerCase();
-      const exists = notes.some(n =>
-        n.title.toLowerCase() === linkedTitle ||
-        n.slug === linkedTitle
-      );
+      const exists = notes.some(n => {
+        const noteTitle = typeof n.title === 'string' ? n.title.toLowerCase() : '';
+        return noteTitle === linkedTitle || n.slug === linkedTitle;
+      });
 
       if (!exists) {
         issues.push({
