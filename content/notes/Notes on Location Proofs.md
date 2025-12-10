@@ -7,7 +7,8 @@ published_at: 2025-12-10
 socialImage: '[[dutch-boats.png]]'
 source_note: obsidian://open?vault=xo&file=Notes/Notes%20on%20Location%20Proofs
 status: fragment
-summary: null
+summary: 'Proof-of-location systems: technical implementations, privacy implications,
+  and potential applications.'
 tags: []
 title: Notes on Location Proofs
 ---
