@@ -1,7 +1,7 @@
 ---
 created: 2025-12-10
 published: true
-published_at: '2025-12-10'
+published_at: 2025-12-10
 source_note: obsidian://open?vault=xo&file=Notes/Observations%20on%20Infrastructure%20Location%20Proofs%20%281%29
 status: fragment
 summary: How can we make the geography of decentralized networks legible?
@@ -11,7 +11,7 @@ tags:
 title: Observations on Infrastructure Location Proofs (1)
 ---
 
-This past few months my focus has been on finding commercial applications for [[Notes on Location Proofs|location proofs]]. The recurring need I'm seeing involves verifying the location of nodes running on decentralized networks. This note is an effort to articulate and unpack what I'm seeing, and to invite engagement from people to color things in. 
+This past few months my focus has been on finding commercial applications for [[Notes on Location Proofs|location proofs]]. The recurring need I'm seeing involves verifying the location of nodes running on decentralized networks, and making better management decisions based on that information. This note is an effort to articulate and unpack what I'm seeing, and to invite engagement from people to color things in. 
 
 ## Observations
 
