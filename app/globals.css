@@ -210,14 +210,44 @@
   margin-bottom: 1.25rem;
 }
 
-.prose ul,
+.prose ul {
+  margin-bottom: 1.25rem;
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
 .prose ol {
   margin-bottom: 1.25rem;
   padding-left: 1.5rem;
+  list-style-type: decimal;
 }
 
 .prose li {
   margin-bottom: 0.5rem;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid var(--border);
+  padding: 0.625rem 0.875rem;
+  text-align: left;
+}
+
+.prose th {
+  background: var(--muted);
+  font-weight: 600;
+}
+
+.prose tr:nth-child(even) {
+  background: var(--secondary);
 }
 
 .prose blockquote {
@@ -258,6 +288,14 @@
 
 .prose a:hover {
   text-decoration-color: var(--primary);
+}
+
+/* Broken internal links - unpublished notes */
+.prose a.broken-link {
+  color: var(--muted-foreground);
+  text-decoration: none;
+  cursor: default;
+  pointer-events: none;
 }
 
 /* Fade-in animation for note titles */

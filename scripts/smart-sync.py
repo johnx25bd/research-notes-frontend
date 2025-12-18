@@ -94,6 +94,33 @@ def create_obsidian_uri(vault_name: str, note_path: str) -> str:
     return f"obsidian://open?vault={vault_name}&file={encoded_path}"
 
 
+def create_live_url(note_name: str) -> str:
+    """Create a URL for the live published note.
+
+    Args:
+        note_name: Name of the note (without .md extension)
+
+    Returns:
+        URL to the published note on johnx.co
+    """
+    # Convert to slug format: lowercase + spaces to dashes
+    slug = note_name.lower().replace(' ', '-')
+    return f"https://johnx.co/notes/{slug}"
+
+
+def create_research_notes_uri(note_name: str) -> str:
+    """Create an Obsidian URI for the note in research-notes vault.
+
+    Args:
+        note_name: Name of the note (without .md extension)
+
+    Returns:
+        Obsidian URI to open the note in research-notes vault
+    """
+    encoded_path = urllib.parse.quote(f"notes/{note_name}")
+    return f"obsidian://open?vault=research-notes&file={encoded_path}"
+
+
 def find_note_in_vault(vault_path: Path, note_name: str) -> Optional[Path]:
     """Find a note by name in a vault (searches recursively)."""
     # Try exact match with .md extension
@@ -305,11 +332,17 @@ def sync_note(source_path: Path, created_stubs: Set[str], update_source: bool = 
 
             # Mark as published in xo vault (overwrite null or missing)
             source_frontmatter['published'] = True
-            if 'published_at' not in source_frontmatter:
+            if 'published_at' not in source_frontmatter or source_frontmatter['published_at'] is None:
                 source_frontmatter['published_at'] = datetime.now().strftime('%Y-%m-%d')
+
+            # Add live URL and research-notes link to xo vault
+            source_frontmatter['url'] = create_live_url(source_path.stem)
+            source_frontmatter['research_note'] = create_research_notes_uri(source_path.stem)
 
             write_frontmatter(source_path, source_frontmatter, body)
             print(f"    → Marked as published in xo vault")
+            print(f"      url: {source_frontmatter['url']}")
+            print(f"      research_note: {source_frontmatter['research_note']}")
 
         return True
 
