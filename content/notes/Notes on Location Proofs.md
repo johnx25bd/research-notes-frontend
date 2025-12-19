@@ -4,6 +4,7 @@ featured: true
 featured_order: '3'
 published: true
 published_at: 2025-12-10
+research_note: obsidian://open?vault=research-notes&file=notes/Notes%20on%20Location%20Proofs
 socialImage: '[[dutch-boats.png]]'
 source_note: obsidian://open?vault=xo&file=Notes/Notes%20on%20Location%20Proofs
 status: fragment
@@ -11,6 +12,7 @@ summary: 'Proof-of-location systems: technical implementations, privacy implicat
   and potential applications.'
 tags: []
 title: Notes on Location Proofs
+url: https://johnx.co/notes/notes-on-location-proofs
 ---
 
 For the past seven years, I’ve been returning again and again to a set of questions I can’t put out of my mind. In a nutshell: how can **geospatial technologies** be enhanced or improved by **Web3 tools and design principles**? And conversely, how can we integrate geospatial computing capabilities into decentralized systems like Ethereum and IPFS?

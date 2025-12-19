@@ -6,13 +6,14 @@ categories:
 created: 2025-12-09
 published: true
 published_at: 2025-12-09
+research_note: obsidian://open?vault=research-notes&file=notes/Co-location%20proofs
 source_note: obsidian://open?vault=xo&file=Notes/Co-location%20proofs
 status: fragment
 summary: How do we verify if internet nodes run in the same data center?
 tags: []
 title: Co-location proofs
 topics: []
-url: null
+url: https://johnx.co/notes/co-location-proofs
 ---
 One question that's come up in conversations with some clients: how can we verify whether two nodes are co-located — that is, running in the same data center or site? 
 

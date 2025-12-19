@@ -8,13 +8,14 @@ featured: true
 featured_order: '2'
 published: true
 published_at: 2025-12-09
+research_note: obsidian://open?vault=research-notes&file=notes/Web3%20is%20a%20set%20of%20design%20principles
 source_note: obsidian://open?vault=xo&file=Notes/Web3%20is%20a%20set%20of%20design%20principles
 status: fragment
 summary: A reframing that helps me make sense of a confusing place
 tags: []
 title: Web3 is a set of design principles
 topics: []
-url: https://www.x25bd.com/posts/web3-design-principles
+url: https://johnx.co/notes/web3-is-a-set-of-design-principles
 ---
 
 

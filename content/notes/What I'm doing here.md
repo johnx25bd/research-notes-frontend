@@ -4,11 +4,13 @@ featured: true
 featured_order: 1
 published: true
 published_at: 2025-12-10
+research_note: obsidian://open?vault=research-notes&file=notes/What%20I%27m%20doing%20here
 source_note: obsidian://open?vault=xo&file=Notes/What%20I%27m%20doing%20here
 status: fragment
 summary: Motivations and all that
 tags: []
 title: What I'm doing here
+url: https://johnx.co/notes/what-i'm-doing-here
 ---
 This is very much a fragment — it feels important to have an orienting note to kick things off. So, what am I doing here?
 
