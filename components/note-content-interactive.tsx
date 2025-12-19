@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Link from "next/link"
+import parse, { domToReact, HTMLReactParserOptions, Element, DOMNode } from "html-react-parser"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { StatusBadge } from "@/components/status-badge"
 import type { Note } from "@/lib/vault"
@@ -46,47 +46,37 @@ function getContentPreview(content: string, maxLength: number = 300): string {
 }
 
 export function NoteContentInteractive({ html, allNotes }: NoteContentInteractiveProps) {
-  const [processedContent, setProcessedContent] = useState<React.ReactNode>(null)
+  const options: HTMLReactParserOptions = {
+    replace(domNode) {
+      // Only process Element nodes
+      if (!(domNode instanceof Element)) return
 
-  useEffect(() => {
-    // Parse HTML and replace internal links with hover-enabled components
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(html, 'text/html')
-    const links = doc.querySelectorAll('a.internal-link')
+      // Check if this is an internal link
+      if (domNode.name === 'a' && domNode.attribs?.class?.includes('internal-link')) {
+        const href = domNode.attribs.href || ''
+        const slug = href.replace('/notes/', '')
+        const linkText = domToReact(domNode.children as DOMNode[], options)
+        const note = allNotes.find(n => n.slug === slug)
+        const isBroken = domNode.attribs.class?.includes('broken-link')
 
-    // Convert links to React elements with hover cards
-    const elements: React.ReactNode[] = []
-    let lastIndex = 0
+        // Broken link - render without hover card
+        if (isBroken || !note) {
+          return (
+            <Link
+              href={href}
+              className="text-muted-foreground"
+            >
+              {linkText}
+            </Link>
+          )
+        }
 
-    const bodyHTML = doc.body.innerHTML
-    const linkPattern = /<a class="internal-link[^"]*" href="\/notes\/([^"]+)">([^<]+)<\/a>/g
-    let match
-
-    const parts: React.ReactNode[] = []
-    let currentIndex = 0
-
-    while ((match = linkPattern.exec(bodyHTML)) !== null) {
-      // Add HTML before this link
-      if (match.index > currentIndex) {
-        parts.push(
-          <span
-            key={`text-${currentIndex}`}
-            style={{ display: 'contents' }}
-            dangerouslySetInnerHTML={{ __html: bodyHTML.slice(currentIndex, match.index) }}
-          />
-        )
-      }
-
-      const slug = match[1]
-      const linkText = match[2]
-      const note = allNotes.find(n => n.slug === slug)
-
-      if (note) {
-        parts.push(
-          <HoverCard key={`link-${match.index}`} openDelay={200} closeDelay={100}>
+        // Valid internal link - render with hover card
+        return (
+          <HoverCard openDelay={200} closeDelay={100}>
             <HoverCardTrigger asChild>
               <Link
-                href={`/notes/${slug}`}
+                href={href}
                 className="text-primary underline decoration-primary/30 underline-offset-2 hover:decoration-primary transition-all duration-200"
               >
                 {linkText}
@@ -105,25 +95,9 @@ export function NoteContentInteractive({ html, allNotes }: NoteContentInteractiv
             </HoverCardContent>
           </HoverCard>
         )
-      } else {
-        // Broken link - keep as-is
-        parts.push(
-          <span key={`broken-${match.index}`} style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: match[0] }} />
-        )
       }
-
-      currentIndex = match.index + match[0].length
     }
+  }
 
-    // Add remaining HTML
-    if (currentIndex < bodyHTML.length) {
-      parts.push(
-        <span key="final" style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: bodyHTML.slice(currentIndex) }} />
-      )
-    }
-
-    setProcessedContent(<>{parts}</>)
-  }, [html, allNotes])
-
-  return <div>{processedContent}</div>
+  return <div>{parse(html, options)}</div>
 }
