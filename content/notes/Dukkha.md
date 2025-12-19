@@ -6,6 +6,7 @@ categories:
 created: 2025-12-09
 published: true
 published_at: 2025-12-09
+research_note: obsidian://open?vault=research-notes&file=notes/Dukkha
 source_note: obsidian://open?vault=xo&file=Notes/Dukkha
 status: fragment
 summary: On feeling out of step
@@ -13,7 +14,7 @@ tags:
 - philosophy
 title: Dukkha
 topics: []
-url: null
+url: https://johnx.co/notes/dukkha
 ---
 I'm constantly feeling the impacts of being a step behind — constantly. Life, it seems, is a balancing act, a ongoing exercise in tightening or loosening the strings, tuning in to the intersecting set of needs and wants and goals, and taking the most appropriate action in the moment to move forward. (Inaction is often the most appropriate action.)  
 

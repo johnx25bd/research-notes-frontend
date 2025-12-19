@@ -3,7 +3,8 @@ created: 2025-12-17
 featured: false
 featured_order: null
 published: true
-published_at: null
+published_at: 2025-12-18
+research_note: obsidian://open?vault=research-notes&file=notes/State%20of%20Provenance%20Verification%20for%20Remote%20Sensing%20Imagery
 source_note: obsidian://open?vault=xo&file=Notes/State%20of%20Provenance%20Verification%20for%20Remote%20Sensing%20Imagery
 status:
 - working
@@ -11,6 +12,7 @@ summary: How can we trust our eyes in the sky?
 tags:
 - geospatial
 title: State of Provenance Verification for Remote Sensing Imagery
+url: https://johnx.co/notes/state-of-provenance-verification-for-remote-sensing-imagery
 ---
 ## *Challenges, Approaches, and Emerging Standards*
 
@@ -20,9 +22,9 @@ There is growing demand for verifiable satellite imagery. Customers — particul
 
 The honest answer, today, is: not really.
 
-Rich metadata exists. File transfer checksums exist. Transport encryption exists. But there is no broadly adopted, interoperable, end-to-end, customer-facing provenance standard for commercial EO imagery or other geospatial datasets.
+Rich metadata exists. File transfer checksums exist. Transport encryption exists. But there is no broadly adopted, interoperable, end-to-end, customer-facing provenance standard for commercial earth observation (EO) imagery or other geospatial datasets.
 
-The building blocks are emerging, though they're immature. C2PA provides a provenance architecture for content credentials. STAC is the dominant metadata standard and a natural integration point. OGC testbed work is developing EO-specific verification schemas. No standards-based operational system has emerged that delivers interoperable, customer-facing provenance across commercial EO providers.
+The building blocks are emerging, though they're immature. The [Coalition for Content Provenance and Authenticity](https://c2pa.org/) (C2PA) provides a provenance architecture for content credentials. [SpatioTemporal Asset Catalogs](https://stacspec.org/en) (STAC) provide the dominant metadata standard and a natural integration point. The Open Geospatial Consortium is developing an [EO-specific verification framework](https://www.ogc.org/blog-article/navigating-synthetic-imagery-trust-geospatial-data/). But no standards-based operational system has emerged that delivers interoperable, customer-facing provenance across commercial EO providers.
 
 This may change gradually as standards mature. Or it may change rapidly — triggered by a prominent geospatial deepfake, a major procurement mandate, or an insurance claim gone wrong. The underlying demand is real and growing. The question is when, not whether, the industry responds.
 
@@ -64,7 +66,7 @@ What it doesn't do is prove the imagery is authentic.
 - Verifiable processing history that can be independently audited
 - Any mechanism for detecting tampering that occurred before distribution
 
-ESA's Copernicus Sentinel program is a prominent example. Each Sentinel-2 product includes a `manifest.safe` file listing every component file with a SHA3-256 checksum.[^sentinel] This is better than nothing — but these checksums are generated at the distribution point. They prove your download wasn't corrupted. They don't prove the data wasn't modified between capture and distribution.
+The European Space Agency's (ESA) Copernicus Sentinel program is a prominent example. Each Sentinel-2 product includes a `manifest.safe` file listing every component file with a SHA3-256 checksum.[^sentinel] This is better than nothing — but these checksums are generated at the distribution point. They prove your download wasn't corrupted. They don't prove the data wasn't modified between capture and distribution.
 
 The distinction matters. A file transfer checksum answers: "Did this file arrive intact?" A provenance verification system answers: "Is this the data that < entity X > claims to have captured/processed, and has it been modified since?" The first is a network reliability check. The second is tamper detection with chain of custody. The industry currently does the first and calls it integrity verification.
 
@@ -121,7 +123,7 @@ The challenges are substantial:
 - **Retrofit impossibility.** Satellites already in orbit cannot be upgraded with new hardware. Given 5-15 year operational lifetimes and multi-year development cycles, most current constellations weren't designed with this capability and can't acquire it.
 - **Where in the pipeline?** Even on-board, data undergoes processing — compression, preliminary corrections, formatting for downlink. Signing the raw sensor readout might not be practical or meaningful. Signing the post-compression data means the signature covers a processed product.
 
-GNSS is instructive here. Galileo's OSNMA (Open Service Navigation Message Authentication) broadcasts signed navigation messages from satellites. Receivers can verify authenticity and reject spoofed signals.[^osnma] But retrofitting verifiability into an existing system took quite a lot of work. In addition, GNSS systems have much different design requirements — challenging in their own right, but different.
+Global Navigation Satellite Systems (GNSS) are instructive here. Galileo's OSNMA (Open Service Navigation Message Authentication) broadcasts signed navigation messages from satellites. Receivers can verify authenticity and reject spoofed signals.[^osnma] But retrofitting verifiability into an existing system took quite a lot of work. In addition, GNSS systems have much different design requirements — challenging in their own right, but different.
 
 The near-term reality is that space-segment signing will only become available as new satellites are designed and launched with this capability. That's a multi-year horizon at minimum.
 
@@ -235,7 +237,7 @@ STAC is the natural integration point for any provenance layer. A future "STAC P
 
 The Open Geospatial Consortium has been exploring EO data verification through its testbed program.
 
-**Testbed 19, 20, 21.** Each testbed cycle has included threads related to data quality, traceability, and integrity. The DQ4IPT (Data Quality for Imagery Product Traceability) testbeds have been developing schemas for EO Verifiable Claims, drawing on verifiable credentials concepts.[^ogc-testbed]
+**Testbed 19, 20, 21.** Each testbed cycle has included threads related to data quality, traceability, and integrity. The DQ4IPT (Data Quality for Integrity, Provenance, and Trust) testbeds have been developing schemas for EO Verifiable Claims, drawing on verifiable credentials concepts.[^ogc-testbed]
 
 Scenarios explored include:
 

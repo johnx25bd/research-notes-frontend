@@ -2,12 +2,14 @@
 created: 2025-12-09
 published: true
 published_at: '2025-12-09'
+research_note: obsidian://open?vault=research-notes&file=notes/Don%27t%20overfill
 source_note: obsidian://open?vault=xo&file=Notes/Don%27t%20overfill
 status: fragment
 summary: null
 tags:
 - principles
 title: Don't overfill
+url: https://johnx.co/notes/don't-overfill
 ---
 
 I'm finding as I age that overfilled things are often a source of problems. 
