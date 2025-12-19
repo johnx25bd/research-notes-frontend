@@ -38,9 +38,13 @@ export async function getAllNotes(): Promise<Note[]> {
         const lastTended = await getGitDate(filepath);
 
         // Generate slug from filename
+        // Normalize special characters: em-dash/en-dash to hyphen, smart quotes to regular
         const slug = path.basename(file, '.md')
           .toLowerCase()
-          .replace(/\s+/g, '-');
+          .replace(/\s+/g, '-')
+          .replace(/[—–]/g, '-')  // em-dash and en-dash to hyphen
+          .replace(/['']/g, "'")  // smart single quotes
+          .replace(/[""]/g, '"'); // smart double quotes
 
         return {
           slug,

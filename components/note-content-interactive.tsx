@@ -71,6 +71,7 @@ export function NoteContentInteractive({ html, allNotes }: NoteContentInteractiv
         parts.push(
           <span
             key={`text-${currentIndex}`}
+            style={{ display: 'contents' }}
             dangerouslySetInnerHTML={{ __html: bodyHTML.slice(currentIndex, match.index) }}
           />
         )
@@ -91,13 +92,13 @@ export function NoteContentInteractive({ html, allNotes }: NoteContentInteractiv
                 {linkText}
               </Link>
             </HoverCardTrigger>
-            <HoverCardContent className="w-80 p-4 border-border/50" side="top" align="start">
+            <HoverCardContent className="w-80 p-4 border-border/50 overflow-hidden" side="top" align="start">
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-3">
                   <h4 className="font-medium text-sm leading-snug">{note.title}</h4>
                   <StatusBadge status={note.status} />
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">
+                <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line break-words">
                   {getContentPreview(note.content, 300)}
                 </p>
               </div>
@@ -107,7 +108,7 @@ export function NoteContentInteractive({ html, allNotes }: NoteContentInteractiv
       } else {
         // Broken link - keep as-is
         parts.push(
-          <span key={`broken-${match.index}`} dangerouslySetInnerHTML={{ __html: match[0] }} />
+          <span key={`broken-${match.index}`} style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: match[0] }} />
         )
       }
 
@@ -117,7 +118,7 @@ export function NoteContentInteractive({ html, allNotes }: NoteContentInteractiv
     // Add remaining HTML
     if (currentIndex < bodyHTML.length) {
       parts.push(
-        <span key="final" dangerouslySetInnerHTML={{ __html: bodyHTML.slice(currentIndex) }} />
+        <span key="final" style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: bodyHTML.slice(currentIndex) }} />
       )
     }
 
