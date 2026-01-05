@@ -22,6 +22,9 @@ I think this is part of what [[Kernel]] is pointing towards when they talk about
 
 This idea — that we've learned to effectively outsource value definition and creation — resonates on many levels. The growing understanding that I have agency here (in fact it might be the primary way we express our agency) is empowering and terrifying. Taking responsibility, caring, working out what *I* think and feel and believe — all things I've done more-or-less throughout my life. But I now am seeing that this is the work, and the joy of being a human.
 
-![[Pasted image 20260105110212.png]]
+>“School prepares for the alienating institutionalisation of life by teaching the need to be taught. Once this lesson is learned, people lose their incentive to grow in independence; they no longer find relatedness attractive and close themselves off to the surprises life offers when it is not predetermined by institutional definition.”
+>- Ivan Illich, via [Kernel](https://www.kernel.community/en/learn/module-metta/school-sucks)
 
-In any case, this reframing, recognizing how things are a multifaceted and constant process rather than a clean and tidy narrative arc culminating in some peak moment, is at once disorienting and deeply reassuring. There's no end to the richness and intrigue of life, it just keeps coming and coming — there's no "made it", there's no "done". At least not the way I mean to live. []
+In any case, this reframing, recognizing how things are a multifaceted and constant process rather than a clean and tidy narrative arc culminating in some peak moment, is at once disorienting and deeply reassuring. There's no end to the richness and intrigue of life, it just keeps coming and coming — there's no "made it", there's no "done". At least not the way I mean to live.
+
+![[Pasted image 20260105145605.png]]
