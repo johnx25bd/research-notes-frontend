@@ -12,10 +12,16 @@ mkdir -p "$CONTENT_DIR"
 # Sync notes
 rsync -av --delete "$VAULT_PATH/notes/" "$CONTENT_DIR/notes/"
 
-# Sync attachments if they exist
-if [ -d "$VAULT_PATH/attachments" ]; then
-  rsync -av --delete "$VAULT_PATH/attachments/" "$CONTENT_DIR/attachments/"
-fi
+# Sync attachments to public/ for Next.js static serving
+# Check multiple possible Obsidian attachment folder names
+for ATTACH_DIR in "attachments" "Attachments" "assets" "Assets" "files" "Files"; do
+  if [ -d "$VAULT_PATH/$ATTACH_DIR" ]; then
+    echo "  Found attachments in: $ATTACH_DIR"
+    mkdir -p "./public/attachments"
+    rsync -av "$VAULT_PATH/$ATTACH_DIR/" "./public/attachments/"
+    break
+  fi
+done
 
 # Sync About.md if it exists
 if [ -f "$VAULT_PATH/About.md" ]; then
@@ -28,7 +34,7 @@ echo "✅ Sync complete!"
 echo ""
 echo "Files synced:"
 echo "  Notes: $CONTENT_DIR/notes/"
-echo "  Attachments: $CONTENT_DIR/attachments/"
+echo "  Attachments: ./public/attachments/"
 echo ""
 echo "Next steps:"
 echo "  1. Review changes: git status"

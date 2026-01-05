@@ -38,8 +38,8 @@ echo ""
 echo "📦 Syncing to frontend..."
 bash scripts/sync-vault.sh
 
-# Check if there are changes
-if [[ -z $(git status --porcelain content/) ]]; then
+# Check if there are changes (content or attachments)
+if [[ -z $(git status --porcelain content/ public/attachments/) ]]; then
   echo ""
   echo "✅ No new notes to publish!"
   exit 0
@@ -48,7 +48,7 @@ fi
 # Show what will be published
 echo ""
 echo "📋 Changes to be published:"
-git status --short content/
+git status --short content/ public/attachments/
 
 # Create a new branch
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
@@ -59,7 +59,7 @@ echo "🌿 Creating branch: $BRANCH_NAME"
 git checkout -b "$BRANCH_NAME"
 
 # Stage changes
-git add content/ .beads/
+git add content/ public/attachments/ .beads/
 
 # Detect new vs modified notes
 NEW_NOTES=$(git diff --cached --name-only --diff-filter=A content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
