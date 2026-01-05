@@ -26,3 +26,5 @@ This idea — that we've learned to effectively outsource value definition and c
 >- Ivan Illich, via [Kernel](https://www.kernel.community/en/learn/module-metta/school-sucks)
 
 In any case, this reframing, recognizing how things are a multifaceted and constant process rather than a clean and tidy narrative arc culminating in some peak moment, is at once disorienting and deeply reassuring. There's no end to the richness and intrigue of life, it just keeps coming and coming — there's no "made it", there's no "done". At least not the way I mean to live.
+
+![[Pasted image 20260105145605.png]]
