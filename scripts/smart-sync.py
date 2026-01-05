@@ -91,19 +91,20 @@ def extract_image_embeds(content: str) -> Set[str]:
     return set(matches)
 
 
-def copy_referenced_attachments(content: str, dest_attachments_dir: Path) -> int:
-    """Copy referenced image attachments from xo vault to destination.
+def copy_referenced_attachments(content: str, dest_attachments_dir: Path, note_slug: str) -> Dict[str, str]:
+    """Copy referenced image attachments from xo vault to destination with clean names.
 
     Args:
         content: Markdown content with potential image embeds
         dest_attachments_dir: Directory to copy attachments to
+        note_slug: Slug of the note (used for renaming images)
 
     Returns:
-        Number of attachments copied
+        Dict mapping original filename → new filename
     """
     image_filenames = extract_image_embeds(content)
     if not image_filenames:
-        return 0
+        return {}
 
     # Possible attachment directories in xo vault
     xo_attachment_dirs = [
@@ -115,20 +116,46 @@ def copy_referenced_attachments(content: str, dest_attachments_dir: Path) -> int
         XO_VAULT_PATH / "files",
     ]
 
-    copied_count = 0
-    for filename in image_filenames:
+    filename_mapping = {}
+    img_counter = 1
+
+    for filename in sorted(image_filenames):  # Sort for consistent numbering
         # Search for the file in possible attachment directories
         for attach_dir in xo_attachment_dirs:
             source_path = attach_dir / filename
             if source_path.exists():
                 dest_attachments_dir.mkdir(parents=True, exist_ok=True)
-                dest_path = dest_attachments_dir / filename
+
+                # Create clean filename: note-slug-1.png
+                ext = source_path.suffix.lower()
+                new_filename = f"{note_slug}-{img_counter}{ext}"
+                dest_path = dest_attachments_dir / new_filename
+
                 shutil.copy2(source_path, dest_path)
-                print(f"    📎 Copied attachment: {filename}")
-                copied_count += 1
+                filename_mapping[filename] = new_filename
+                print(f"    📎 {filename} → {new_filename}")
+                img_counter += 1
                 break
 
-    return copied_count
+    return filename_mapping
+
+
+def rewrite_image_embeds(content: str, filename_mapping: Dict[str, str]) -> str:
+    """Rewrite image embeds in content using the new filenames.
+
+    Args:
+        content: Markdown content with Obsidian image embeds
+        filename_mapping: Dict mapping original filename → new filename
+
+    Returns:
+        Content with updated image embeds
+    """
+    for old_name, new_name in filename_mapping.items():
+        # Replace ![[old_name]] or ![[old_name|alt]] with ![[new_name]] or ![[new_name|alt]]
+        pattern = rf'!\[\[{re.escape(old_name)}(\|[^\]]+)?\]\]'
+        replacement = f'![[{new_name}\\1]]'
+        content = re.sub(pattern, replacement, content)
+    return content
 
 
 def create_obsidian_uri(vault_name: str, note_path: str) -> str:
@@ -366,9 +393,14 @@ def sync_note(source_path: Path, created_stubs: Set[str], update_source: bool = 
                     created_stubs.add(linked_note)
                     print(f"    ⚠️  Created stub for unpublished reference: {linked_note}")
 
-        # Copy referenced attachments to research-notes vault
+        # Copy referenced attachments to research-notes vault (with clean names)
         attachments_dir = RESEARCH_NOTES_VAULT_PATH / "attachments"
-        copy_referenced_attachments(body, attachments_dir)
+        note_slug = source_path.stem.lower().replace(' ', '-')
+        filename_mapping = copy_referenced_attachments(body, attachments_dir, note_slug)
+
+        # Rewrite image embeds in body to use new filenames
+        if filename_mapping:
+            body = rewrite_image_embeds(body, filename_mapping)
 
         # Write to research-notes vault
         write_frontmatter(dest_path, research_frontmatter, body)
