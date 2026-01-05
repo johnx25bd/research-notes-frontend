@@ -14,71 +14,70 @@ tags:
 title: State of Provenance Verification for Remote Sensing Imagery
 url: https://johnx.co/notes/state-of-provenance-verification-for-remote-sensing-imagery
 ---
-## *Challenges, Approaches, and Emerging Standards*
-
-## Executive Summary
-
 There is growing demand for verifiable satellite imagery. Customers — particularly in government, insurance, and media — are asking questions that providers cannot currently answer: _How do I know this image hasn't been tampered with? Can you prove this is what the satellite actually captured?_
 
 The honest answer, today, is: not really.
 
-Rich metadata exists. File transfer checksums exist. Transport encryption exists. But there is no broadly adopted, interoperable, end-to-end, customer-facing provenance standard for commercial earth observation (EO) imagery or other geospatial datasets.
+Rich metadata exists. File transfer checksums exist. Transport encryption exists. But there is no broadly adopted, interoperable, end-to-end, customer-facing provenance standard for commercial earth observation (EO) imagery or other geospatial datasets. 
+
+Instead, the industry relies on contractual relationships and institutional trust. This has worked well up until now, but as a growing number of commercial players broaden out the Earth observation data market, and new pressures and security risks emerge, verifiability is becoming more and more important.
 
 The building blocks are emerging, though they're immature. The [Coalition for Content Provenance and Authenticity](https://c2pa.org/) (C2PA) provides a provenance architecture for content credentials. [SpatioTemporal Asset Catalogs](https://stacspec.org/en) (STAC) provide the dominant metadata standard and a natural integration point. The Open Geospatial Consortium is developing an [EO-specific verification framework](https://www.ogc.org/blog-article/navigating-synthetic-imagery-trust-geospatial-data/). But no standards-based operational system has emerged that delivers interoperable, customer-facing provenance across commercial EO providers.
 
-This may change gradually as standards mature. Or it may change rapidly — triggered by a prominent geospatial deepfake, a major procurement mandate, or an insurance claim gone wrong. The underlying demand is real and growing. The question is when, not whether, the industry responds.
+This may change gradually as standards mature. Or it may change rapidly — triggered by a prominent geospatial deepfake, a major procurement mandate, or an insurance claim gone wrong. The underlying demand is nascent, but my read is that it's real and growing. The question is when, not whether, the industry responds.
 
 ## 1. Introduction
 
-Generative AI has made synthetic imagery trivially easy to produce. This creates an obvious problem for a domain where imagery is used as evidence — of environmental conditions, infrastructure status, military movements, treaty compliance, insurance claims.
+Generative AI has made synthetic imagery trivially easy to produce. This creates an obvious problem for a domain where imagery is used for important decision-making — about environmental conditions, infrastructure status, military movements, treaty compliance, insurance claims.
 
-Satellite imagery has historically benefited from an implicit trust model: the technical barriers to producing it were high enough that authenticity was assumed. That assumption is eroding. Customers are starting to ask hard questions about chain of custody, and providers are discovering they lack good answers.
+Satellite imagery has historically benefited from an implicit trust model: the technical barriers to producing it were high enough, and legal contracts were sufficient, that authenticity was assumed. That assumption is eroding. Customers are starting to ask hard questions about chain of custody, and providers are discovering they lack good answers. A growing and decentralizing data supply chain is expanding the security / risk surface area. 
 
-The use cases driving this demand are varied:
+The use cases driving this demand are varied: 
 
-**Defense and intelligence.** Verifying that imagery of contested regions hasn't been manipulated between capture and analysis. The concern isn't just external threat actors — it's the integrity of data flowing through multi-stakeholder pipelines involving commercial providers, allied partners, and potentially adversarial ground infrastructure.
+**Defense and intelligence.** Verifying that imagery of contested regions hasn't been manipulated between capture and analysis. The concern isn't just external threat actors — it's the integrity of data flowing through multi-stakeholder pipelines involving commercial providers, allied partners, and potentially adversarial ground infrastructure. 
 
 **Media verification.** News organizations increasingly rely on commercial satellite imagery for stories involving conflict, disaster, or environmental change. Authenticity matters for credibility — and for liability.
 
 **Parametric insurance.** Automated payouts triggered by satellite-derived metrics (crop damage, flood extent, drought indices) create obvious incentives for manipulation. Insurers need confidence in the data triggering their exposure.
 
-**Legal and evidentiary use.** The Berkeley Protocol (2022) established frameworks for using open-source digital evidence in international justice contexts. Satellite imagery is increasingly presented in legal proceedings. Current chain-of-custody practices — often just cryptographic hashing — are acknowledged as inadequate.[^berkeley]
+**Legal and evidentiary use.** The Berkeley Protocol (2022) established frameworks for using open-source digital evidence in international justice contexts. Satellite imagery is increasingly presented in legal proceedings. Current chain-of-custody practices — often just cryptographic hashing (if verification exists at all) — are increasingly acknowledged as inadequate.[^berkeley]
 
 **Regulatory compliance.** EUDR deforestation monitoring, carbon credit verification, and other compliance regimes depend on satellite-derived data. The stakes of manipulation are significant.
 
 The gap between what customers are asking and what providers can deliver is real. This note examines that gap: what exists today, what's hard about closing it, and where things are headed.
 ## 2. Current State of Provider Practices
 
-Major satellite imagery providers deliver rich metadata with their products. A typical STAC-compliant delivery includes acquisition timestamps, sensor parameters, processing levels, cloud cover assessments, geometric accuracy metrics, and more. This metadata is valuable for understanding what you're looking at.
+Major satellite imagery providers deliver rich metadata with their products. A common STAC-compliant delivery includes acquisition timestamps, sensor parameters, processing levels, cloud cover assessments, geometric accuracy metrics, and more. This metadata is valuable for understanding what you're looking at.
 
-What it doesn't do is prove the imagery is authentic.
+But it doesn't prove the imagery is authentic.
 
 **What providers offer:**
 
-- **Metadata.** STAC or proprietary formats describing acquisition and processing parameters. Comprehensive, standardized, useful — but descriptive claims, not verifiable assertions.
-- **File transfer checksums.** cryptographic hashes published alongside downloads. These verify that the file you downloaded matches what the server sent. They say nothing about whether that file was tampered with before distribution.
-- **Transport encryption.** HTTPS for API access, encrypted downlinks from satellites. Protects data in transit, but transit security isn't provenance.
+- **Metadata.** STAC or proprietary formats describing acquisition and processing parameters. Comprehensive, standardized, useful as descriptive claims.
+- **File transfer checksums.** Cryptographic hashes published alongside downloads. These verify that the file you downloaded matches what the server sent. They say nothing about whether that file was tampered with before distribution.
+- **Transport encryption.** HTTPS for API access, encrypted downlinks from satellites. Protects data in transit.
 
 **What's absent:**
 
+- Public key infrastructure / identity system associating public keys with organizations involved in the EO data value chain
 - Cryptographic signatures binding imagery to claims about its origin
 - Signed attestations at capture, processing, or distribution points
 - Verifiable processing history that can be independently audited
 - Any mechanism for detecting tampering that occurred before distribution
 
-The European Space Agency's (ESA) Copernicus Sentinel program is a prominent example. Each Sentinel-2 product includes a `manifest.safe` file listing every component file with a SHA3-256 checksum.[^sentinel] This is better than nothing — but these checksums are generated at the distribution point. They prove your download wasn't corrupted. They don't prove the data wasn't modified between capture and distribution.
+The European Space Agency's (ESA) Copernicus Sentinel program is a prominent example. Each Sentinel-2 product includes a `manifest.safe` file listing every component file with a SHA3-256 checksum.[^sentinel] This is better than nothing, but these checksums are generated at the distribution point. They prove your download of final processed imagery wasn't corrupted, leaving everything "upstream" of that inscrutable and unverifiable.
 
-The distinction matters. A file transfer checksum answers: "Did this file arrive intact?" A provenance verification system answers: "Is this the data that < entity X > claims to have captured/processed, and has it been modified since?" The first is a network reliability check. The second is tamper detection with chain of custody. The industry currently does the first and calls it integrity verification.
+The distinction matters. A file transfer checksum answers: "Did this file arrive intact?" A provenance verification system answers: "Is this the data that < entity X > claims to have captured/processed, and has it been modified since? By whom? By what algorithms" The first is a network reliability check. The second is tamper detection with chain of custody. The industry currently does the first and calls it integrity verification.
 
 ## 3. Key Challenges
 
-The absence of provenance verification for satellite imagery isn't an oversight. It's hard. Several interlocking challenges explain why this problem remains unsolved.
+The absence of provenance verification for satellite imagery isn't an oversight. It's hard, and hasn't been a big enough problem to be worth solving. Several interlocking challenges explain why this problem remains unsolved.
 
 ### 3.1 The Processing Pipeline Problem
 
-Satellite imagery undergoes extensive legitimate transformation before it reaches customers. Raw sensor data is radiometrically corrected to account for sensor characteristics. It's geometrically corrected through orthorectification — a process that adjusts pixel positions based on terrain elevation models to remove distortions from viewing angle and topography. Atmospheric correction removes haze and scattering effects. Pan-sharpening fuses high-resolution panchromatic data with lower-resolution multispectral bands. Format conversion produces deliverable file types.
+Satellite imagery undergoes extensive legitimate transformation before it reaches customers. Raw sensor data is radiometrically corrected to account for sensor characteristics. It's geometrically corrected through orthorectification — a process that adjusts pixel positions based on terrain elevation models and lens angles to remove distortions from viewing angle and topography. Atmospheric correction removes haze and scattering effects. Pan-sharpening fuses high-resolution panchromatic data with lower-resolution multispectral bands. Format conversion produces deliverable file types.
 
-Each of these steps produces genuinely different data. The bytes change. A cryptographic hash of orthorectified imagery will have zero relationship to a hash of the raw capture. They are, at the byte level, completely different files.
+Each of these steps produces genuinely different data. Because the bytes change, a typical cryptographic hash of orthorectified imagery will have zero relationship to a hash of the raw capture.
 
 This breaks the simplest approach to integrity verification: hash at capture, verify hash at delivery. That only works if the data doesn't change. Satellite imagery, by its nature, changes a lot between capture and delivery.
 
@@ -94,7 +93,7 @@ None of these are standardized or widely implemented.
 
 **Perceptual hashing.** One intuitive approach is perceptual hashing — algorithms that produce similar hashes for visually similar images, robust to minor transformations. These are used for near-duplicate detection in content moderation and copyright enforcement.
 
-Toomey et al. explored perceptual hashing for satellite imagery verification and found it unsuitable.[^toomey] These algorithms are designed to detect whether two images are "basically the same" — not to provide cryptographic integrity guarantees. They lack the security properties required for evidentiary or defense applications. A perceptual hash might not change when an image is subtly manipulated in ways that matter (altered coordinates, removed objects, synthetic insertions). This is a fundamental mismatch between the tool and the requirement.
+Toomey et al. explored perceptual hashing for satellite imagery verification and found it unsuitable.[^toomey] These algorithms are designed to detect whether two images are "basically the same" — not to provide cryptographic integrity guarantees. They lack the security properties required for evidentiary or defense applications. A perceptual hash might not change when an image is subtly manipulated in ways that matter (altered coordinates, removed objects, synthetic insertions). As they stand, Toomey found a fundamental mismatch between perceptual hashing algorithms and the job to be done — though perhaps innovation in that family of algorithms could provide useful tools for verification.
 
 ### 3.2 Multi-Stakeholder Chain of Custody
 
@@ -110,7 +109,7 @@ Trust boundaries don't align with data flow. An aggregator can attest to what th
 
 Examples from the defense industry illustrates this: a military consumer's concern may not be that the distributor might tamper with imagery, but that imagery might be manipulated somewhere in the upstream chain before it ever reached the distributor. The hardest part of the problem is the part furthest from the customer.
 
-End-to-end verification requires coordination across organizational boundaries. That's not primarily a technical problem — it's an institutional and commercial one.
+End-to-end verification for a sophisticated data supply chain requires coordination across organizational boundaries, and buy-in from the hardware designers and operators. That's not primarily a technical problem — it's an institutional and commercial one.
 
 ### 3.3 Space Segment Constraints
 
@@ -120,10 +119,10 @@ The challenges are substantial:
 
 - **Hardware requirements.** Cryptographic signing requires secure key storage. Radiation-hardened secure enclaves are specialized components that weren't standard in satellite designs until recently (and still aren't universal).
 - **Key management.** Keys on satellites need to be issued, potentially rotated, and revocable if compromised. Key management infrastructure for space assets is complex — you can't just swap out a hardware security module in orbit.
-- **Retrofit impossibility.** Satellites already in orbit cannot be upgraded with new hardware. Given 5-15 year operational lifetimes and multi-year development cycles, most current constellations weren't designed with this capability and can't acquire it.
+- **Retrofit infeasibility.** Satellites already in orbit cannot feasibly be upgraded with new hardware. Given 5-15 year operational lifetimes and multi-year development cycles, most current constellations weren't designed with this capability and can't acquire it.
 - **Where in the pipeline?** Even on-board, data undergoes processing — compression, preliminary corrections, formatting for downlink. Signing the raw sensor readout might not be practical or meaningful. Signing the post-compression data means the signature covers a processed product.
 
-Global Navigation Satellite Systems (GNSS) are instructive here. Galileo's OSNMA (Open Service Navigation Message Authentication) broadcasts signed navigation messages from satellites. Receivers can verify authenticity and reject spoofed signals.[^osnma] But retrofitting verifiability into an existing system took quite a lot of work. In addition, GNSS systems have much different design requirements — challenging in their own right, but different.
+Though not identical, Global Navigation Satellite Systems (GNSS) are instructive here. Galileo's OSNMA (Open Service Navigation Message Authentication) broadcasts signed navigation messages from satellites. Receivers can verify authenticity and reject spoofed signals.[^osnma] But retrofitting verifiability into an existing system took quite a lot of work. In addition, GNSS systems have much different design requirements — challenging in their own right, but different.
 
 The near-term reality is that space-segment signing will only become available as new satellites are designed and launched with this capability. That's a multi-year horizon at minimum.
 
@@ -131,7 +130,7 @@ The near-term reality is that space-segment signing will only become available a
 
 A signature is only valuable if someone actually verifies it. This raises practical questions that don't have good answers yet.
 
-**Tooling.** What software does a customer use to verify imagery provenance? For C2PA-signed photos, browsers and image viewers are beginning to display Content Credentials. For satellite imagery, equivalent tooling doesn't exist. Verification today would mean custom code or manual processes.
+**Tooling.** What software does a customer use to verify imagery provenance? For C2PA-signed photos, browsers and image viewers are beginning to display Content Credentials. For satellite imagery, equivalent tooling doesn't exist (yet). Verification today would mean custom code or manual processes.
 
 **Workflow integration.** Imagery goes into GIS systems, analysis pipelines, machine learning workflows. Adding a verification step adds friction. If verification isn't seamless, it won't happen consistently.
 
@@ -145,13 +144,13 @@ These are solvable problems, but they're not solved yet. Standards for EO proven
 
 There is no ratified industry standard for Earth observation provenance verification. Work is underway, but productization is still ahead.
 
-The coordination problem is real, though it's not quite "customers can't demand what doesn't exist." Customers can and do demand things that don't exist — that's how industries evolve. The dynamic is subtler:
+The coordination problem is real:
 
 - **Providers** face uncertainty about the strength of demand and the specific requirements. Investing in provenance infrastructure has unclear ROI until the market crystallizes.
 - **Customers** face uncertainty about what's technically feasible, what it would cost, and how to write procurement requirements for something that doesn't have standard terminology.
 - **Standards bodies** are working toward solutions, but adoption requires critical mass of implementers and users.
 
-This creates inertia. But the conditions for rapid change are present. The entire industry could adopt provenance verification in a relatively compressed timeframe given the right trigger — a prominent geospatial deepfake causing significant harm, a major government procurement mandate, or ratification of a clear standard that gives providers a target to implement against.
+This creates inertia. But the conditions for rapid change are present. The entire industry could adopt provenance verification in a relatively compressed timeframe given the right trigger — a prominent geospatial deepfake[^geo-deepfake] causing significant harm, a major government procurement mandate, or ratification of a clear standard that gives providers a target to implement against.
 
 ## 4. Elements of a Provenance Architecture
 
@@ -159,20 +158,22 @@ What would a provenance verification system for satellite imagery actually look 
 
 ### 4.1 Data Integrity
 
-At the foundation is the digital signature. A hash function produces a fixed-size digest of the data — change any bit, the hash changes. A signature binds that hash to a specific key pair: anyone with the public key can verify that whoever holds the corresponding private key signed that exact data. 
+At the foundation is the digital signature. A [hash function](https://en.wikipedia.org/wiki/Hash_function) accepts a large input file and outputs a fixed-size digest — change any bit, the hash changes. A signature binds that hash to a specific key pair: anyone with the public key can verify that whoever holds the corresponding private key signed that exact data. 
 
-Hashing detects tampering; signatures add non-repudiation and create an anchor point for attribution. Establishing that a given key pair belongs to a specific entity — that this public key really is Maxar's — is a separate problem, addressed through certificate authorities, PKI, or other trust frameworks.
+Hashing detects tampering; signatures add non-repudiation and create an anchor for attribution. Establishing that a given key pair belongs to a specific entity — that this public key really is Maxar's, for example — is a separate problem, addressed through certificate authorities, PKI, secure hardware, or other trust frameworks.
 
-The critical question is _where_ and _when_ the hash or digital signature is generated, because that determines what it actually proves:
+A critical question is _where_ and _when_ the signature is generated, because that determines what it proves:
 
-|Hash generated at...|Proves...|
-|---|---|
-|Distribution point|File wasn't corrupted in transit (download integrity)|
-|Post-processing output|Data hasn't changed since processing completed|
-|Ground station receipt|Data hasn't changed since downlink|
-|On-board capture|Data hasn't changed since acquisition|
+| Signed at...                         | Proves...                                             |
+| ------------------------------------ | ----------------------------------------------------- |
+| Distribution point                   | File wasn't corrupted in transit (download integrity) |
+| Post-processing output               | Data changes are proper since processing completed    |
+| Ground station receipt               | Data changes are proper since downlink                |
+| On-board capture (furthest upstream) | Data changes are proper since acquisition             |
 
-Current industry practice mostly involves the first category — distribution-point hashes — but the language used often implies the fourth. When a provider says "we provide checksums for integrity verification," it's worth asking: integrity since when?
+Current industry practice mostly involves the first category. When a provider says "we provide checksums for integrity verification," it's worth asking: integrity since _when_?
+
+**Why this is hard.** Satellite imagery moves through a multi-stakeholder supply chain — operator, ground station, processing facility, aggregator, customer — with legitimate transformations at each step. Tracking those transformations in credible, verifiable, and eventually consistent ways is the core challenge: who did what, using which algorithms, with what parameters, producing what outputs? When the algorithms are proprietary, when handoffs cross organizational boundaries, and when each entity has limited visibility into what happened upstream, building a trustworthy chain becomes genuinely difficult.
 
 ### 4.2 Provenance Manifests
 
@@ -180,12 +181,16 @@ Beyond verifying that data hasn't changed, provenance systems need to record _wh
 
 **Existing approaches:**
 
-- **STAC Processing Extension.** Adds fields like `processing:lineage` and `processing:software` to STAC metadata. Useful for recording processing history, but the content is descriptive text — not cryptographically bound to the data or independently verifiable.[^stac-processing]
-    
-- **STACD.** Academic work extending STAC with DAG-based workflow tracking, algorithm versioning, and support for selective recomputation. More rigorous provenance model, but not commercially deployed.[^stacd]
-    
-- **C2PA.** The Content Credentials model uses signed manifests containing assertions (claims about the content), actions (what was done to it), and hash references (binding claims to specific data). This architecture is directly applicable to EO imagery.[^c2pa]
-    
+- **STAC Processing Extension.** Adds fields like `processing:lineage` and `processing:software` to STAC metadata. Useful for recording processing history, but the core fields are descriptive metadata. Work on cryptographic binding within the STAC ecosystem may be underway. (If you know of anything going on here, please reach out! I'm curious.)[^stac-processing]
+
+- **C2PA.** The Content Credentials model uses signed manifests containing assertions (claims about the content), actions (what was done to it), and hash references (binding claims to specific data). This architecture is directly applicable to EO imagery (complexities are explored later).[^c2pa]
+
+---
+vvvv todo vvvv
+
+
+- **STACD.** New academic work extending STAC with DAG-based workflow tracking, algorithm versioning, and support for selective recomputation. More rigorous provenance model, but not commercially deployed.[^stacd]
+
 
 The key distinction is whether the manifest is merely recorded or cryptographically bound to the data it describes. Recording is useful for audit trails. Binding enables verification.
 
@@ -342,6 +347,8 @@ The building blocks are available. Someone needs to assemble them.
 [^toomey]: J. Toomey, "A Step Toward Working with Untrusted Ground Stations," Sandia National Laboratories, SAND2022-5368, 2022.
 
 [^osnma]: European GNSS Agency, "Galileo Open Service Navigation Message Authentication (OSNMA)." See also Septentrio, "OSNMA: The Latest in GNSS Anti-Spoofing Security."
+
+[^geo-deepfake]: Cartography and Geographic Information Science, "Deep fake geography? When geospatial data encounter Artificial Intelligence." Zhao et al.
 
 [^stac-processing]: STAC Processing Extension, https://github.com/stac-extensions/processing
 
