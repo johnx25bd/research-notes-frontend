@@ -59,15 +59,12 @@ export function NoteContentInteractive({ html, allNotes }: NoteContentInteractiv
         const note = allNotes.find(n => n.slug === slug)
         const isBroken = domNode.attribs.class?.includes('broken-link')
 
-        // Broken link - render without hover card
+        // Broken/unpublished link - render as plain text
         if (isBroken || !note) {
           return (
-            <Link
-              href={href}
-              className="text-muted-foreground"
-            >
+            <span className="text-muted-foreground">
               {linkText}
-            </Link>
+            </span>
           )
         }
 
