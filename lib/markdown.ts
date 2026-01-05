@@ -14,7 +14,8 @@ function preprocessObsidianImages(markdown: string): string {
     /!\[\[([^\]|]+?)(?:\|([^\]]+))?\]\]/g,
     (_, filename, altText) => {
       const alt = altText || filename.replace(/\.[^.]+$/, '');
-      return `![${alt}](/attachments/${filename})`;
+      const encodedFilename = encodeURIComponent(filename);
+      return `![${alt}](/attachments/${encodedFilename})`;
     }
   );
 }

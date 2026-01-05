@@ -79,6 +79,58 @@ def extract_wikilinks(content: str) -> Set[str]:
     return note_names
 
 
+def extract_image_embeds(content: str) -> Set[str]:
+    """Extract all image embeds from markdown content.
+
+    Supports Obsidian syntax:
+    - ![[image.png]]
+    - ![[image.png|alt text]]
+    """
+    pattern = r'!\[\[([^\]|]+?)(?:\|[^\]]+)?\]\]'
+    matches = re.findall(pattern, content)
+    return set(matches)
+
+
+def copy_referenced_attachments(content: str, dest_attachments_dir: Path) -> int:
+    """Copy referenced image attachments from xo vault to destination.
+
+    Args:
+        content: Markdown content with potential image embeds
+        dest_attachments_dir: Directory to copy attachments to
+
+    Returns:
+        Number of attachments copied
+    """
+    image_filenames = extract_image_embeds(content)
+    if not image_filenames:
+        return 0
+
+    # Possible attachment directories in xo vault
+    xo_attachment_dirs = [
+        XO_VAULT_PATH / "Attachments",
+        XO_VAULT_PATH / "attachments",
+        XO_VAULT_PATH / "Assets",
+        XO_VAULT_PATH / "assets",
+        XO_VAULT_PATH / "Files",
+        XO_VAULT_PATH / "files",
+    ]
+
+    copied_count = 0
+    for filename in image_filenames:
+        # Search for the file in possible attachment directories
+        for attach_dir in xo_attachment_dirs:
+            source_path = attach_dir / filename
+            if source_path.exists():
+                dest_attachments_dir.mkdir(parents=True, exist_ok=True)
+                dest_path = dest_attachments_dir / filename
+                shutil.copy2(source_path, dest_path)
+                print(f"    📎 Copied attachment: {filename}")
+                copied_count += 1
+                break
+
+    return copied_count
+
+
 def create_obsidian_uri(vault_name: str, note_path: str) -> str:
     """Create an Obsidian URI for opening a note.
 
@@ -313,6 +365,10 @@ def sync_note(source_path: Path, created_stubs: Set[str], update_source: bool = 
                     create_stub_note(linked_note, source_path.stem, notes_dir)
                     created_stubs.add(linked_note)
                     print(f"    ⚠️  Created stub for unpublished reference: {linked_note}")
+
+        # Copy referenced attachments to research-notes vault
+        attachments_dir = RESEARCH_NOTES_VAULT_PATH / "attachments"
+        copy_referenced_attachments(body, attachments_dir)
 
         # Write to research-notes vault
         write_frontmatter(dest_path, research_frontmatter, body)
