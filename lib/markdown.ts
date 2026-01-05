@@ -6,10 +6,24 @@ import rehypeStringify from 'rehype-stringify';
 import wikiLinkPlugin from 'remark-wiki-link';
 import rehypeCallouts from 'rehype-callouts';
 
+// Convert Obsidian image embeds to standard markdown
+// ![[image.png]] → ![image](/attachments/image.png)
+// ![[image.png|alt text]] → ![alt text](/attachments/image.png)
+function preprocessObsidianImages(markdown: string): string {
+  return markdown.replace(
+    /!\[\[([^\]|]+?)(?:\|([^\]]+))?\]\]/g,
+    (_, filename, altText) => {
+      const alt = altText || filename.replace(/\.[^.]+$/, '');
+      return `![${alt}](/attachments/${filename})`;
+    }
+  );
+}
+
 export async function processMarkdown(
   markdown: string,
   availableNotes: string[] = []
 ): Promise<string> {
+  const preprocessed = preprocessObsidianImages(markdown);
   const processor = unified()
     .use(remarkParse)
     .use(remarkGfm) // Tables, strikethrough, task lists
@@ -29,6 +43,6 @@ export async function processMarkdown(
     .use(rehypeCallouts)
     .use(rehypeStringify, { allowDangerousHtml: true });
 
-  const result = await processor.process(markdown);
+  const result = await processor.process(preprocessed);
   return String(result);
 }
