@@ -3,7 +3,8 @@ created: 2026-01-07
 featured: true
 featured_order: null
 published: true
-published_at: null
+published_at: '2026-01-07'
+research_note: obsidian://open?vault=research-notes&file=notes/Geopositional%20encoding%20for%20language%20models
 source_note: obsidian://open?vault=xo&file=Notes/Geopositional%20encoding%20for%20language%20models
 status: fragment
 summary: Could a trick from natural language processing improve geographic accuracy
@@ -13,6 +14,7 @@ tags:
 - geospatial
 - ai
 title: Geopositional encoding
+url: https://johnx.co/notes/geopositional-encoding-for-language-models
 ---
 Last year I published a [paper](https://osf.io/preprints/osf/bg2uq_v1) at GISRUK with Prof Taylor Oshan, my collaborator at UMD. It was a great experience — he traveled over from the US, we got to enjoy a beautiful spring week in Bristol, and he introduced me to the UK GIS academic community.
 
@@ -26,11 +28,11 @@ My hypothesis is that making location _explicit_ through a structured encoding w
 
 I'd imagine the prompt would include geographic location — coordinates maybe, or some other way of representing the geographic subject of the prompt, a more reliable and explicit articulation of geography than natural language alone.
 
-```json
-infer({
-  "prompt": "Tell me about activities in London",
-  "location": [-81.2453, 42.9849]  // London, Ontario coords
-})
+```python
+model.generate(
+	prompt="Tell me about activities in London", 
+	location=(42.9849, -81.2453) # London, Ontario 
+)
 // -> Output accurately reflects London, Ontario rather than 
 //    defaulting to London, UK as the model might without encoding
 ```
