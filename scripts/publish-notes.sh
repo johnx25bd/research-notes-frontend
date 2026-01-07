@@ -184,3 +184,6 @@ echo "Next steps:"
 echo "  1. Review the PR"
 echo "  2. Merge when ready"
 echo "  3. Vercel will auto-deploy"
+
+# Open PR in browser
+open "$PR_URL"
