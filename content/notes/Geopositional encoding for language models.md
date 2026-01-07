@@ -18,7 +18,12 @@ url: https://johnx.co/notes/geopositional-encoding-for-language-models
 ---
 Last year I published a [paper](https://osf.io/preprints/osf/bg2uq_v1) at GISRUK with Prof Taylor Oshan, my collaborator at UMD. It was a great experience — he traveled over from the US, we got to enjoy a beautiful spring week in Bristol, and he introduced me to the UK GIS academic community.
 
-There were lots of amazing talks at the event — one that has stuck with me was Prof Stef de Sabbata from Leicester sharing research on [Geospatial Mechanistic Interpretability of Large Language Models](https://arxiv.org/abs/2505.03368). The research uses probing techniques and spatial autocorrelation analysis to show that LLMs encode geographic information in their internal representations — you can train a simple linear regression to predict coordinates of place names from the model's hidden states. At the same time this is unsurprising and incredible, that spatial information is somehow reflected in our language and captured by these models. It builds on foundational work by [Gurnee and Tegmark](https://arxiv.org/abs/2310.02207) showing that LLMs learn linear representations of space and time, applying the broader framework of mechanistic interpretability — to my mind some of the most important research happening right now on AI alignment and safety. (A little dive into [this world](https://arxiv.org/abs/2309.01933) last year blew my mind.)
+There were lots of amazing talks at the event — one that has stuck with me was Prof Stef de Sabbata from Leicester sharing research on [Geospatial Mechanistic Interpretability of Large Language Models](https://arxiv.org/abs/2505.03368). The research uses probing techniques and spatial autocorrelation analysis to show that LLMs encode geographic information in their internal representations — you can train a simple linear regression to predict coordinates of place names from the model's hidden states. 
+
+![[geopositional-encoding-for-language-models-1.png]]
+*Nice and very interesting maps from de Sabbata et al 2025*
+
+At the same time this is unsurprising and incredible, that spatial information is somehow reflected in our language and captured by these models. It builds on foundational work by [Gurnee and Tegmark](https://arxiv.org/abs/2310.02207) showing that LLMs learn linear representations of space and time, applying the broader framework of mechanistic interpretability — to my mind some of the most important research happening right now on AI alignment and safety. (A little dive into [this world](https://arxiv.org/abs/2309.01933) last year blew my mind.)
 
 ## Flip the script?
 
