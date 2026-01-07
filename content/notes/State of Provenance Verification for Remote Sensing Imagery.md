@@ -185,12 +185,7 @@ Beyond verifying that data hasn't changed, provenance systems need to record _wh
 
 - **C2PA.** The Content Credentials model uses signed manifests containing assertions (claims about the content), actions (what was done to it), and hash references (binding claims to specific data). This architecture is directly applicable to EO imagery (complexities are explored later).[^c2pa]
 
----
-vvvv todo vvvv
-
-
 - **STACD.** New academic work extending STAC with DAG-based workflow tracking, algorithm versioning, and support for selective recomputation. More rigorous provenance model, but not commercially deployed.[^stacd]
-
 
 The key distinction is whether the manifest is merely recorded or cryptographically bound to the data it describes. Recording is useful for audit trails. Binding enables verification.
 
@@ -220,11 +215,11 @@ Signatures require verifiable identity. When imagery is signed by "Maxar," how d
 
 This is a solved problem in other contexts. Public key infrastructure (PKI), certificate authorities, and established identity verification practices exist. The question is how they apply to the EO context.
 
-The good news is that enterprise and government use cases actually simplify this. Customers typically have contractual relationships with their imagery providers. There's already an established identity context — business registration, contracts, legal liability. You don't need a fully decentralized trust model. Hierarchical trust, where a recognized authority vouches for provider identities, mirrors existing business relationships.
+The good news is that enterprise and government use cases actually simplify this. Customers typically have contractual relationships with their imagery providers. There's already an established identity context — business registration, contracts, legal liability — upon which to build a trust model. (A fully decentralized trust model for identity verification increases complexity considerably.) Hierarchical trust, where a recognized authority vouches for provider identities, mirrors existing business relationships.
 
 Key management remains important: how are signing keys issued? How are they protected? What's the rotation policy? What happens if a key is compromised? These are operational questions with established answers in other industries.
 
-**Provider trust frameworks.** Beyond cryptographic identity, there's a broader question of provider trustworthiness. MITRE's Architecture Score Index (ASI) provides a framework for scoring the cybersecurity posture of commercial space providers — combining compliance certification (CMMC), operational metrics (patch cadence), and incident response performance into a quantitative trust score.[^mitre-asi] This addresses "will their systems get breached?" rather than "is their data authentic?" — but the framework approach could inform analogous assessments of provenance practices.
+**Provider trust frameworks.** Beyond cryptographic identity, there's a broader question of provider trustworthiness. MITRE's Architecture Score Index (ASI) provides a framework for scoring the cybersecurity posture of commercial space providers — combining compliance certification (CMMC), operational metrics (patch cadence), and incident response performance into a quantitative trust score.[^mitre-asi] This addresses "will their systems get breached?" rather than "is their data authentic?" — but the framework approach could inform analogous assessments of provenance practices. It's not clear how well developed or implemented MITRE's approach is. 
 
 ## 5. Standards and Research Landscape
 
@@ -232,7 +227,7 @@ Key management remains important: how are signing keys issued? How are they prot
 
 **C2PA (Coalition for Content Provenance and Authenticity).** C2PA defines a technical standard for content credentials — cryptographically signed manifests that travel with media files, recording provenance and editing history. The coalition includes Adobe, Google, Microsoft, BBC, and others. Adoption is growing for photographs, video, and AI-generated content. Browsers and platforms are beginning to surface Content Credentials to users.[^c2pa]
 
-There is no production implementation of C2PA for Earth observation imagery. C2PA is designed for digital content with a different production workflow, which may introduce technical barriers to its application to EO data products. In principle, the architecture — manifests, assertions, hash binding, signature chains — applies directly. For example, C2PA already supports sidecar manifests and ‘collection hashing’ for multiple-file assets, which maps more naturally to EO bundle deliveries than single-image workflows. But in practice things might be more complicated. Exploratory work is underway, and it seems that non-trivial integration work is required for multi-file EO products, geospatial metadata conventions, and GIS tooling. 
+To my knowledge, there is no production implementation of C2PA for Earth observation imagery. C2PA is designed for digital content with a different production workflow, which may introduce technical barriers to its application to EO data products. In principle, the architecture — manifests, assertions, hash binding, signature chains — applies directly. For example, C2PA already supports sidecar manifests and ‘collection hashing’ for multiple-file assets, which maps more naturally to EO bundle deliveries than single-image workflows. But in practice things might be more complicated. Exploratory work is underway, and it seems that non-trivial integration work is required for multi-file EO products, geospatial metadata conventions, and GIS tooling — not to mention verification scripts and UI components to make C2PA manifest for geospatial data actually actionable.
 
 **STAC (SpatioTemporal Asset Catalog).** STAC has become the dominant metadata standard for EO imagery. Its extension mechanism allows domain-specific additions. The Processing Extension provides fields for recording processing history, but as noted, these are descriptive rather than cryptographic.[^stac-processing]
 
@@ -268,6 +263,14 @@ This work is producing specifications and reference implementations, but it rema
 
 **GNSS authentication.** Navigation signals face spoofing threats analogous to imagery manipulation. Galileo's OSNMA and GPS's CHIMERA represent operational or near-operational authentication systems for satellite-broadcast data.[^osnma] The design requirements differ substantially — real-time verification, broadcast model, receiver constraints — but these systems demonstrate that space-segment authentication is achievable when designed in from the start.
 
+### 5.5 Alternative Approaches
+
+Cryptographic provenance isn't the only path. Machine learning-based deepfake detection offers a complementary approach — training classifiers to identify synthetic or manipulated imagery based on artifacts, inconsistencies, or statistical anomalies. Recent work has applied this specifically to [geospatial imagery](https://www.darkreading.com/threat-intelligence/why-17-year-old-built-ai-expose-deepfake-maps), detecting manipulated satellite images and maps.
+
+The appeal is lower coordination overhead. Detection can happen downstream, without requiring upstream providers to implement new infrastructure. A customer or platform can run detection independently.
+
+The limitation is that these approaches are probabilistic, not deterministic. A classifier gives you a confidence score, not a verifiable proof. And they're subject to the [Red Queen effect](https://en.wikipedia.org/wiki/Red_Queen_hypothesis): any detection method that GANs can learn about, GANs can learn to evade. The arms race favors the attacker over time.
+
 ## 6. Paths Forward
 
 ### 6.1 Near-Term Opportunities
@@ -285,6 +288,10 @@ Several things are buildable now, without waiting for new standards or upstream 
 This creates partial chain of custody. It also creates pressure on upstream providers to offer similar capabilities, extending the chain backward over time.
 
 **Transparent logging.** Even without cryptographic binding, systematic logging of provenance information — published and auditable — establishes practices and surfaces requirements. What claims matter? What format should they take? What do customers actually want to verify? Logging-first implementations can inform later cryptographic implementations.
+
+**Cryptographic + ML approaches.** If designed properly, cryptographic approaches offer determinism — a valid signature is valid, full stop — but require coordination across the supply chain. Detection approaches offer independence but degrade as adversaries adapt.
+
+The path forward is clearly defense-in-depth: cryptographic provenance where achievable, detection-based methods as a complementary layer, and operational practices (source diversity, anomaly flagging, human review for high-stakes use cases) filling remaining gaps. No single mechanism will be sufficient.
 
 ### 6.2 Industry Coordination Needs
 
@@ -319,7 +326,7 @@ Industry adoption could be gradual — or it could flip rapidly. Potential trigg
 
 ## 7. Conclusion
 
-The demand for verifiable satellite imagery is real and growing. The technical building blocks exist. The gap is coordination and implementation.
+The need for verifiable satellite imagery is real and growing, though it's only just coming into the light. The technical building blocks exist, with significant caveats and implementation complexities. The gap is coordination and market demand.
 
 Today's state:
 
@@ -333,10 +340,9 @@ What's needed:
 - Provenance manifests recording processing history
 - Standards that enable interoperability and clear requirements
 - Tooling that makes verification practical
+- Robust cross-verification systems
 
 This will happen. The pressure from deepfakes, regulatory requirements, legal evidentiary standards, and customer demand makes it inevitable. The question is whether the industry moves proactively — shaping standards, building capability, establishing competitive advantage — or reactively, scrambling after a crisis.
-
-The building blocks are available. Someone needs to assemble them.
 
 ## References
 
