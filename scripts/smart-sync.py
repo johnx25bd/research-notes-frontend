@@ -158,6 +158,84 @@ def rewrite_image_embeds(content: str, filename_mapping: Dict[str, str]) -> str:
     return content
 
 
+def rename_xo_attachments(content: str, note_slug: str) -> Dict[str, str]:
+    """Rename image attachments in-place in xo vault with clean names.
+
+    This ensures the source document keeps working after sync by renaming
+    images in the xo vault itself, not just copying with new names.
+
+    Args:
+        content: Markdown content with potential image embeds
+        note_slug: Slug of the note (used for renaming images)
+
+    Returns:
+        Dict mapping original filename → new filename
+    """
+    image_filenames = extract_image_embeds(content)
+    if not image_filenames:
+        return {}
+
+    # Possible attachment directories in xo vault
+    xo_attachment_dirs = [
+        XO_VAULT_PATH / "Attachments",
+        XO_VAULT_PATH / "attachments",
+        XO_VAULT_PATH / "Assets",
+        XO_VAULT_PATH / "assets",
+        XO_VAULT_PATH / "Files",
+        XO_VAULT_PATH / "files",
+    ]
+
+    filename_mapping = {}
+    img_counter = 1
+
+    for filename in sorted(image_filenames):  # Sort for consistent numbering
+        for attach_dir in xo_attachment_dirs:
+            source_path = attach_dir / filename
+            if source_path.exists():
+                ext = source_path.suffix.lower()
+                new_filename = f"{note_slug}-{img_counter}{ext}"
+                new_path = attach_dir / new_filename
+
+                # Skip if already has clean name
+                if filename == new_filename:
+                    img_counter += 1
+                    break
+
+                # Rename in place
+                source_path.rename(new_path)
+                filename_mapping[filename] = new_filename
+                print(f"    📎 Renamed in xo: {filename} → {new_filename}")
+                img_counter += 1
+                break
+
+    return filename_mapping
+
+
+def copy_renamed_attachments(filename_mapping: Dict[str, str], dest_dir: Path):
+    """Copy already-renamed attachments from xo vault to research-notes.
+
+    Args:
+        filename_mapping: Dict mapping old filename → new filename (values are copied)
+        dest_dir: Destination directory in research-notes
+    """
+    xo_attachment_dirs = [
+        XO_VAULT_PATH / "Attachments",
+        XO_VAULT_PATH / "attachments",
+        XO_VAULT_PATH / "Assets",
+        XO_VAULT_PATH / "assets",
+        XO_VAULT_PATH / "Files",
+        XO_VAULT_PATH / "files",
+    ]
+
+    for new_filename in filename_mapping.values():
+        for attach_dir in xo_attachment_dirs:
+            source_path = attach_dir / new_filename
+            if source_path.exists():
+                dest_dir.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source_path, dest_dir / new_filename)
+                break
+
+
 def create_obsidian_uri(vault_name: str, note_path: str) -> str:
     """Create an Obsidian URI for opening a note.
 
@@ -393,14 +471,17 @@ def sync_note(source_path: Path, created_stubs: Set[str], update_source: bool = 
                     created_stubs.add(linked_note)
                     print(f"    ⚠️  Created stub for unpublished reference: {linked_note}")
 
-        # Copy referenced attachments to research-notes vault (with clean names)
+        # Rename attachments in xo vault first (so source doc keeps working)
         attachments_dir = RESEARCH_NOTES_VAULT_PATH / "attachments"
         note_slug = source_path.stem.lower().replace(' ', '-')
-        filename_mapping = copy_referenced_attachments(body, attachments_dir, note_slug)
+        filename_mapping = rename_xo_attachments(body, note_slug)
 
         # Rewrite image embeds in body to use new filenames
         if filename_mapping:
             body = rewrite_image_embeds(body, filename_mapping)
+
+        # Copy renamed attachments to research-notes
+        copy_renamed_attachments(filename_mapping, attachments_dir)
 
         # Write to research-notes vault
         write_frontmatter(dest_path, research_frontmatter, body)
