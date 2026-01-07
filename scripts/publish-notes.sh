@@ -71,6 +71,8 @@ if [[ "$USE_EXISTING" == "true" ]]; then
   BRANCH_NAME="$EXISTING_BRANCH"
   echo ""
   echo "🌿 Switching to existing branch: $BRANCH_NAME"
+  # Stash uncommitted changes before switching
+  git stash -q
   git fetch origin "$BRANCH_NAME"
   git checkout "$BRANCH_NAME"
   # Rebase on main to get latest changes
@@ -80,6 +82,8 @@ if [[ "$USE_EXISTING" == "true" ]]; then
     git rebase --abort
     git merge main -m "Merge main into publish branch"
   fi
+  # Restore stashed changes
+  git stash pop -q 2>/dev/null || true
 else
   TIMESTAMP=$(date +%Y%m%d-%H%M%S)
   BRANCH_NAME="${BRANCH_PREFIX}-${TIMESTAMP}"
