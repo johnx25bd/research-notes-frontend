@@ -1,6 +1,6 @@
 ---
 created: 2025-12-17
-featured: false
+featured: true
 featured_order: null
 published: true
 published_at: 2025-12-18
