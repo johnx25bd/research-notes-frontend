@@ -44,7 +44,7 @@ The use cases driving this demand are varied:
 
 **Regulatory compliance.** EUDR deforestation monitoring, carbon credit verification, and other compliance regimes depend on satellite-derived data. The stakes of manipulation are significant.
 
-The gap between what customers are asking and what providers can deliver is real. This note examines that gap: what exists today, what's hard about closing it, and where things are headed.
+The gap between what customers are asking and what providers can deliver is real. This note examines that gap: what exists today, what's hard about closing it, and where things are headed. (This is closely related to my broader work on [[Notes on Location Proofs|location proofs]] — verifiable claims about where and when events occur.)
 ## 2. Current State of Provider Practices
 
 Major satellite imagery providers deliver rich metadata with their products. A common STAC-compliant delivery includes acquisition timestamps, sensor parameters, processing levels, cloud cover assessments, geometric accuracy metrics, and more. This metadata is valuable for understanding what you're looking at.
@@ -247,7 +247,7 @@ Scenarios explored include:
 
 This work is producing specifications and reference implementations, but it remains in the testbed phase. Transition to ratified standards and commercial deployment is still ahead.
 
-**OGC Blockchain and DLT Domain Working Group.** This working group provides a coordination point for standards work involving distributed ledger technologies and related verification approaches. It's a venue for cross-organizational discussion on where standards should go.
+**OGC Blockchain and DLT Domain Working Group.** This working group provides a coordination point for standards work involving distributed ledger technologies and related verification approaches — tools I think of as embodying [[Web3 is a set of design principles|Web3 design principles]]. It's a venue for cross-organizational discussion on where standards should go.
 
 ### 5.3 Prior Research and Proofs of Concept
 

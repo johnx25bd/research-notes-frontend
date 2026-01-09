@@ -17,7 +17,7 @@ This past few months my focus has been on finding commercial applications for [[
 
 ## Observations
 
-One of the hallmarks of decentralized systems is that they are open (or "permissionless") — anyone can join, or leave, the network. Service / infrastructure providers are coordinated using token incentives and other cryptoeconomic mechanisms. 
+One of the hallmarks of decentralized systems is that they are open (or "permissionless" — one of the [[Web3 is a set of design principles|Web3 design principles]] I find most compelling) — anyone can join, or leave, the network. Service / infrastructure providers are coordinated using token incentives and other cryptoeconomic mechanisms. 
 
 If designed well, this is a powerful way of ensuring durability. By relying on self-interest and consensus mechanisms and other protocols for dispute resolution rather than legal commitments and master-slave architectures, decentralized networks have remarkably high liveness guarantees. The Ethereum network has never halted or failed, even as it has scaled to control billions of dollars of value, and attracted commensurate attacks. 
 

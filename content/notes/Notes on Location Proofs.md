@@ -28,7 +28,7 @@ Crypto isn’t my home turf. I’ve been working professionally with geospatial 
 - 2019 — MSc in Spatial Data Science and Visualisation at UCL
 - 2021 — a formative spell at Ordnance Survey, the UK’s national mapping agency. 
 
-Ever since I discovered Ethereum in 2017, and came to recognize the importance of [Web3 design principles](https://www.x25bd.com/posts/web3-design-principles) — open, durable, and opt-in — I couldn’t help but wonder how geospatial data could fit into this new paradigm.
+Ever since I discovered Ethereum in 2017, and came to recognize the importance of [[Web3 is a set of design principles|Web3 design principles]] — open, durable, and opt-in — I couldn't help but wonder how geospatial data could fit into this new paradigm.
 
 ---
 
@@ -65,8 +65,8 @@ Our initial research identified seven broad categories of sources of location ev
 - **Authority**: Verified by a trusted person or institution (passport control, event admission).
 - **Social**: Peers mutually verify presence (digital check-ins, vouching).
 - **Near-field machine**: Devices confirm co-presence via Bluetooth, NFC, RFID.
-- **Network machine**: Distributed nodes confirm via triangulation or time-of-flight.
-- **Sensor data**: Photographic, acoustic, inertial, or environmental signals.
+- **Network machine**: Distributed nodes confirm via triangulation or time-of-flight. (A related question: how do we verify if nodes are running in the same physical location? See [[Co-location proofs]].)
+- **Sensor data**: Photographic, acoustic, inertial, or environmental signals. (For satellite imagery specifically, see my notes on [[State of Provenance Verification for Remote Sensing Imagery|provenance verification for remote sensing]].)
 - **Delegated**: Piggybacking on existing trusted systems (bank statements, Uber rides, utility bills).
 - **Legal**: Formal attestations in affidavits, bills of lading, customs documents, contracts etc.
 

@@ -34,26 +34,24 @@ export default async function HomePage() {
     <LayoutShell noteSlugs={notes.map(n => n.slug)}>
       <div className="max-w-2xl mx-auto px-6 py-10">
         <section className="mb-16">
+          <h2 className="text-2xl sm:text-3xl font-normal text-foreground mb-4 animate-fade-in-up text-balance">
+            Research Notebook
+          </h2>
           <p className="text-lg text-foreground leading-relaxed mb-4">
             I'm John. I build systems that connect emerging tech to the people who need to understand it—developers, policymakers, enterprises.
           </p>
-          <p className="text-base text-muted-foreground leading-relaxed mb-4">
-            I co-founded <a href="https://toucan.earth" className="underline hover:text-foreground transition-colors">Toucan Protocol</a>, which ended up handling over $4B in carbon credit trading. At Ordnance Survey I launched the OS Data Hub, opening up the UK's national mapping data under a £1B licensing deal. Now I'm building <a href="https://astral.global" className="underline hover:text-foreground transition-colors">Astral</a> (location verification infrastructure) and doing research at the University of Maryland on proof-of-location systems.
+          <p className="text-lg text-foreground leading-relaxed mb-4">
+            I co-founded <a href="https://toucan.earth" className="underline hover:text-foreground transition-colors">Toucan Protocol</a>, which ended up handling over $4B in carbon credit trading. At Ordnance Survey I helped launch the OS Data Hub, opening up the UK's national mapping data under a £1B licensing deal. Now I'm building <a href="https://astral.global" className="underline hover:text-foreground transition-colors">Astral</a> (decentralized geospatial systems) and doing research at the University of Maryland on proof-of-location systems.
           </p>
-          <p className="text-base text-muted-foreground leading-relaxed mb-4">
-            I've also co-chaired climate tech working groups at the World Economic Forum, built data systems for UN maritime security work, and taught machine learning.
+          <p className="text-lg text-foreground leading-relaxed mb-4">
+            I've also built data systems for UN maritime security work, co-chaired a climate tech working group at the World Economic Forum, and taught smart contract engineering.
           </p>
-          <p className="text-base text-muted-foreground leading-relaxed">
-            Originally from Golden, Colorado. Currently in southeast England with my partner, working on dual citizenship. I spend my free time sailing, bikepacking to places with interesting topography, reading, learning piano, and talking to people different from me. I was a Casa Bonita cliff diver once—peaked early.
+          <p className="text-lg text-foreground leading-relaxed mb-4">
+            Originally from Golden, Colorado, I currently live in southeast England with my partner, working on dual citizenship. I spend my free time sailing, bikepacking to places with interesting topography, reading, learning piano, and talking to people different from me. I was a Casa Bonita cliff diver once—peaked early.
           </p>
-        </section>
 
-        <section className="mb-20">
-          <h2 className="text-2xl sm:text-3xl font-normal text-foreground mb-4 animate-fade-in-up text-balance">
-            Lines of inquiry.
-          </h2>
-          <p className="text-base text-muted-foreground leading-relaxed">
-            Working notes from ongoing projects and questions. These are updated over time; links are stable, conclusions are not.{" "}
+          <p className="text-lg text-foreground leading-relaxed">
+            This website contains working notes from ongoing projects and things I'm thinking about. These are updated over time; links are stable, conclusions are not.{" "}
             <Link href="/about" className="underline hover:text-foreground transition-colors">
               More about this notebook
             </Link>.
