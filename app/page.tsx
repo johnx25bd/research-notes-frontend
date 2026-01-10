@@ -52,7 +52,7 @@ export default async function HomePage() {
             <a href="https://twitter.com/johnx25bd" className="underline hover:text-foreground transition-colors">Twitter</a>
             <a href="https://github.com/johnx25bd" className="underline hover:text-foreground transition-colors">GitHub</a>
             <a href="https://linkedin.com/in/johnx25bd" className="underline hover:text-foreground transition-colors">LinkedIn</a>
-            <a href="mailto:john@x25bd.com" className="underline hover:text-foreground transition-colors">john@x25bd.com</a>
+            <a href="mailto:john@johnx.co" className="underline hover:text-foreground transition-colors">john@johnx.co</a>
           </div>
         </section>
 
