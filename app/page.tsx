@@ -34,8 +34,11 @@ export default async function HomePage() {
     <LayoutShell noteSlugs={notes.map(n => n.slug)}>
       <div className="max-w-2xl mx-auto px-6 py-10">
         <section className="mb-16">
+          <h1 className="text-3xl sm:text-4xl font-normal text-foreground mb-6">
+            Hey, I'm John.
+          </h1>
           <p className="text-lg text-foreground leading-relaxed mb-4">
-            I'm John. I build systems that connect emerging tech to the people who need to understand it—developers, policymakers, enterprises. I love exploring the world—ideally under natural power—and learning about how things connect.{" "}
+            I build systems that connect emerging tech to the people who need to understand it—developers, policymakers, enterprises. I love exploring the world—ideally under natural power—and learning about how things connect.{" "}
             <Link href="/about" className="underline hover:text-foreground transition-colors">
               Read more about me
             </Link>.
