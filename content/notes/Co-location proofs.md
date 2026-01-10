@@ -19,7 +19,7 @@ One question that's come up in conversations with some clients: how can we verif
 
 Co-located nodes are especially exposed to correlated risks — a power cut, natural disaster, or single malicious actor is more likely to impact them together. Given our goal of building systems resilient to the widest imaginable range of risks, there's reason to figure this out. 
 
-So, a question comes up: how can we **verify** whether nodes are co-located? Terraform manifests and legal contracts serve as a form of evidence, but we want to challenge ourselves to go a layer deeper, to work out how to generate evidence sources that aren't based on [[Trust-conscious vs. trustless|naive trust]]. 
+So, a question comes up: how can we **verify** whether nodes are co-located? Terraform manifests and legal contracts serve as a form of evidence, but we want to challenge ourselves to go a layer deeper, to work out how to generate evidence sources that aren't based on [[Trust-conscious vs. trustless|naive trust]]. (This is a specific application of [[Notes on Location Proofs|location proofs]] — verifying location claims about infrastructure.) 
 
 This deserves a deep dive. One idea: outside of data centers, devices can collect signals from across the radiofrequency spectrum — WiFi BSSIDs, Bluetooth identifi
 # Co-location proofs

@@ -28,7 +28,7 @@ Crypto isn’t my home turf. I’ve been working professionally with geospatial 
 - 2019 — MSc in Spatial Data Science and Visualisation at UCL
 - 2021 — a formative spell at Ordnance Survey, the UK’s national mapping agency. 
 
-Ever since I discovered Ethereum in 2017, and came to recognize the importance of [Web3 design principles](https://www.x25bd.com/posts/web3-design-principles) — open, durable, and opt-in — I couldn’t help but wonder how geospatial data could fit into this new paradigm.
+Ever since I discovered Ethereum in 2017, and came to recognize the importance of [[Web3 is a set of design principles|Web3 design principles]] — open, durable, and opt-in — I couldn't help but wonder how geospatial data could fit into this new paradigm.
 
 ---
 
@@ -65,8 +65,8 @@ Our initial research identified seven broad categories of sources of location ev
 - **Authority**: Verified by a trusted person or institution (passport control, event admission).
 - **Social**: Peers mutually verify presence (digital check-ins, vouching).
 - **Near-field machine**: Devices confirm co-presence via Bluetooth, NFC, RFID.
-- **Network machine**: Distributed nodes confirm via triangulation or time-of-flight.
-- **Sensor data**: Photographic, acoustic, inertial, or environmental signals.
+- **Network machine**: Distributed nodes confirm via triangulation or time-of-flight. (A related question: how do we verify if nodes are running in the same physical location? See [[Co-location proofs]].)
+- **Sensor data**: Photographic, acoustic, inertial, or environmental signals. (For satellite imagery specifically, see my notes on [[State of Provenance Verification for Remote Sensing Imagery|provenance verification for remote sensing]].)
 - **Delegated**: Piggybacking on existing trusted systems (bank statements, Uber rides, utility bills).
 - **Legal**: Formal attestations in affidavits, bills of lading, customs documents, contracts etc.
 
@@ -104,7 +104,8 @@ This is why I think of proofs as lying on a **spectrum of certainty**, an idea I
 | 4 | A proof that leverages diverse, high-integrity signals and strong cryptographic measures, making forgery significantly harder. |
 | 5 | A proof designed to resist even nation-state level attacks, using advanced cryptographic protocols and multiple cross-domain endorsements. |
 
-![A generalized multi-signal location proof workflow](Attachments/location-proof.png)
+![[location-proof.png]]
+*A generalized multi-signal location proof workflow*
 
 ### In Practice
 
@@ -174,7 +175,7 @@ Things I’m thinking about these days:
 
 At the [University of Maryland](https://easierdata.org/), we’re cataloging existing verification strategies, developing frameworks for “stacked proofs,” and exploring privacy-preserving designs. This is ongoing, and we’re looking to speak with anyone who verifies location data for their company or use case.
 
-In addition to this current work, through our role leading the Open Geospatial Consortium’s Blockchain and DLT Working Group (Prof Oshan is co-chair), we’re working on the [**Location Protocol](https://easierdata.org/updates/2025/2025-05-19-location-protocol-spec).** It’s a standardized schema for structuring, signing, and transporting location data — and a carrier for location proofs. I think of it as the envelope, not the evidence itself. It ensures verifiability, consistency, portability, and compatibility across systems.
+In addition to this current work, through our role leading the Open Geospatial Consortium’s Blockchain and DLT Working Group (Prof Oshan is co-chair), we're working on the **[Location Protocol](https://easierdata.org/updates/2025/2025-05-19-location-protocol-spec)**. It's a standardized schema for structuring, signing, and transporting location data — and a carrier for location proofs. I think of it as the envelope, not the evidence itself. It ensures verifiability, consistency, portability, and compatibility across systems.
 
 The Location Protocol doesn’t replace commonly-used location data formats like existing formats like GeoJSON, GPX, GeoTIFF, etc. It complements them by wrapping these artifacts in standardized metadata required to interpret them, and by adding digital signatures. This makes location data portable, verifiable, and usable across decentralized and traditional systems alike. The reference implementation of the Location Protocol is built on the [Ethereum Attestation Service](https://attest.org/).
 

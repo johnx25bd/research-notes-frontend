@@ -25,6 +25,6 @@ This idea — that we've learned to effectively outsource value definition and c
 >“School prepares for the alienating institutionalisation of life by teaching the need to be taught. Once this lesson is learned, people lose their incentive to grow in independence; they no longer find relatedness attractive and close themselves off to the surprises life offers when it is not predetermined by institutional definition.”
 >- Ivan Illich, via [Kernel](https://www.kernel.community/en/learn/module-metta/school-sucks)
 
-In any case, this reframing, recognizing how things are a multifaceted and constant process rather than a clean and tidy narrative arc culminating in some peak moment, is at once disorienting and deeply reassuring. There's no end to the richness and intrigue of life, it just keeps coming and coming — there's no "made it", there's no "done". At least not the way I mean to live.
+In any case, this reframing, recognizing how things are a multifaceted and constant process rather than a clean and tidy narrative arc culminating in some peak moment, is at once disorienting and deeply reassuring. (I've been thinking about this through the lens of [[Dukkha]] — the Buddhist concept of an "ill-fitting axle" — and through practices like [[Baking|baking]], where the process itself is the point.) There's no end to the richness and intrigue of life, it just keeps coming and coming — there's no "made it", there's no "done". At least not the way I mean to live.
 
 ![[no-summit-1.png]]
