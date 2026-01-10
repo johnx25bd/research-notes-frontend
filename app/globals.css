@@ -353,13 +353,13 @@
 
 /* Removed with-meridian class - no longer used on any page */
 
-/* Section headers - slightly bigger */
+/* Section headers */
 .section-header {
   font-variant: small-caps;
   letter-spacing: 0.04em;
   text-transform: lowercase;
   color: #6d6a65;
-  font-size: 0.8125rem;
+  font-size: 1.125rem;
 }
 
 /* Note entry with hover accent */
