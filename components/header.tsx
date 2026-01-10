@@ -46,6 +46,8 @@ export function Header() {
             <span className="lg:hidden mr-1.5">
               <GlobalTriangle />
             </span>
+            <span className="text-xs uppercase tracking-[0.2em] font-semibold leading-5">Johnx.co</span>
+            <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground mx-2">/</span>
             <span className="text-xs uppercase tracking-[0.2em] font-semibold leading-5">Research Notes</span>
           </Link>
 
