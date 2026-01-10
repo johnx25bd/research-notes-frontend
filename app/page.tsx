@@ -60,7 +60,7 @@ export default async function HomePage() {
 
         <section className="mb-16">
           <h2
-            className="section-header text-lg tracking-[0.15em] opacity-60 mb-3"
+            className="section-header text-lg tracking-[0.15em] opacity-60"
             style={{ fontFamily: "var(--font-ui)" }}
           >
             Orient
