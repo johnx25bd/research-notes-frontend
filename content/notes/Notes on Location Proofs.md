@@ -104,8 +104,7 @@ This is why I think of proofs as lying on a **spectrum of certainty**, an idea I
 | 4 | A proof that leverages diverse, high-integrity signals and strong cryptographic measures, making forgery significantly harder. |
 | 5 | A proof designed to resist even nation-state level attacks, using advanced cryptographic protocols and multiple cross-domain endorsements. |
 
-![[location-proof.png]]
-*A generalized multi-signal location proof workflow*
+![A generalized multi-signal location proof workflow](Attachments/location-proof.png)
 
 ### In Practice
 
@@ -175,7 +174,7 @@ Things I’m thinking about these days:
 
 At the [University of Maryland](https://easierdata.org/), we’re cataloging existing verification strategies, developing frameworks for “stacked proofs,” and exploring privacy-preserving designs. This is ongoing, and we’re looking to speak with anyone who verifies location data for their company or use case.
 
-In addition to this current work, through our role leading the Open Geospatial Consortium’s Blockchain and DLT Working Group (Prof Oshan is co-chair), we're working on the **[Location Protocol](https://easierdata.org/updates/2025/2025-05-19-location-protocol-spec)**. It's a standardized schema for structuring, signing, and transporting location data — and a carrier for location proofs. I think of it as the envelope, not the evidence itself. It ensures verifiability, consistency, portability, and compatibility across systems.
+In addition to this current work, through our role leading the Open Geospatial Consortium’s Blockchain and DLT Working Group (Prof Oshan is co-chair), we’re working on the [**Location Protocol](https://easierdata.org/updates/2025/2025-05-19-location-protocol-spec).** It’s a standardized schema for structuring, signing, and transporting location data — and a carrier for location proofs. I think of it as the envelope, not the evidence itself. It ensures verifiability, consistency, portability, and compatibility across systems.
 
 The Location Protocol doesn’t replace commonly-used location data formats like existing formats like GeoJSON, GPX, GeoTIFF, etc. It complements them by wrapping these artifacts in standardized metadata required to interpret them, and by adding digital signatures. This makes location data portable, verifiable, and usable across decentralized and traditional systems alike. The reference implementation of the Location Protocol is built on the [Ethereum Attestation Service](https://attest.org/).
 
