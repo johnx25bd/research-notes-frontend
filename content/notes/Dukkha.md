@@ -28,6 +28,6 @@ So the real trick is not to get on top of things, but to accept the feeling of b
 
 I'm reminded here of Joseph Goldstein's lesson on the etymology of the work *[dukkha](https://en.wikipedia.org/wiki/Du%E1%B8%A5kha)* — an "ill-fitting axle". In the metaphor, my perception of life is the axle shaft, and life as it is in the axle housing. If my perception is straining — grasping for what I desire, averting itself from unpleasant things, that is makes for a grinding, noisy, bumpy ride — suffering. That is the axle not fitting well: wishing things were otherwise. 
 
-So yes, it's not so much about changing reality to match my perceptions — we have extremely limited capacity to do that (though I do believe we have some). But there's a much more powerful lever available to us, and that's changing our relationship with reality, accepting it as a process of becoming, and settling smoothly into the axle housing. It's a choice, but one we don't really realize we're making day in and day out. (I've been returning to this theme — see [[No summit]].)   
+So yes, it's not so much about changing reality to match my perceptions — we have extremely limited capacity to do that (though I do believe we have some). But there's a much more powerful lever available to us, and that's changing our relationship with reality, accepting it as a process of becoming, and settling smoothly into the axle housing. It's a choice, but one we don't really realize we're making day in and day out.   
 
 [[Every step is the goal]].

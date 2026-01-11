@@ -14,7 +14,7 @@ title: No summit
 url: https://johnx.co/notes/no-summit
 ---
 
-2026 ... this morning I had a thought, a form of embodied knowledge taking hold. I'm reading quite a lot these days (which I love) — currently I'm working on [[The Penguin History of the World]], [[The Road]], [[Outlive]], [[The Red and The Black]] (as of recently), [[How To Read Water]], and [[The Technological Republic]] ... I recently finished [[Cryptonomicon]] (again), [[The Safekeep]], [[Abundance]], [[The Fountainhead]] ... and I have a lot more I want to read — [[Superintelligence]], [[The Art of Uncertainty]], [[Consider Phlebas]], many many many more. (Suggestions are always welcome.)
+2026 ... this morning I had a thought, a form of embodied knowledge taking hold. I'm reading quite a lot these days (which I love) — currently I'm working on [[The Penguin History of the World]], [[References/The Road|The Road]], [[Outlive]], [[The Red and The Black]] (as of recently), [[How To Read Water]], and [[The Technological Republic]] ... I recently finished [[Cryptonomicon]] (again), [[The Safekeep]], [[Abundance]], [[The Fountainhead]] ... and I have a lot more I want to read — [[Superintelligence]], [[The Art of Uncertainty]], [[Consider Phlebas]], many many many more. (Suggestions are always welcome.)
 
 In the past I've had this subtle and unexamined belief that there'd become a point where I reached the top of some mountain, an intellectual becoming converting into became, and that I'd finally feel confident in my knowledge. It seems to me like this is an incredibly pernicious and toxic belief, perhaps an outcome of an education system that erects these summits and fosters the belief that reaching them — "graduating" — is some "end", and that then one is qualified whereas before one isn't. 
 
@@ -25,6 +25,6 @@ This idea — that we've learned to effectively outsource value definition and c
 >“School prepares for the alienating institutionalisation of life by teaching the need to be taught. Once this lesson is learned, people lose their incentive to grow in independence; they no longer find relatedness attractive and close themselves off to the surprises life offers when it is not predetermined by institutional definition.”
 >- Ivan Illich, via [Kernel](https://www.kernel.community/en/learn/module-metta/school-sucks)
 
-In any case, this reframing, recognizing how things are a multifaceted and constant process rather than a clean and tidy narrative arc culminating in some peak moment, is at once disorienting and deeply reassuring. (I've been thinking about this through the lens of [[Dukkha]] — the Buddhist concept of an "ill-fitting axle" — and through practices like [[Baking|baking]], where the process itself is the point.) There's no end to the richness and intrigue of life, it just keeps coming and coming — there's no "made it", there's no "done". At least not the way I mean to live.
+In any case, this reframing, recognizing how things are a multifaceted and constant process rather than a clean and tidy narrative arc culminating in some peak moment, is at once disorienting and deeply reassuring. There's no end to the richness and intrigue of life, it just keeps coming and coming — there's no "made it", there's no "done". At least not the way I mean to live.
 
 ![[no-summit-1.png]]
