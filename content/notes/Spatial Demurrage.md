@@ -81,7 +81,55 @@ It is worth delving a bit deeper into some of the functionality that could be de
 
 What can we do when we can calculate the `distance` between two points, a buffer around a polygon, whether two lines intersect, and so on? What about network operations like Dijkstra's shortest path algorithm? Or clustering / classification? 
 
-One idea: should a user completely lose access the a local currency system the moment they step across an imaginary line on Earth? Or would it make more sense for the access to decay the further they travelled away? For this we propose spatial demurrage: a tax placed on an account's holdings proportional to the distance from a particular place. Just as traditional demurrage systems (which we can think of as "temporal demurrage") incentivize people to spend their money closer to *now*, a spatial demurrage system would encourage them to spend their money closer to *here*. Applying a decay function to their purchasing power based on geographic location seems to be a more graceful policy than a discrete, binary "in" or "out" condition. There are many places where integrating distance could make for interesting financial protocols — currency swaps could be altered based on the distance between two people, distant purchasers could pay a higher fee for purchasing a particular good or service (like an event ticket); etc. This points toward the innovation we hope to unlock when we release v1 of the Astral Protocol. 
+One idea: should a user completely lose access the a local currency system the moment they step across an imaginary line on Earth? Or would it make more sense for the access to decay the further they travelled away? For this we propose spatial demurrage: a tax placed on an account's holdings proportional to the distance from a particular place. Just as traditional demurrage systems (which we can think of as "temporal demurrage") incentivize people to spend their money closer to *now*, a spatial demurrage system would encourage them to spend their money closer to *here*. Applying a decay function to their purchasing power based on geographic location seems to be a more graceful policy than a discrete, binary "in" or "out" condition. There are many places where integrating distance could make for interesting financial protocols — currency swaps could be altered based on the distance between two people, distant purchasers could pay a higher fee for purchasing a particular good or service (like an event ticket); etc. This points toward the innovation we hope to unlock when we release v1 of the Astral Protocol.
+
+<SpatialDemurrageMap
+  zone={{
+    type: "Feature",
+    properties: { name: "Islington" },
+    geometry: {
+      type: "MultiPolygon",
+      coordinates: [[[
+        [-0.119213, 51.574996], [-0.122345, 51.574912], [-0.126206, 51.574049],
+        [-0.129349, 51.57385], [-0.132656, 51.573169], [-0.136144, 51.571531],
+        [-0.139464, 51.570003], [-0.141562, 51.569264], [-0.142511, 51.568925],
+        [-0.141645, 51.567692], [-0.141176, 51.565698], [-0.140656, 51.564555],
+        [-0.140791, 51.563636], [-0.140597, 51.563067], [-0.140971, 51.561468],
+        [-0.141006, 51.561055], [-0.14098, 51.560354], [-0.140503, 51.559806],
+        [-0.138489, 51.557011], [-0.136991, 51.555292], [-0.135063, 51.554434],
+        [-0.134353, 51.553623], [-0.131815, 51.551969], [-0.130788, 51.55122],
+        [-0.130137, 51.54962], [-0.129322, 51.548972], [-0.127584, 51.548039],
+        [-0.127062, 51.547456], [-0.126628, 51.546107], [-0.125884, 51.543188],
+        [-0.125664, 51.542113], [-0.125067, 51.541194], [-0.124272, 51.539816],
+        [-0.12315, 51.538645], [-0.122581, 51.537621], [-0.122326, 51.536312],
+        [-0.122314, 51.534568], [-0.122538, 51.53111], [-0.12253, 51.530728],
+        [-0.11987, 51.530939], [-0.116507, 51.530097], [-0.115781, 51.529546],
+        [-0.115654, 51.528321], [-0.115278, 51.527598], [-0.113412, 51.526525],
+        [-0.113654, 51.524612], [-0.112537, 51.523796], [-0.111175, 51.523399],
+        [-0.109296, 51.522945], [-0.108576, 51.522462], [-0.106476, 51.521496],
+        [-0.105464, 51.519139], [-0.102058, 51.519577], [-0.099629, 51.520285],
+        [-0.097491, 51.521605], [-0.097614, 51.522484], [-0.096444, 51.522823],
+        [-0.094597, 51.522315], [-0.093567, 51.521497], [-0.092354, 51.521035],
+        [-0.089674, 51.520718], [-0.0862, 51.518811], [-0.08488, 51.520995],
+        [-0.084289, 51.523603], [-0.085005, 51.525207], [-0.086769, 51.525791],
+        [-0.088458, 51.527241], [-0.095376, 51.5292], [-0.095499, 51.530788],
+        [-0.097007, 51.532984], [-0.095019, 51.533636], [-0.092522, 51.53467],
+        [-0.089692, 51.535995], [-0.087059, 51.537222], [-0.086378, 51.537734],
+        [-0.085468, 51.540378], [-0.083603, 51.545226], [-0.079693, 51.546351],
+        [-0.076351, 51.546354], [-0.076609, 51.547936], [-0.077692, 51.549422],
+        [-0.078776, 51.551065], [-0.079937, 51.551871], [-0.084486, 51.552047],
+        [-0.086483, 51.552575], [-0.088558, 51.553945], [-0.090011, 51.554141],
+        [-0.090294, 51.556695], [-0.091021, 51.559264], [-0.092742, 51.56044],
+        [-0.094799, 51.560967], [-0.099453, 51.561487], [-0.101489, 51.562796],
+        [-0.104482, 51.564709], [-0.107304, 51.566334], [-0.108789, 51.567509],
+        [-0.111595, 51.569056], [-0.115117, 51.571413], [-0.116102, 51.572193],
+        [-0.117559, 51.574151], [-0.119213, 51.574996]
+      ]]]
+    }
+  }}
+  showControls={true}
+  caption="A local currency for Islington, UK. Spatial demurrage applies a fee proportionate to the distance a transaction sender is from the borough. Hover over the map to see exchange rates at different locations."
+/>
 
 Humans strive for knowledge. For whatever reason, we tend to push towards understanding our world more deeply. Science provides a framework for drawing robust, defensible conclusions about the nature of reality, and technology leverages our grasp of those patterns. I believe firmly that major discoveries are yet to be made about how we relate to each other, mainly in the realm of meaning — the informational domain. I'm hoping the tools we're building at [Astral](https://astral.global/) help us find new, healthy ways to relate and support one another.
 
