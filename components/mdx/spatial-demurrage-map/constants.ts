@@ -4,9 +4,9 @@ import type { Feature, MultiPolygon } from 'geojson';
 /** Free CartoDB Positron tiles - no API key required */
 export const DEFAULT_MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 
-export const DEFAULT_ZOOM = 13;
+export const DEFAULT_ZOOM = 11.5;
 export const DEFAULT_HEIGHT = 450;
-export const DEFAULT_MAX_BUFFER_DISTANCE = 0.5; // km - 500m for neighborhood scale
+export const DEFAULT_MAX_BUFFER_DISTANCE = 2; // km - fits zoomed out view with buffer rings visible
 export const DEFAULT_BUFFER_RINGS = 8;
 export const DEFAULT_BASE_RATE = 1.0;
 export const DEFAULT_OUTER_RATE = 0.2;
