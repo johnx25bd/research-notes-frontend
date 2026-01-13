@@ -3,10 +3,11 @@ import type { Metadata } from "next"
 import { LayoutShell } from "@/components/layout-shell"
 import { StatusBadge } from "@/components/status-badge"
 import { NoteContentInteractive } from "@/components/note-content-interactive"
+import { NoteContentMDX } from "@/components/note-content-mdx"
 import { NoteConnections } from "@/components/note-connections"
 import { TagChip } from "@/components/tag-chip"
 import { getAllNotes, getNoteBySlug } from "@/lib/vault"
-import { processMarkdown } from "@/lib/markdown"
+import { processMarkdown, containsMDX } from "@/lib/markdown"
 import { computeBacklinks } from "@/lib/backlinks"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://johnx.co'
@@ -61,11 +62,13 @@ export default async function NotePage({ params }: NotePageProps) {
   // Get all notes for backlinks and related notes
   const allNotes = await getAllNotes()
 
-  // Process markdown to HTML
-  const html = await processMarkdown(
-    note.content,
-    allNotes.map(n => n.slug)
-  )
+  // Detect if content contains MDX (React components)
+  const isMDX = containsMDX(note.content)
+
+  // Process markdown to HTML (only needed for non-MDX content)
+  const html = isMDX
+    ? ''
+    : await processMarkdown(note.content, allNotes.map(n => n.slug))
 
   // Compute backlinks
   const backlinksMap = computeBacklinks(allNotes)
@@ -109,7 +112,12 @@ export default async function NotePage({ params }: NotePageProps) {
 
           {/* Main content */}
           <div className="prose text-foreground">
-            <NoteContentInteractive html={html} allNotes={allNotes} />
+            {isMDX ? (
+              /* @ts-expect-error - Async Server Component pattern */
+              <NoteContentMDX source={note.content} />
+            ) : (
+              <NoteContentInteractive html={html} allNotes={allNotes} />
+            )}
           </div>
 
           <NoteConnections
