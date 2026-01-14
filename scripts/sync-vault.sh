@@ -3,14 +3,28 @@
 
 VAULT_PATH="/Users/x25bd/Projects/obsidian/research-notes"
 CONTENT_DIR="./content"
+SYNCIGNORE_FILE="$VAULT_PATH/.syncignore"
 
 echo "🔄 Syncing notes from Obsidian vault..."
 
 # Create content directory if it doesn't exist
 mkdir -p "$CONTENT_DIR"
 
-# Sync notes
-rsync -av --delete "$VAULT_PATH/notes/" "$CONTENT_DIR/notes/"
+# Build rsync exclude arguments from .syncignore
+EXCLUDE_ARGS=""
+if [ -f "$SYNCIGNORE_FILE" ]; then
+  echo "  📋 Reading .syncignore..."
+  while IFS= read -r line || [ -n "$line" ]; do
+    # Skip empty lines and comments
+    [[ -z "$line" || "$line" =~ ^# ]] && continue
+    # Add as rsync exclude pattern (with .md extension)
+    EXCLUDE_ARGS="$EXCLUDE_ARGS --exclude=${line}.md"
+    echo "    → Excluding: ${line}.md"
+  done < "$SYNCIGNORE_FILE"
+fi
+
+# Sync notes (respecting .syncignore)
+rsync -av --delete $EXCLUDE_ARGS "$VAULT_PATH/notes/" "$CONTENT_DIR/notes/"
 
 # Sync attachments to public/ for Next.js static serving
 # Check multiple possible Obsidian attachment folder names
