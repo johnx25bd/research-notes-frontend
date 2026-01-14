@@ -28,7 +28,7 @@ export function ExchangeRateTooltip({
       }}
     >
       <div className="font-medium">
-        Exchange Rate:{' '}
+        Fee Rate:{' '}
         <span className={isAtPar ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}>
           {rate.toFixed(3)}
         </span>
