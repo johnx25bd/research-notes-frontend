@@ -22,7 +22,7 @@ import {
   DEFAULT_DECAY_FUNCTION,
   ZONE_COLOR,
 } from './constants';
-import type { SpatialDemurrageMapProps, MapParams, HoverInfo } from './types';
+import type { MapContainerProps, MapParams, HoverInfo } from './types';
 
 export function MapContainer({
   zone,
@@ -36,7 +36,7 @@ export function MapContainer({
   showControls = false,
   mapStyle = DEFAULT_MAP_STYLE,
   caption,
-}: SpatialDemurrageMapProps) {
+}: MapContainerProps) {
   const mapRef = useRef<MapRef>(null);
 
   // State for interactive parameters
