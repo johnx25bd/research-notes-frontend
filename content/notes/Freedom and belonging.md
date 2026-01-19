@@ -3,13 +3,15 @@ created: 2026-01-14
 featured: false
 featured_order: null
 published: true
-published_at: null
+published_at: '2026-01-14'
+research_note: obsidian://open?vault=research-notes&file=notes/Freedom%20and%20belonging
 source_note: obsidian://open?vault=xo&file=Notes/Freedom%20and%20belonging
 status: fragment
 summary: Freedom isn't having choices — it's choosing
 tags:
 - reflection
 title: Freedom and belonging
+url: https://johnx.co/notes/freedom-and-belonging
 ---
 
 For a long time I have known (though maybe not understood) that [[Freedom isn't having choices — it's choosing]]. By committing, by *exercising* choice and exerting agency over a situation, one flexes ones agency and manifests the value of having choices to begin with. 
