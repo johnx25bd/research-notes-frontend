@@ -23,7 +23,7 @@ Write and edit your notes in Obsidian as usual. The vault is located at:
 
 From the frontend repo:
 ```bash
-cd /Users/x25bd/Code/johnx/front
+cd /Users/x25bd/code/johnx/front
 ./scripts/sync-vault.sh
 ```
 
