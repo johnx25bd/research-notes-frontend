@@ -4,7 +4,7 @@ Simple workflow for publishing notes to your digital garden.
 
 ## Overview
 
-1. **Write** notes in Obsidian (`/Users/x25bd/Projects/obsidian/research-notes`)
+1. **Write** notes in Obsidian (`/Users/x25bd/notes/research-notes`)
 2. **Sync** notes to frontend repo with `./scripts/sync-vault.sh`
 3. **Review** changes with `git status`
 4. **Commit** with a meaningful message
@@ -16,14 +16,14 @@ Simple workflow for publishing notes to your digital garden.
 
 Write and edit your notes in Obsidian as usual. The vault is located at:
 ```
-/Users/x25bd/Projects/obsidian/research-notes
+/Users/x25bd/notes/research-notes
 ```
 
 ### Step 2: Sync to Frontend
 
 From the frontend repo:
 ```bash
-cd /Users/x25bd/Code/johnx/front
+cd /Users/x25bd/code/johnx/front
 ./scripts/sync-vault.sh
 ```
 

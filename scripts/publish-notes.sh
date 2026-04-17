@@ -14,7 +14,7 @@
 set -e
 
 # Configuration
-REPO_DIR="/Users/x25bd/Code/johnx/front"
+REPO_DIR="/Users/x25bd/code/johnx/front"
 BRANCH_PREFIX="content/publish"
 
 cd "$REPO_DIR"

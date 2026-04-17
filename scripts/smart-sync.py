@@ -19,8 +19,8 @@ from datetime import datetime
 from typing import List, Dict, Any, Optional, Tuple, Set
 
 # Two-vault architecture paths
-XO_VAULT_PATH = Path("/Users/x25bd/Projects/obsidian/xo")
-RESEARCH_NOTES_VAULT_PATH = Path("/Users/x25bd/Projects/obsidian/research-notes")
+XO_VAULT_PATH = Path("/Users/x25bd/notes/xo")
+RESEARCH_NOTES_VAULT_PATH = Path("/Users/x25bd/notes/research-notes")
 TO_PUBLISH_TAG = "to-publish"
 
 
@@ -439,7 +439,7 @@ def sync_note(source_path: Path, created_stubs: Set[str], update_source: bool = 
 
         # Add published metadata (overwrite null or missing)
         research_frontmatter['published'] = True
-        if 'published_at' not in research_frontmatter:
+        if research_frontmatter.get('published_at') is None:
             research_frontmatter['published_at'] = datetime.now().strftime('%Y-%m-%d')
 
         # Add source_note obsidian:// URI for all notes
