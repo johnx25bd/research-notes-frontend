@@ -6,6 +6,12 @@ interface NoteContentMDXProps {
 }
 
 export async function NoteContentMDX({ source }: NoteContentMDXProps) {
-  // @ts-expect-error - Async Server Component pattern, types lag behind React 19
-  return <MDXRemote source={source} components={mdxComponents} />;
+  return (
+    // @ts-expect-error - Async Server Component pattern, types lag behind React 19
+    <MDXRemote
+      source={source}
+      components={mdxComponents}
+      options={{ blockJS: false }}
+    />
+  );
 }
