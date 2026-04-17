@@ -19,8 +19,8 @@ from datetime import datetime
 from typing import List, Dict, Any, Optional, Tuple, Set
 
 # Two-vault architecture paths
-XO_VAULT_PATH = Path("/Users/x25bd/Projects/obsidian/xo")
-RESEARCH_NOTES_VAULT_PATH = Path("/Users/x25bd/Projects/obsidian/research-notes")
+XO_VAULT_PATH = Path("/Users/x25bd/notes/xo")
+RESEARCH_NOTES_VAULT_PATH = Path("/Users/x25bd/notes/research-notes")
 TO_PUBLISH_TAG = "to-publish"
 
 

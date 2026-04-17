@@ -1,7 +1,7 @@
 #!/bin/bash
 # Syncs notes from Obsidian vault to frontend repo
 
-VAULT_PATH="/Users/x25bd/Projects/obsidian/research-notes"
+VAULT_PATH="/Users/x25bd/notes/research-notes"
 CONTENT_DIR="./content"
 
 echo "🔄 Syncing notes from Obsidian vault..."

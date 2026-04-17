@@ -129,7 +129,7 @@ gh auth login
 ```
 
 **Notes aren't syncing**
-- Verify vault path: `/Users/x25bd/Projects/obsidian/research-notes`
+- Verify vault paths: xo at `/Users/x25bd/notes/xo`, research-notes at `/Users/x25bd/notes/research-notes`
 - Check file permissions
 - Try running `python3 scripts/smart-sync.py` manually to see errors
 
