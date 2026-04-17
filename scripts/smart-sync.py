@@ -439,7 +439,7 @@ def sync_note(source_path: Path, created_stubs: Set[str], update_source: bool = 
 
         # Add published metadata (overwrite null or missing)
         research_frontmatter['published'] = True
-        if 'published_at' not in research_frontmatter:
+        if research_frontmatter.get('published_at') is None:
             research_frontmatter['published_at'] = datetime.now().strftime('%Y-%m-%d')
 
         # Add source_note obsidian:// URI for all notes
