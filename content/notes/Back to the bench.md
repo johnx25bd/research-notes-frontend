@@ -1,7 +1,7 @@
 ---
 created: 2026-04-17
-featured: false
-featured_order: null
+featured: true
+featured_order: 2
 published: true
 published_at: 2026-04-17
 source_note: obsidian://open?vault=xo&file=Notes/Back%20to%20the%20bench
