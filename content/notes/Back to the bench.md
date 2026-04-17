@@ -14,10 +14,10 @@ Like any technologist with an internet connection, I'm feeling the magnitude of 
 
 Claude read my past writing in moments, called up the key relevant thinkers in the literature (many of whom I'm familiar with, and many more who I've never encountered), and most importantly both articulated what I've been thinking accurately and concisely, and helped me uncover new insights, form new connections, and identify actionable paths forward to develop and deliver these ideas.
 
-We're hitting the elbow of the exponential, and I'm feeling mixed emotions, equal parts awe and angst about it. The fact that I've been reading both [Superintelligence](../References/Superintelligence.md) and [The Fall of Hyperion](../References/The%20Fall%20of%20Hyperion.md) -- concurrently -- is a big contributing factor, as is the closed release of Mythos last week, even if one holds a reasonable sense of skepticism about some of the claims and the significance of the capabilities.
+We're hitting the elbow of the exponential, and I'm feeling mixed emotions, equal parts awe and angst about it. The fact that I've been reading both [[Superintelligence]] and *The Fall of Hyperion* -- concurrently -- is a big contributing factor, as is the closed release of Mythos last week, even if one holds a reasonable sense of skepticism about some of the claims and the significance of the capabilities.
 
 
-![](../Attachments/Pasted%20image%2020260417093951.png)
+![[Pasted image 20260417093951.png]]
 *(A diagram from Chapter 4 of SuperIntelligence: Paths, Dangers, Strategies by Nick Bostrom, 2014. It feels like we're in "crossover" territory.*
 
 I've been a bit quiet on my research notes for a while. This is mostly because I've been focused on personal things -- most notably welcoming a new family member. I've also been getting [Astral](https://docs.astral.global) into a stable position, and thinking about the future of the research (more on this very soon). 
