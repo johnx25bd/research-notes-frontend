@@ -3,12 +3,14 @@ created: 2026-04-17
 featured: true
 featured_order: 2
 published: true
-published_at: 2026-04-17
+published_at: '2026-04-17'
+research_note: obsidian://open?vault=research-notes&file=notes/Back%20to%20the%20bench
 source_note: obsidian://open?vault=xo&file=Notes/Back%20to%20the%20bench
 status: fragment
 summary: On mixed emotions and being the second mouse.
 tags: []
 title: Back to the bench
+url: https://johnx.co/notes/back-to-the-bench
 ---
 Like any technologist with an internet connection, I'm feeling the magnitude of the moment, day in and day out. It's a single data point, but yesterday's release of Opus 4.7 appeared to continue the trendline. I did an informal personal eval on the model -- which involves talking to it about some philosophical and technological questions I've been thinking through for the past decade+ -- and was impressed by the sense that I was having a conversation with a very intelligent counterpart. 
 
@@ -17,7 +19,7 @@ Claude read my past writing in moments, called up the key relevant thinkers in t
 We're hitting the elbow of the exponential, and I'm feeling mixed emotions, equal parts awe and angst about it. The fact that I've been reading both [[Superintelligence]] and *The Fall of Hyperion* -- concurrently -- is a big contributing factor, as is the closed release of Mythos last week, even if one holds a reasonable sense of skepticism about some of the claims and the significance of the capabilities.
 
 
-![[Pasted image 20260417093951.png]]
+![[back-to-the-bench-1.png]]
 *(A diagram from Chapter 4 of SuperIntelligence: Paths, Dangers, Strategies by Nick Bostrom, 2014. It feels like we're in "crossover" territory.*
 
 I've been a bit quiet on my research notes for a while. This is mostly because I've been focused on personal things -- most notably welcoming a new family member. I've also been getting [Astral](https://docs.astral.global) into a stable position, and thinking about the future of the research (more on this very soon). 
