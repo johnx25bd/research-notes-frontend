@@ -1,5 +1,4 @@
 import type { Metadata } from "next"
-import { Mail } from "lucide-react"
 import { LayoutShell } from "@/components/layout-shell"
 
 export const metadata: Metadata = {
@@ -20,6 +19,11 @@ const services = [
     title: "AI strategy",
     summary:
       "Where AI genuinely earns its place in your product or operations, and where it doesn't. A clear, honest view of what to build, in what order, and why.",
+  },
+  {
+    title: "Education and sensemaking",
+    summary:
+      "I help you and your team build a clear picture of what's actually happening in AI and why it matters for your work, so you can decide from understanding rather than from pressure.",
   },
   {
     title: "Agentic system design",
@@ -61,6 +65,10 @@ const shapes = [
   },
 ]
 
+// .section-header sets font-size: 1.35rem unlayered, which beats the text-xs
+// utility; force the eyebrow size inline so the labels stay small.
+const capStyle = { fontFamily: "var(--font-ui)", fontSize: "0.75rem" } as const
+
 export default function ServicesPage() {
   return (
     <LayoutShell>
@@ -83,7 +91,7 @@ export default function ServicesPage() {
         </section>
 
         <section className="mb-16">
-          <h2 className="section-header text-xs mb-4" style={{ fontFamily: "var(--font-ui)" }}>
+          <h2 className="section-header text-xs mb-4" style={capStyle}>
             What I do
           </h2>
           <div className="space-y-0">
@@ -97,7 +105,7 @@ export default function ServicesPage() {
         </section>
 
         <section className="mb-16">
-          <h2 className="section-header text-xs mb-4" style={{ fontFamily: "var(--font-ui)" }}>
+          <h2 className="section-header text-xs mb-4" style={capStyle}>
             How we'd work together
           </h2>
           <div className="space-y-0">
@@ -122,7 +130,7 @@ export default function ServicesPage() {
         </section>
 
         <section className="mb-16">
-          <h2 className="section-header text-xs mb-4" style={{ fontFamily: "var(--font-ui)" }}>
+          <h2 className="section-header text-xs mb-4" style={capStyle}>
             About
           </h2>
           <p className="text-lg text-foreground leading-relaxed mb-4">
@@ -138,7 +146,7 @@ export default function ServicesPage() {
         </section>
 
         <section className="mb-16">
-          <h2 className="section-header text-xs mb-4" style={{ fontFamily: "var(--font-ui)" }}>
+          <h2 className="section-header text-xs mb-4" style={capStyle}>
             Get in touch
           </h2>
           <p className="text-lg text-foreground leading-relaxed mb-6">
@@ -148,10 +156,8 @@ export default function ServicesPage() {
           </p>
           <a
             href="mailto:john@johnx.co?subject=Working%20together"
-            className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 transition-colors"
-            style={{ fontFamily: "var(--font-ui)" }}
+            className="text-lg underline underline-offset-2 hover:text-primary transition-colors"
           >
-            <Mail className="h-4 w-4" strokeWidth={1.5} />
             john@johnx.co
           </a>
         </section>
