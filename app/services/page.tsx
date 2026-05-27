@@ -4,7 +4,7 @@ import { LayoutShell } from "@/components/layout-shell"
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "AI strategy, education, agentic system design, and prototyping for teams building with AI—with deep roots in geospatial and location intelligence.",
+    "AI strategy, education, agentic system design, and prototyping for teams building with AI -- with deep roots in geospatial and location intelligence.",
   openGraph: {
     type: "website",
     title: "Working with me",
@@ -28,17 +28,17 @@ const services = [
   {
     title: "Agentic system design",
     summary:
-      "Architecture for systems that use language models to reason, plan, and act—tool use, retrieval, evaluation, and the guardrails that keep them reliable.",
+      "Architecture for systems that use language models to reason, plan, and act -- tool use, retrieval, evaluation, and the guardrails that keep them reliable.",
   },
   {
     title: "Rapid prototyping",
     summary:
-      "Working prototypes, quickly—so you can put something real in front of users or investors instead of arguing about a slide.",
+      "Working prototypes, quickly -- so you can put something real in front of users or investors instead of arguing about a slide.",
   },
   {
     title: "Technical due diligence",
     summary:
-      "An assessment of the technical substance of a product, team, or codebase—for founders sharpening their own thinking, or investors who need a second opinion.",
+      "An assessment of the technical substance of a product, team, or codebase -- for founders sharpening their own thinking, or investors who need a second opinion.",
   },
   {
     title: "Fractional technical leadership",
@@ -51,17 +51,17 @@ const shapes = [
   {
     title: "Discovery engagement",
     meta: "one to two weeks · fixed fee · mostly asynchronous",
-    body: "A written diagnosis and a roadmap—what the real problem is, what's feasible, what to build first, and what to ignore for now. Concrete enough to act on or hand to a developer. The natural first step when you know AI should help but aren't yet sure how.",
+    body: "A written diagnosis and a roadmap -- what the real problem is, what's feasible, what to build first, and what to ignore for now. Concrete enough to act on or hand to a developer. The natural first step when you know AI should help but aren't yet sure how.",
   },
   {
     title: "Fractional",
     meta: "one to two days a week · billed monthly · three-month minimum",
-    body: "Ongoing senior technical judgment—architecture decisions, code and design review, prototyping, hiring input, and acting as the AI lead in the room. The deliverable is momentum and good decisions, not a single artifact. For when you have real work in flight and need someone senior shaping it every week, but a full-time hire is premature.",
+    body: "Ongoing senior technical judgment -- architecture decisions, code and design review, prototyping, hiring input, and acting as the AI lead in the room. The deliverable is momentum and good decisions, not a single artifact. For when you have real work in flight and need someone senior shaping it every week, but a full-time hire is premature.",
   },
   {
     title: "Project, fixed fee",
     meta: "scoped outcome · milestones · price agreed up front",
-    body: "The thing itself—a working prototype, a production integration, a due-diligence report—built to an agreed specification. For when the problem is well enough understood, often after a discovery engagement, that we can name the outcome and fix the price.",
+    body: "The thing itself -- a working prototype, a production integration, a due-diligence report -- built to an agreed specification. For when the problem is well enough understood, often after a discovery engagement, that we can name the outcome and fix the price.",
   },
 ]
 
@@ -78,13 +78,13 @@ export default function ServicesPage() {
             Working with me
           </h1>
           <p className="text-lg text-foreground leading-relaxed mb-4">
-            I work with teams building with AI and agentic systems—from early-stage startups to
-            established organizations—who have a real problem and a sense that these tools should be
-            part of the answer, but who don't yet have the in-house depth to design the system,
+            I work with teams building with AI and agentic systems -- from early-stage startups to
+            established organizations -- who have a real problem and a sense that these tools should
+            be part of the answer, but who don't yet have the in-house depth to design the system,
             judge the trade-offs, or build the first version.
           </p>
           <p className="text-lg text-foreground leading-relaxed">
-            I'm most useful when the stakes are technical and the path is still uncertain—when you
+            I'm most useful when the stakes are technical and the path is still uncertain -- when you
             need someone who has built these systems to tell you honestly what's feasible, what's
             hype, and what the smallest valuable first step looks like.
           </p>
@@ -124,8 +124,8 @@ export default function ServicesPage() {
           </div>
           <p className="text-base text-muted-foreground leading-relaxed mt-6">
             These aren't rigid, and they aren't priced off a menu. We almost always start with a
-            short call to work out which one—if any—actually fits, and what a fair scope and price
-            look like for your problem.
+            short call to work out which one -- if any -- actually fits, and what a fair scope and
+            price look like for your problem.
           </p>
         </section>
 
@@ -140,10 +140,9 @@ export default function ServicesPage() {
             of Geography.
           </p>
           <p className="text-lg text-foreground leading-relaxed">
-            Geospatial and location intelligence are where I go deepest—the problems there are hard,
-            and they've taught me how to build systems that hold up. But the work travels. The
-            questions I help with—where AI earns its place, how to keep it reliable, what to build
-            first—are the same in any domain.
+            Geospatial and location intelligence are my specialism, not a limit. The work itself --
+            finding where AI fits, making it reliable, building the first version -- applies well
+            beyond them.
           </p>
         </section>
 
@@ -153,7 +152,7 @@ export default function ServicesPage() {
           </h2>
           <p className="text-lg text-foreground leading-relaxed mb-6">
             If any of this sounds like your problem, I'd like to hear about it. The right starting
-            point is almost always a short conversation—tell me what you're working on and where
+            point is almost always a short conversation -- tell me what you're working on and where
             you're stuck.
           </p>
           <a
