@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Building with agents</title>
+
+        <base href="/presentations/ai-agents/" />
+
+        <link rel="stylesheet" href="lib/reveal/reset.css" />
+        <link rel="stylesheet" href="lib/reveal/reveal.css" />
+        <link rel="stylesheet" href="lib/reveal/theme-highlight/zenburn.css" />
+        <link rel="stylesheet" href="theme/johnx.css?v=8" />
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="deck-footer">johnx.co · ai agents · session 1</div>
+            <div class="slides">
+                <!-- ============================================================
+       COVER
+       ============================================================ -->
+                <section class="cover no-meridian">
+                    <p class="eyebrow">ai agents working group · session 1</p>
+                    <h1>Building with agents.</h1>
+                    <p class="lede" style="margin-top: 0.2em">
+                        How they actually work.
+                    </p>
+                    <p
+                        class="muted"
+                        style="
+                            margin-top: 2em;
+                            font-family: var(--font-display);
+                            font-style: italic;
+                        "
+                    >
+                        John Hoopes&nbsp;&nbsp;·&nbsp;&nbsp;Sophia Systems<br />
+                        27 May 2026
+                    </p>
+                    <aside class="notes">
+                        <ul>
+                            <li>Longtime Geovation member</li>
+                            <li>Serial founder, researcher · ex–Ordnance Survey · now Sophia Systems (independent consultancy)</li>
+                            <li>Geospatial + emerging tech — arms control, climate; recently UMD (verifiable geospatial systems)</li>
+                            <li>Building with AI a few years; ~1.5 on agentic engineering — new to this too</li>
+                            <li>Community of practice — no experts here; invite challenges &amp; questions throughout</li>
+                            <li>Today: anatomy of an agent → live-built demo</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- ============================================================
+       BLOCK A — ANATOMY OF AN AGENT
+       ============================================================ -->
+                <section class="section-divider">
+                    <p class="index">01 — anatomy</p>
+                    <h1>The anatomy of an agent.</h1>
+                    <p
+                        class="muted"
+                        style="margin-top: 0.4em; font-size: 1.05em"
+                    >
+                        A high-level mental model common to almost every AI
+                        agent.
+                    </p>
+                    <ul style="margin-top: 1em; font-size: 1.15em">
+                        <li style="font-weight: 500">Model</li>
+                        <li style="font-weight: 500">Harness</li>
+                        <li style="font-weight: 500">Prompts</li>
+                        <li style="font-weight: 500">Tools</li>
+                    </ul>
+                    <aside class="notes">
+                        <ul>
+                            <li>Goal: a shared vocabulary that cuts across products &amp; implementations</li>
+                            <li>A step toward a community of practice — learn, reason, interrogate together</li>
+                            <li>~10 min · preview the four, then each in turn · harness-agnostic</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <section>
+                    <p class="eyebrow">the vocabulary</p>
+                    <h2 style="font-size: 2em">Every step is the goal.</h2>
+                    <p
+                        style="
+                            font-size: 1em;
+                            line-height: 1.9;
+                            color: var(--muted-foreground);
+                            max-width: 46ch;
+                            margin-top: 0.5em;
+                        "
+                    >
+                        <span>models ·</span>
+                        <span>agents ·</span>
+                        <span>transformers ·</span>
+                        <span>embeddings ·</span>
+                        <span>MCP ·</span>
+                        <span>RAG ·</span>
+                        <span>harnesses ·</span>
+                        <span>scaffolds ·</span>
+                        <span>tools ·</span>
+                        <span>prompts ·</span>
+                        <span>context engineering ·</span>
+                        <span>function calling ·</span>
+                        <span>evals ·</span>
+                        <span>fine-tuning</span>
+                    </p>
+                    <p
+                        style="
+                            font-family: var(--font-display);
+                            font-style: italic;
+                            font-size: 1.4em;
+                            margin-top: 0.7em;
+                        "
+                    >
+                        The landscape is still shifting.
+                    </p>
+                    <aside class="notes">
+                        <ul>
+                            <li>Open: "every step is the goal"</li>
+                            <li>Click the jargon in — lots of words, a handful of ideas</li>
+                            <li>Agentic engineering: emerging, still immature, maturing fast</li>
+                            <li>Driven by new patterns/tools + model advances</li>
+                            <li>Changing how products get built — and how we upskill</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- The agent-loop diagram now lives on "The agent loop" slide, re-skinned to
+       the system palette (media/agent-loop.svg). This slot intentionally empty. -->
+
+                <section>
+                    <p class="eyebrow">anatomy</p>
+                    <h2>Model</h2>
+                    <p class="lede definition">
+                        A mathematical function trained on data to make
+                        predictions or generate outputs from a prompt.
+                    </p>
+                    <div style="margin-top: 1.3em">
+                        <p class="small muted" style="margin: 0">
+                            Two modes:
+                        </p>
+                        <ul class="small muted" style="margin-top: 0.3em">
+                            <li>
+                                <strong>training</strong> — learning from vast
+                                amounts of text
+                            </li>
+                            <li>
+                                <strong>inference</strong> — generating a
+                                response
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pill-row" style="margin-top: 1.3em">
+                        <span class="pill no-dot">Claude</span>
+                        <span class="pill no-dot">GPT</span>
+                        <span class="pill no-dot">Gemini</span>
+                        <span class="pill no-dot">Llama</span>
+                        <span class="pill no-dot">Mistral</span>
+                        <span class="pill no-dot">DeepSeek</span>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>This is an LLM — trained on lots of text; generating = "inference"</li>
+                            <li>Precisely: its parameters (weights) are learned during training to predict the most likely next token</li>
+                            <li>Runs locally or (usually) behind an API — Anthropic, OpenAI…</li>
+                            <li>Not deep today: transformers, quality/speed/cost, open weights → future session</li>
+                            <li>"Claude" = family; the model is the version (Opus 4.x, Haiku)</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <section>
+                    <p class="eyebrow">anatomy</p>
+                    <h2>Harness</h2>
+                    <p class="lede definition">
+                        The software system that wraps around a raw AI model,
+                        giving it tools, an execution environment, feedback
+                        loops, and guardrails.
+                    </p>
+                    <div class="flowline" style="margin-top: 1.3em">
+                        <span class="node">chatbot</span><span class="sep">→</span>
+                        <span class="node">copilot</span><span class="sep">→</span>
+                        <span class="node">narrow agent</span><span class="sep">→</span>
+                        <span class="node">general agentic</span>
+                    </div>
+                    <p class="fine" style="font-style: italic; margin-top: 0.6em">
+                        more autonomy, capability, and security risk →
+                    </p>
+                    <div class="pill-row" style="margin-top: 1.2em">
+                        <span class="pill no-dot">Claude Code</span>
+                        <span class="pill no-dot">Cursor</span>
+                        <span class="pill no-dot">Windsurf</span>
+                        <span class="pill no-dot">ChatGPT</span>
+                        <span class="pill no-dot">Claude.ai</span>
+                        <span class="pill no-dot">Devin</span>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>Same model + different harness = very different behaviour</li>
+                            <li>Impressive agent? ask what harness it runs</li>
+                            <li>Both UI and CLI harnesses are on the slide</li>
+                            <li>Spectrum: chatbot → copilot → narrow agent → general agentic</li>
+                            <li>Capability ↔ security tradeoff runs along it</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <section>
+                    <p class="eyebrow">anatomy</p>
+                    <h2>Prompts</h2>
+                    <p class="lede definition">
+                        The input to a model, from which it generates a response.
+                    </p>
+                    <ul style="font-size: 1em; margin-top: 1.1em">
+                        <li>
+                            <span style="font-weight: 500">User prompt</span> —
+                            what you type.
+                        </li>
+                        <li>
+                            <span style="font-weight: 500">System prompt</span>
+                            — set by the harness, usually hidden from you.
+                        </li>
+                    </ul>
+                    <div class="flowline" style="margin-top: 1.4em">
+                        <span class="node">text</span><span class="sep">→</span>
+                        <span class="node">tokens</span><span class="sep">→</span>
+                        <span class="node">embeddings</span><span class="sep">→</span>
+                        <span class="node">neural network</span><span class="sep">→</span>
+                        <span class="node">next token</span><span class="sep">↻</span>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>Pipeline (below): text → tokens → embeddings → neural network → next-token (repeat)</li>
+                            <li>Transformer = the neural-network architecture that weighs which earlier tokens matter most (attention) to predict the next</li>
+                            <li>Transformers in depth: a future session</li>
+                            <li>System prompt = invisible work; user prompt = your control</li>
+                            <li>Iterate on the prompt — beats one-shotting it</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <section>
+                    <p class="eyebrow">anatomy</p>
+                    <h2>Tools</h2>
+                    <p class="lede definition">
+                        A function the model can call to fetch information or
+                        take an action beyond writing text.
+                    </p>
+                    <div class="pill-row" style="margin-top: 1.4em">
+                        <span class="pill no-dot">read / write a file</span>
+                        <span class="pill no-dot">search the web</span>
+                        <span class="pill no-dot">run a command</span>
+                        <span class="pill no-dot">query a database</span>
+                        <span class="pill no-dot">call an API</span>
+                        <span class="pill no-dot">send an email</span>
+                        <span class="pill no-dot">control a browser</span>
+                    </div>
+                    <p
+                        class="small muted"
+                        style="margin-top: 1.4em; line-height: 1.7"
+                    >
+                        <strong>MCP</strong> — a standard way to connect tools
+                        to a model.<br /><strong>RAG</strong> — a tool that
+                        searches documents and feeds back what's relevant.
+                    </p>
+                    <aside class="notes">
+                        <ul>
+                            <li>Base LLM: generates text · no access to outside info or systems</li>
+                            <li>Tools = that access: data, files, APIs, email, a browser…</li>
+                            <li>This is where a chatbot becomes an agent</li>
+                            <li>MCP &amp; RAG both live under "tools"</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <section>
+                    <p class="eyebrow">putting it together</p>
+                    <h2>Four questions for any agent.</h2>
+                    <div class="principle">
+                        <div class="num">1</div>
+                        <div><h3>What model is it calling?</h3></div>
+                    </div>
+                    <div class="principle">
+                        <div class="num">2</div>
+                        <div><h3>What harness wraps it?</h3></div>
+                    </div>
+                    <div class="principle">
+                        <div class="num">3</div>
+                        <div><h3>What's in the system prompt?</h3></div>
+                    </div>
+                    <div class="principle">
+                        <div class="num">4</div>
+                        <div><h3>What tools can it access?</h3></div>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>Agent acting weird? walk these four · most failures collapse to one</li>
+                            <li>Our levers as designers, at each step:</li>
+                            <li>— Model: swap the base model, or finetune it</li>
+                            <li>— Harness: modify it, but often you can't access it</li>
+                            <li>— System prompt: modify it, often can't access it</li>
+                            <li>— Tools: add/remove; user-configurable to a point; build custom ones</li>
+                            <li>Different products expose different config levels — each a tradeoff</li>
+                            <li>Easiest → hardest: user prompt → swap base model (cost) → add/remove tools → alt harness/system prompt → finetune</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <section class="dark top loop-slide">
+                    <p class="eyebrow">how it runs</p>
+                    <h2>The agent loop.</h2>
+                    <div
+                        style="
+                            display: flex;
+                            gap: 44px;
+                            align-items: center;
+                            margin-top: 0.5em;
+                        "
+                    >
+                        <div
+                            style="
+                                flex: 0 0 38%;
+                                display: flex;
+                                flex-direction: column;
+                                gap: 0.6em;
+                                font-size: 0.8em;
+                                color: var(--muted-foreground);
+                            "
+                        >
+                            <span class="fragment fade-in" data-fragment-index="0" style="display: flex; gap: 12px; line-height: 1.3"><strong style="color: #f2b25c">1</strong><span>input a prompt</span></span>
+                            <span class="fragment fade-in" data-fragment-index="1" style="display: flex; gap: 12px; line-height: 1.3"><strong style="color: #f2b25c">2</strong><span>the harness enriches it</span></span>
+                            <span class="fragment fade-in" data-fragment-index="2" style="display: flex; gap: 12px; line-height: 1.3"><strong style="color: #f2b25c">3</strong><span>the model is called</span></span>
+                            <span class="fragment fade-in" data-fragment-index="3" style="display: flex; gap: 12px; line-height: 1.3"><strong style="color: #f2b25c">4</strong><span>the model calls a tool</span></span>
+                            <span class="fragment fade-in" data-fragment-index="4" style="display: flex; gap: 12px; line-height: 1.3"><strong style="color: #f2b25c">5</strong><span>the harness runs it, returns result to model</span></span>
+                            <span class="fragment fade-in" data-fragment-index="5" style="display: flex; gap: 12px; line-height: 1.3"><strong style="color: #f2b25c">6</strong><span>repeat until model signals done</span></span>
+                        </div>
+                        <div class="loop-diagram" id="loop-svg" style="flex: 1; width: 100%; max-width: none"></div>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>Click each step in — point at the box as it lights</li>
+                            <li>1 prompt → 2 harness enriches (system prompt + tools)</li>
+                            <li>3 model called → 4 model calls a tool</li>
+                            <li>5 harness runs it, returns result → 6 repeat until done</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <section>
+                    <p class="eyebrow">recognising them in the wild</p>
+                    <h2>The landscape.</h2>
+                    <div style="margin-top: 0.6em">
+                        <div
+                            style="
+                                display: flex;
+                                gap: 24px;
+                                padding: 18px 0;
+                                border-bottom: 1px solid var(--border);
+                                align-items: baseline;
+                            "
+                        >
+                            <span style="flex: 0 0 150px; font-weight: 600"
+                                >Model</span
+                            ><span class="muted small"
+                                >Claude · GPT · Gemini · Llama · Mistral ·
+                                DeepSeek</span
+                            >
+                        </div>
+                        <div
+                            style="
+                                display: flex;
+                                gap: 24px;
+                                padding: 18px 0;
+                                border-bottom: 1px solid var(--border);
+                                align-items: baseline;
+                            "
+                        >
+                            <span style="flex: 0 0 150px; font-weight: 600"
+                                >Harness</span
+                            ><span class="muted small"
+                                >Claude Code · Cursor · Windsurf · ChatGPT ·
+                                Claude.ai · Devin</span
+                            >
+                        </div>
+                        <div
+                            style="
+                                display: flex;
+                                gap: 24px;
+                                padding: 18px 0;
+                                border-bottom: 1px solid var(--border);
+                                align-items: baseline;
+                            "
+                        >
+                            <span style="flex: 0 0 150px; font-weight: 600"
+                                >Prompts</span
+                            ><span class="muted small"
+                                >the system prompt · what you type · a CLAUDE.md
+                                file</span
+                            >
+                        </div>
+                        <div
+                            style="
+                                display: flex;
+                                gap: 24px;
+                                padding: 18px 0;
+                                border-bottom: 1px solid var(--border);
+                                align-items: baseline;
+                            "
+                        >
+                            <span style="flex: 0 0 150px; font-weight: 600"
+                                >Tools</span
+                            ><span class="muted small"
+                                >files · web search · a database · an API · MCP
+                                · RAG</span
+                            >
+                        </div>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>"Slot it into your mental model" — hear a name, which bucket?</li>
+                            <li>Overlaps the examples on each definition slide — keep one or the other</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- ============================================================
+       BLOCK C — LIMITATIONS (discussion)
+       ============================================================ -->
+                <section class="top">
+                    <p class="eyebrow">discussion</p>
+                    <h1>Limitations.</h1>
+                    <ul style="font-size: 1.05em; margin-top: 0.5em">
+                        <li>The speed–security tradeoff</li>
+                        <li>Cost considerations</li>
+                        <li>Handling hallucinations</li>
+                        <li>Privacy &amp; IP</li>
+                        <li><em>What else?</em></li>
+                    </ul>
+                    <aside class="notes">
+                        <ul>
+                            <li>Prompts for discussion, not a lecture</li>
+                            <li>Speed ↔ security: more autonomy = more risk surface</li>
+                            <li>The real cost of long agent runs</li>
+                            <li>Catching &amp; handling hallucinations</li>
+                            <li>Privacy &amp; IP once code/data go to a provider</li>
+                            <li>"What else?" — open it to the room</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- ============================================================
+       CLOSE
+       ============================================================ -->
+                <section class="top">
+                    <p class="eyebrow">take it with you</p>
+                    <h2>Resources.</h2>
+                    <div class="cols">
+                        <div class="small">
+                            <ul>
+                                <li>
+                                    Anthropic —
+                                    <a href="https://www.anthropic.com/research/building-effective-agents"><em>Building Effective Agents</em></a>
+                                </li>
+                                <li>
+                                    Simon Willison —
+                                    <a href="https://simonwillison.net/2025/Sep/30/designing-agentic-loops/"><em>Designing agentic loops</em></a>
+                                </li>
+                                <li>
+                                    Simon Willison —
+                                    <a href="https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/"><em>The lethal trifecta</em></a>
+                                </li>
+                                <li>
+                                    Chip Huyen —
+                                    <a href="https://huyenchip.com/"><em>AI Engineering</em></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="small">
+                            <ul>
+                                <li>
+                                    The repo —
+                                    <a href="https://github.com/johnx25bd/surveyor-demo">surveyor-demo</a>
+                                </li>
+                                <li>The take-home one-pager</li>
+                                <li>The working-group Slack channel</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>The 20-min Q&amp;A is the most valuable part</li>
+                            <li>Answer most questions via the four words</li>
+                            <li>Close: what should session 2 cover?</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- ===== Close — contact ===== -->
+                <section class="cover no-meridian">
+                    <p class="eyebrow">thank you</p>
+                    <h1>Questions?</h1>
+                    <p
+                        class="muted"
+                        style="
+                            margin-top: 2em;
+                            font-family: var(--font-display);
+                            font-style: italic;
+                        "
+                    >
+                        John Hoopes&nbsp;&nbsp;·&nbsp;&nbsp;Sophia Systems<br />
+                        <a href="https://johnx.co">johnx.co</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://github.com/johnx25bd">github.com/johnx25bd</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="mailto:john@johnx.co">john@johnx.co</a>
+                    </p>
+                    <aside class="notes">
+                        <ul>
+                            <li>Thanks — find me after, or any time</li>
+                            <li>Open to questions, collaborations, follow-ups</li>
+                        </ul>
+                    </aside>
+                </section>
+            </div>
+        </div>
+
+        <script src="lib/reveal/reveal.js"></script>
+        <script src="lib/reveal/plugin/notes.js"></script>
+        <script src="lib/reveal/plugin/markdown.js"></script>
+        <script src="lib/reveal/plugin/highlight.js"></script>
+        <script>
+            Reveal.initialize({
+                width: 1280,
+                height: 720,
+                margin: 0.04,
+                minScale: 0.2,
+                maxScale: 2.0,
+                center: false, // our flex layout owns vertical alignment, not reveal
+                controls: false, // chrome should whisper — progress bar is enough
+                fragments: true,
+                hash: true,
+                progress: true,
+                slideNumber: "c/t",
+                transition: "fade", // pages are still — restraint over motion
+                transitionSpeed: "fast",
+                backgroundTransition: "fade",
+                plugins: [RevealNotes, RevealMarkdown, RevealHighlight],
+            });
+
+            // Agent-loop: inline the diagram so its cells can light up per step,
+            // and drive the highlight off how many step fragments are shown.
+            function syncLoop() {
+                const slide = document.querySelector(".loop-slide");
+                if (!slide) return;
+                const shown = slide.querySelectorAll(".fragment.visible").length;
+                slide.querySelectorAll(".cell").forEach((c) => {
+                    const st = +c.getAttribute("data-stage");
+                    const on = shown >= 6 ? st === 5 : st < shown;
+                    c.classList.toggle("on", on);
+                });
+            }
+            const loopMount = document.getElementById("loop-svg");
+            if (loopMount) {
+                fetch("media/agent-loop.svg?v=" + Date.now())
+                    .then((r) => r.text())
+                    .then((t) => {
+                        loopMount.innerHTML = t;
+                        syncLoop();
+                    });
+            }
+            Reveal.on("fragmentshown", syncLoop);
+            Reveal.on("fragmenthidden", syncLoop);
+            Reveal.on("slidechanged", syncLoop);
+        </script>
+    </body>
+</html>
