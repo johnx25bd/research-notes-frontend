@@ -12,6 +12,14 @@ const nextConfig = {
       },
     ]
   },
+  async rewrites() {
+    return [
+      {
+        source: '/presentations/ai-agents',
+        destination: '/presentations/ai-agents/index.html',
+      },
+    ]
+  },
 }
 
 export default nextConfig
