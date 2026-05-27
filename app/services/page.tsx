@@ -4,12 +4,12 @@ import { LayoutShell } from "@/components/layout-shell"
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "AI strategy, agentic system design, and rapid prototyping for early-stage companies in geospatial, location intelligence, and AI-adjacent domains.",
+    "AI strategy, education, agentic system design, and prototyping for teams building with AI—with deep roots in geospatial and location intelligence.",
   openGraph: {
     type: "website",
     title: "Working with me",
     description:
-      "AI and agentic systems for early-stage companies. Strategy, system design, prototyping, due diligence, and fractional technical leadership.",
+      "Strategy, education, system design, prototyping, due diligence, and fractional technical leadership for teams building with AI and agentic systems.",
     url: "/services",
   },
 }
@@ -78,8 +78,8 @@ export default function ServicesPage() {
             Working with me
           </h1>
           <p className="text-lg text-foreground leading-relaxed mb-4">
-            I work with early-stage teams in geospatial, location intelligence, and AI-adjacent
-            domains—people who have a real problem and a sense that AI or agentic systems should be
+            I work with teams building with AI and agentic systems—from early-stage startups to
+            established organizations—who have a real problem and a sense that these tools should be
             part of the answer, but who don't yet have the in-house depth to design the system,
             judge the trade-offs, or build the first version.
           </p>
@@ -140,8 +140,10 @@ export default function ServicesPage() {
             of Geography.
           </p>
           <p className="text-lg text-foreground leading-relaxed">
-            My work sits where geospatial data, machine learning, and agentic systems meet—which is
-            exactly where a lot of early-stage companies are now trying to find their footing.
+            Geospatial and location intelligence are where I go deepest—the problems there are hard,
+            and they've taught me how to build systems that hold up. But the work travels. The
+            questions I help with—where AI earns its place, how to keep it reliable, what to build
+            first—are the same in any domain.
           </p>
         </section>
 
