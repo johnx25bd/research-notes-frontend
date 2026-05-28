@@ -17,31 +17,37 @@ export const metadata: Metadata = {
 const services = [
   {
     title: "AI strategy",
+    question: "Is AI actually the right tool for this part of the problem?",
     summary:
       "Where AI genuinely earns its place in your product or operations, and where it doesn't. A clear, honest view of what to build, in what order, and why.",
   },
   {
     title: "Education and sensemaking",
+    question: "What has actually changed in the last six months that we need to understand?",
     summary:
       "I help you and your team build a clear picture of what's actually happening in AI and why it matters for your work, so you can decide from understanding rather than from pressure.",
   },
   {
     title: "Agentic system design",
+    question: "How do we get a system that uses an LLM to behave reliably enough to ship?",
     summary:
       "Architecture for systems that use language models to reason, plan, and act -- tool use, retrieval, evaluation, and the guardrails that keep them reliable.",
   },
   {
     title: "Rapid prototyping",
+    question: "Can we have a working version in front of users in a couple of weeks?",
     summary:
       "Working prototypes, quickly -- so you can put something real in front of users or investors instead of arguing about a slide.",
   },
   {
     title: "Technical due diligence",
+    question: "Is the technical substance here what the team is claiming?",
     summary:
       "An assessment of the technical substance of a product, team, or codebase -- for founders sharpening their own thinking, or investors who need a second opinion.",
   },
   {
     title: "Fractional technical leadership",
+    question: "Who is the senior AI voice in our room, and do we need them full-time?",
     summary:
       "A part-time technical lead or AI architect, for when you need senior judgment in the room but not a full-time hire yet.",
   },
@@ -96,7 +102,13 @@ export default function ServicesPage() {
           </h2>
           <div className="space-y-0">
             {services.map((service) => (
-              <div key={service.title} className="py-4 border-b border-border/50 last:border-0">
+              <div key={service.title} className="py-5 border-b border-border/50 last:border-0">
+                <p
+                  className="text-sm italic text-muted-foreground/80 mb-1 leading-relaxed"
+                  style={{ fontFamily: "var(--font-lora)" }}
+                >
+                  {service.question}
+                </p>
                 <div className="font-medium text-foreground mb-1">{service.title}</div>
                 <p className="text-sm text-muted-foreground leading-relaxed">{service.summary}</p>
               </div>
