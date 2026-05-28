@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { LayoutShell } from "@/components/layout-shell"
+import { DeckRequestForm } from "@/components/deck-request-form"
 
 export const metadata: Metadata = {
   title: "Services",
@@ -139,6 +140,21 @@ export default function ServicesPage() {
             short call to work out which one -- if any -- actually fits, and what a fair scope and
             price look like for your problem.
           </p>
+        </section>
+
+        <section className="mb-16">
+          <h2 className="section-header text-xs mb-4" style={capStyle}>
+            Where to start
+          </h2>
+          <p className="text-lg text-foreground leading-relaxed mb-4">
+            If you would like a sense of how I think about this work before we talk, I put together a
+            short deck -- <em>Building with agents</em> -- on what is actually new, what is still
+            hype, and what the smallest valuable first step usually looks like.
+          </p>
+          <p className="text-lg text-foreground leading-relaxed mb-6">
+            Drop your email and I will send you the link.
+          </p>
+          <DeckRequestForm />
         </section>
 
         <section className="mb-16">
