@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
         "",
         `Thanks for the interest. The deck is here: ${deckUrl}`,
         "",
-        "It's a short pass through what's actually new with agentic systems, what is still hype, and what the smallest valuable first step usually looks like -- about fifteen minutes if you read every slide.",
+        "It's a short pass through foundational concepts in agentic systems, to help build an accurate mental model.",
         "",
         "If anything in it sparks a question, or if you want to talk through how it lands for what you're working on, just reply to this email.",
         "",
