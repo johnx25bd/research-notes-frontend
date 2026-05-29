@@ -102,8 +102,8 @@ export default function ServicesPage() {
           </p>
           <p className="text-lg text-foreground leading-relaxed mb-4">
             I'm most useful when the stakes are technical and the path is still uncertain -- when you
-            need someone who has built these systems to tell you honestly what's feasible, what's
-            hype, and what the smallest valuable first step looks like.
+            need someone who has built these systems to tell you honestly what's feasible and what
+            the smallest valuable first step looks like.
           </p>
           <p className="text-base text-muted-foreground leading-relaxed">
             Alongside the consulting, I take a smaller number of research and advisory engagements
@@ -163,8 +163,8 @@ export default function ServicesPage() {
           </h2>
           <p className="text-lg text-foreground leading-relaxed mb-4">
             If you would like a sense of how I think about this work before we talk, I put together a
-            short deck -- <em>Building with agents</em> -- on what is actually new, what is still
-            hype, and what the smallest valuable first step usually looks like.
+            short deck -- <em>Building with agents</em> -- a pass through foundational concepts in
+            agentic systems, to help build an accurate mental model.
           </p>
           <p className="text-lg text-foreground leading-relaxed mb-6">
             Drop your email and I will send you the link.
