@@ -55,9 +55,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "server_config" }, { status: 500 })
   }
 
-  // Default sender lets the route work before johnx.co is verified in Resend.
-  // Once verified, swap to "John Hoopes <deck@johnx.co>" or similar.
-  const from = process.env.DECK_REQUEST_FROM ?? "johnx deck <onboarding@resend.dev>"
+  // Send from the verified johnx.co domain so Resend lifts its testing restriction
+  // (which otherwise only allows delivery to the account owner). Override via env
+  // if a different sender address is preferred.
+  const from = process.env.DECK_REQUEST_FROM ?? "johnx <noreply@johnx.co>"
 
   const resend = new Resend(apiKey)
   const { error } = await resend.emails.send({
