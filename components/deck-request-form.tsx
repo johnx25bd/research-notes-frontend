@@ -51,7 +51,7 @@ export function DeckRequestForm() {
           </a>
         </p>
         <p className="text-sm text-muted-foreground">
-          I will be in touch if I think there is a useful next step for us to talk.
+          A copy is on its way to your inbox in case you want to come back to it later.
         </p>
       </div>
     )
