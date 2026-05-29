@@ -89,7 +89,7 @@ export function DeckRequestForm() {
             },
             maxLength: { value: 254, message: "That email is too long." },
           })}
-          className="flex-1 px-3 py-2 text-sm bg-background border border-border/60 rounded-sm focus:outline-none focus:border-foreground/60 transition-colors disabled:opacity-60"
+          className="flex-1 px-3 py-2 text-sm bg-background border border-foreground/30 rounded-sm focus:outline-none focus:border-foreground transition-colors disabled:opacity-60"
         />
         <button
           type="submit"
