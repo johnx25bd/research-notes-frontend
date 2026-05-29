@@ -85,11 +85,9 @@ export async function POST(req: NextRequest) {
       replyTo: "john@johnx.co",
       subject: "Building with agents",
       text: [
-        "Hey,",
+        `Hey -- thanks for your interest in Building with agents. The deck on AI agent fundamentals you requested is here: ${deckUrl}`,
         "",
-        `Thanks for the interest. The deck is here: ${deckUrl}`,
-        "",
-        "It's a short pass through foundational concepts in agentic systems, to help build an accurate mental model.",
+        "It's a short pass through foundational concepts in agentic systems, meant to help build an accurate mental model.",
         "",
         "If anything in it sparks a question, or if you want to talk through how it lands for what you're working on, just reply to this email.",
         "",
