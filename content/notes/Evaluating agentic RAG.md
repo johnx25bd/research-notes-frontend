@@ -4,11 +4,13 @@ featured: false
 featured_order: null
 published: true
 published_at: 2026-05-08
+research_note: obsidian://open?vault=research-notes&file=notes/Evaluating%20agentic%20RAG
 source_note: obsidian://open?vault=xo&file=Notes/Evaluating%20agentic%20RAG
 status: fragment
 summary: Is it really about the journey -- or just the destination?
 tags: []
 title: Evaluating agentic RAG -- journey or destination?
+url: https://johnx.co/notes/evaluating-agentic-rag
 ---
 
 I've been building an agentic system for one of my business partners -- a RAG application over maintenance manuals for the equipment they operate. The work has led me down into the depths how how to build production agents in 2026, and to the inevitable conclusion that building evals well is a key element of any system. 
