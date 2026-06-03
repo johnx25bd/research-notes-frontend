@@ -8,7 +8,8 @@ research_note: obsidian://open?vault=research-notes&file=notes/Shouting%20on%20T
 source_note: obsidian://open?vault=xo&file=Notes/Shouting%20on%20Trains
 status: fragment
 summary: Reflections on location-based governance in the Information Age.
-tags: []
+tags:
+- spatial-alignment
 title: Shouting on Trains
 url: https://johnx.co/notes/shouting-on-trains
 ---
