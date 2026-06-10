@@ -91,9 +91,11 @@ export async function POST(req: NextRequest) {
     replyTo: "john@johnx.co",
     subject: "You're subscribed",
     text: [
+      "Hi,",
+      "",
       "Thanks for subscribing.",
       "",
-      "I'll send a short note when I publish something new in the garden -- no schedule, no noise, just the occasional new piece of writing.",
+      "I'll occasionally send a short note when I publish something new in the garden.",
       "",
       "If you ever want to talk through anything I write, just reply. This comes straight to me.",
       "",
