@@ -75,6 +75,7 @@ Optional fields:
 - `summary` - Short description (used in note cards)
 - `featured` - Set to `true` for homepage
 - `created` - Creation date
+- `notify` - Set to `true` to announce this note to email subscribers (see [Notifying subscribers](#notifying-subscribers))
 
 ## Raycast Setup
 
@@ -97,12 +98,49 @@ title: {{title}}
 status: fragment
 tags: [to-publish]
 created: {{date:YYYY-MM-DD}}
+notify: false   # set true to email subscribers when this publishes
 ---
 
 # {{title}}
 
 Your content here...
 ```
+
+## Notifying subscribers
+
+Publishing a note **does not** email anyone. Notifications are a separate,
+deliberate step so you keep editorial control over what lands in inboxes.
+
+### How subscribers sign up
+
+Visitors subscribe via the form in the site footer (every page) or at
+`/subscribe`. Their email is stored as a contact in a **Resend Audience** —
+Resend owns the list, the unsubscribe link, and compliance. No database here.
+
+### Announcing a note
+
+1. In the note's frontmatter, set `notify: true` (and make sure it's published).
+2. Run the notify command from the frontend repo:
+   ```bash
+   pnpm notify --dry-run   # preview which notes would be announced
+   pnpm notify             # create the draft broadcasts
+   ```
+3. `pnpm notify` finds published notes flagged `notify: true` that haven't
+   been announced yet, and creates a **draft** broadcast in Resend for each —
+   it never sends automatically.
+4. Review and send the draft at https://resend.com/broadcasts.
+5. The command stamps `notified_at: YYYY-MM-DD` into the note's frontmatter so
+   it's never announced twice. **Commit that change** (it lands in `content/`).
+
+To re-announce a note (rare), delete its `notified_at` line and run again.
+
+### Required environment variables
+
+These live in `.env.local` (local) and Vercel project settings (production):
+
+- `RESEND_API_KEY` — existing Resend key (also used by the deck-request form)
+- `RESEND_AUDIENCE_ID` — the Audience to add subscribers to / broadcast from
+- `SUBSCRIBE_FROM` — optional sender, defaults to `"John <john@johnx.co>"`
 
 ## Workflow Tips
 
