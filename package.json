@@ -6,6 +6,7 @@
     "build": "pnpm validate && next build",
     "dev": "next dev",
     "lint": "eslint .",
+    "notify": "tsx scripts/notify-subscribers.ts",
     "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
