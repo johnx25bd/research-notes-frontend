@@ -117,7 +117,9 @@ async function main() {
     const email = buildNotificationEmail(note, SITE_URL)
 
     const broadcast = await resend.broadcasts.create({
-      audienceId,
+      // Resend renamed Audiences to Segments; broadcasts.create now takes
+      // segmentId (audienceId is deprecated). The same id works for both.
+      segmentId: audienceId,
       from: BROADCAST_FROM,
       replyTo: "john@johnx.co",
       subject: email.subject,
