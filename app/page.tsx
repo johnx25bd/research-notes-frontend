@@ -3,6 +3,7 @@ import { RecentNotesSection } from "@/components/recent-notes-section"
 import { getAllNotes } from "@/lib/vault"
 import Link from "next/link"
 import { NoteRow } from "@/components/note-row"
+import { SubscribeForm } from "@/components/subscribe-form"
 
 export default async function HomePage() {
   const notes = await getAllNotes()
@@ -48,9 +49,15 @@ export default async function HomePage() {
             <a href="https://maggieappleton.com/garden-history" className="underline hover:text-foreground transition-colors">digital garden</a>{" "}
             is my effort to do just that.
           </p>
-          <p className="text-lg text-foreground leading-relaxed mb-6">
+          <p className="text-lg text-foreground leading-relaxed mb-4">
             If you're interested in anything I'm writing about, please reach out! That's half the point of doing this.
           </p>
+          <div className="mb-6">
+            <p className="text-base text-muted-foreground leading-relaxed mb-2">
+              Or subscribe for an occasional note when I publish something new.
+            </p>
+            <SubscribeForm variant="inline" />
+          </div>
           <div className="flex flex-wrap gap-4 text-sm">
             <a href="https://twitter.com/johnx25bd" className="underline hover:text-foreground transition-colors">Twitter</a>
             <a href="https://github.com/johnx25bd" className="underline hover:text-foreground transition-colors">GitHub</a>
