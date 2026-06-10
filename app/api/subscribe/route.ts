@@ -70,10 +70,17 @@ export async function POST(req: NextRequest) {
   })
 
   if (contact.error) {
-    // A duplicate (already-subscribed) email is a benign no-op, not a failure
-    // we should surface. Treat it as success; log anything else for visibility.
+    // A duplicate (already-subscribed) email is a benign no-op -- treat it as
+    // success. Anything else (bad/missing audience, auth, Resend outage) is a
+    // real failure the form should reflect, not silently swallow.
+    const message = String(contact.error.message ?? "").toLowerCase()
+    const isDuplicate =
+      contact.error.name === "validation_error" && message.includes("already")
+    if (isDuplicate) {
+      return NextResponse.json({ ok: true, already: true })
+    }
     console.error("[subscribe] contact create error", contact.error)
-    return NextResponse.json({ ok: true, already: true })
+    return NextResponse.json({ ok: false, error: "subscribe_failed" }, { status: 502 })
   }
 
   // Welcome note -- short, personal, from John so a reply lands in his inbox.
