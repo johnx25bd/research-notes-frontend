@@ -43,7 +43,7 @@ A major gap I see -- and it appears that the authors see it too, and rightfully 
 
 As you may have guessed, I'm particularly interested in the use cases where the location of these devices impacts the set of rules they are expected to follow. So far, my read of the discourse is that current thinking around location verification focuses on coarse-but-extremely-"hard" (as in hard-to-forge or spoof) techniques that leverage [delay-based measurements](https://www.iaps.ai/research/location-verification-for-ai-chips) to situate a chip or chip cluster. These are useful when policy zones are approximately city to country-scale: the privacy afforded by imprecision can be a feature, not a bug. Latency-based strategies are less useful (on their own at least) when they're neighborhood scale down, let alone street or sidewalk scale. 
 
-![[flexhegs-and-the-location-gap-2.svg]]
+![[flexhegs-and-the-location-gap-2.svg|75%]]
 *High durability / high precision location proofs are a major unlock for verifiable spatial governance of mobile sensitive AI deployments.*
 
 I recognize this is a glimpse into some things I'm thinking about without a lot of surrounding context, but I'll post it anyway -- I'm pushing myself to think in public and not boil the ocean. 
