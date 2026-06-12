@@ -15,13 +15,14 @@ url: https://johnx.co/notes/flexhegs-and-the-location-gap
 
 I spent most of my flight from London to Denver (where I'm going to my 20th high school reunion 😳) doing a deep dive on my research area: spatial governance of intelligent machines.
 
-I'll be writing more about the research agenda as it's taking shape, I'm fleshing it out now, looking at different angles, and doing my homework so I can enter the conversation with a solid footing. Rather than sit on all of this in isolation, I want to share notes along the way, to think in public and invite comments, criticism and collaborators.
+I'll be writing more about the research agenda as it's taking shape. I'm fleshing it out now, looking at different angles, and doing my homework so I can enter the conversation with a solid footing. Rather than sit on all of this in isolation, I want to share notes along the way, to think in public and invite comments, criticism and collaborators.
 
 ## FlexHEGs
 
 Towards the end of my reading session, I started digging into the proposals for Flexible Hardware-Enabled Guarantees, a proposal to develop open source hardware that gets integrated in frontier AI chips so they can be monitored and governed remotely. I won't go into explaining technical details -- I'm still getting my head around them, and want to keep my eyes on some of the insights and questions I have -- but if you're interested, these are the papers I've been looking at over the past few days:
 - Flexible Hardware-Enabled Guarantees for AI Compute (Petrie, Aarne, Ammann, davidad), Parts [1](https://arxiv.org/abs/2506.15093), [2](https://arxiv.org/abs/2506.03409) and [3](https://arxiv.org/abs/2506.15100)
 - [Embedded Off-Switches for AI Compute](https://arxiv.org/pdf/2509.07637) (Petrie)
+- https://flexheg.com/
 
 I'm struck by a few things, both in the sophistication of the work, and in how my work may fill in some of the intentional gaps the authors left. 
 
