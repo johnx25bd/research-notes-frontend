@@ -113,6 +113,46 @@ describe('processMarkdown', () => {
     });
   });
 
+  describe('Image embeds', () => {
+    test('converts a basic Obsidian image embed', async () => {
+      const html = await processMarkdown('![[diagram.svg]]', availableNotes);
+      expect(html).toContain('src="/attachments/diagram.svg"');
+      expect(html).toContain('alt="diagram"');
+    });
+
+    test('uses a pipe segment as alt text', async () => {
+      const html = await processMarkdown('![[diagram.svg|a nice chart]]', availableNotes);
+      expect(html).toContain('src="/attachments/diagram.svg"');
+      expect(html).toContain('alt="a nice chart"');
+    });
+
+    test('applies a percentage width hint as an inline style', async () => {
+      const html = await processMarkdown('![[diagram.svg|75%]]', availableNotes);
+      expect(html).toContain('src="/attachments/diagram.svg"');
+      expect(html).toContain('width: 75%');
+      // fragment is stripped from the served src
+      expect(html).not.toContain('#w=');
+    });
+
+    test('treats a bare number as a pixel width', async () => {
+      const html = await processMarkdown('![[diagram.svg|400]]', availableNotes);
+      expect(html).toContain('width: 400px');
+    });
+
+    test('supports both alt text and a width hint', async () => {
+      const html = await processMarkdown('![[diagram.svg|a nice chart|75%]]', availableNotes);
+      expect(html).toContain('alt="a nice chart"');
+      expect(html).toContain('width: 75%');
+    });
+
+    test('keeps an adjacent caption line rendering as markdown', async () => {
+      const markdown = '![[diagram.svg|75%]]\n*caption text*';
+      const html = await processMarkdown(markdown, availableNotes);
+      expect(html).toContain('width: 75%');
+      expect(html).toContain('<em>caption text</em>');
+    });
+  });
+
   describe('Callouts', () => {
     test('processes note callout', async () => {
       const markdown = '> [!note] Important\n> This is a callout.';
