@@ -23,6 +23,43 @@ XO_VAULT_PATH = Path("/Users/x25bd/notes/xo")
 RESEARCH_NOTES_VAULT_PATH = Path("/Users/x25bd/notes/research-notes")
 TO_PUBLISH_TAG = "to-publish"
 
+# Preferred attachment locations in the xo vault, searched first for a clean
+# match before falling back to a vault-wide search.
+XO_ATTACHMENT_DIRS = [
+    XO_VAULT_PATH / "Attachments",
+    XO_VAULT_PATH / "attachments",
+    XO_VAULT_PATH / "Assets",
+    XO_VAULT_PATH / "assets",
+    XO_VAULT_PATH / "Files",
+    XO_VAULT_PATH / "files",
+]
+
+
+def find_attachment_in_vault(filename: str) -> Optional[Path]:
+    """Locate an embedded attachment anywhere in the xo vault.
+
+    Obsidian resolves ![[file]] by searching the whole vault, so attachments
+    can live next to a note (e.g. in Notes/) and be linked by relative path,
+    not just in a dedicated Attachments/ folder. Mirror that here: check the
+    preferred attachment dirs first (fast, predictable), then fall back to a
+    recursive search so notes-adjacent files are still found.
+
+    Skips hidden folders (e.g. .obsidian, .trash) and Templates.
+    """
+    for attach_dir in XO_ATTACHMENT_DIRS:
+        candidate = attach_dir / filename
+        if candidate.exists():
+            return candidate
+
+    for match in XO_VAULT_PATH.rglob(filename):
+        if any(part.startswith('.') for part in match.parts):
+            continue
+        if 'Templates' in match.parts:
+            continue
+        return match
+
+    return None
+
 
 def parse_frontmatter(file_path: Path) -> Tuple[Optional[Dict[str, Any]], str]:
     """Parse YAML frontmatter from markdown file."""
@@ -106,36 +143,24 @@ def copy_referenced_attachments(content: str, dest_attachments_dir: Path, note_s
     if not image_filenames:
         return {}
 
-    # Possible attachment directories in xo vault
-    xo_attachment_dirs = [
-        XO_VAULT_PATH / "Attachments",
-        XO_VAULT_PATH / "attachments",
-        XO_VAULT_PATH / "Assets",
-        XO_VAULT_PATH / "assets",
-        XO_VAULT_PATH / "Files",
-        XO_VAULT_PATH / "files",
-    ]
-
     filename_mapping = {}
     img_counter = 1
 
     for filename in sorted(image_filenames):  # Sort for consistent numbering
-        # Search for the file in possible attachment directories
-        for attach_dir in xo_attachment_dirs:
-            source_path = attach_dir / filename
-            if source_path.exists():
-                dest_attachments_dir.mkdir(parents=True, exist_ok=True)
+        # Search for the file anywhere in the vault (attachment dirs first)
+        source_path = find_attachment_in_vault(filename)
+        if source_path:
+            dest_attachments_dir.mkdir(parents=True, exist_ok=True)
 
-                # Create clean filename: note-slug-1.png
-                ext = source_path.suffix.lower()
-                new_filename = f"{note_slug}-{img_counter}{ext}"
-                dest_path = dest_attachments_dir / new_filename
+            # Create clean filename: note-slug-1.png
+            ext = source_path.suffix.lower()
+            new_filename = f"{note_slug}-{img_counter}{ext}"
+            dest_path = dest_attachments_dir / new_filename
 
-                shutil.copy2(source_path, dest_path)
-                filename_mapping[filename] = new_filename
-                print(f"    📎 {filename} → {new_filename}")
-                img_counter += 1
-                break
+            shutil.copy2(source_path, dest_path)
+            filename_mapping[filename] = new_filename
+            print(f"    📎 {filename} → {new_filename}")
+            img_counter += 1
 
     return filename_mapping
 
@@ -175,38 +200,38 @@ def rename_xo_attachments(content: str, note_slug: str) -> Dict[str, str]:
     if not image_filenames:
         return {}
 
-    # Possible attachment directories in xo vault
-    xo_attachment_dirs = [
-        XO_VAULT_PATH / "Attachments",
-        XO_VAULT_PATH / "attachments",
-        XO_VAULT_PATH / "Assets",
-        XO_VAULT_PATH / "assets",
-        XO_VAULT_PATH / "Files",
-        XO_VAULT_PATH / "files",
-    ]
+    # Files already in `{note_slug}-{N}.ext` form keep their number, so
+    # re-publishing a note doesn't renumber (and break) attachments that were
+    # cleaned on a previous run. New attachments are numbered after the highest
+    # index already in use.
+    clean_pattern = re.compile(rf'^{re.escape(note_slug)}-(\d+)\.[^.]+$')
+    used_indices = {
+        int(m.group(1))
+        for f in image_filenames
+        if (m := clean_pattern.match(f))
+    }
+    next_index = max(used_indices, default=0) + 1
 
     filename_mapping = {}
-    img_counter = 1
 
     for filename in sorted(image_filenames):  # Sort for consistent numbering
-        for attach_dir in xo_attachment_dirs:
-            source_path = attach_dir / filename
-            if source_path.exists():
-                ext = source_path.suffix.lower()
-                new_filename = f"{note_slug}-{img_counter}{ext}"
-                new_path = attach_dir / new_filename
+        # Already-clean names need no rename
+        if clean_pattern.match(filename):
+            continue
 
-                # Skip if already has clean name
-                if filename == new_filename:
-                    img_counter += 1
-                    break
+        source_path = find_attachment_in_vault(filename)
+        if source_path:
+            ext = source_path.suffix.lower()
+            new_filename = f"{note_slug}-{next_index}{ext}"
+            # Rename in the directory where the file actually lives, which may
+            # be an attachment folder or alongside the note (e.g. Notes/).
+            new_path = source_path.parent / new_filename
 
-                # Rename in place
-                source_path.rename(new_path)
-                filename_mapping[filename] = new_filename
-                print(f"    📎 Renamed in xo: {filename} → {new_filename}")
-                img_counter += 1
-                break
+            # Rename in place
+            source_path.rename(new_path)
+            filename_mapping[filename] = new_filename
+            print(f"    📎 Renamed in xo: {filename} → {new_filename}")
+            next_index += 1
 
     return filename_mapping
 
@@ -218,22 +243,11 @@ def copy_renamed_attachments(filename_mapping: Dict[str, str], dest_dir: Path):
         filename_mapping: Dict mapping old filename → new filename (values are copied)
         dest_dir: Destination directory in research-notes
     """
-    xo_attachment_dirs = [
-        XO_VAULT_PATH / "Attachments",
-        XO_VAULT_PATH / "attachments",
-        XO_VAULT_PATH / "Assets",
-        XO_VAULT_PATH / "assets",
-        XO_VAULT_PATH / "Files",
-        XO_VAULT_PATH / "files",
-    ]
-
     for new_filename in filename_mapping.values():
-        for attach_dir in xo_attachment_dirs:
-            source_path = attach_dir / new_filename
-            if source_path.exists():
-                dest_dir.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(source_path, dest_dir / new_filename)
-                break
+        source_path = find_attachment_in_vault(new_filename)
+        if source_path:
+            dest_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source_path, dest_dir / new_filename)
 
 
 def create_obsidian_uri(vault_name: str, note_path: str) -> str:
