@@ -3,12 +3,14 @@ created: 2026-06-11
 featured: true
 featured_order: 1
 published: true
-published_at: '2026-06-12'
+published_at: 2026-06-12
+research_note: obsidian://open?vault=research-notes&file=notes/FlexHEGs%20and%20the%20location%20gap
 source_note: obsidian://open?vault=xo&file=Notes/FlexHEGs%20and%20the%20location%20gap
 status: fragment
 summary: Orienting myself in the AI governance conversation on an LHR -> DEN flight
 tags: []
-title: LHR → DEN reading session
+title: FlexHEGs and the location gap
+url: https://johnx.co/notes/flexhegs-and-the-location-gap
 ---
 
 I spent most of my flight from London to Denver (where I'm going to my 20th high school reunion 😳) doing a deep dive on my research area: spatial governance of intelligent machines. A [[../Research/hoopes-2026-spatial-governance-of-intelligent-machines/deep-research-report|deep research report]] (produced by Fable 5 ...) gave me a lot to think about: after today a lot of my thinking is taking shape. (I plan to publish an outline very soon.)
