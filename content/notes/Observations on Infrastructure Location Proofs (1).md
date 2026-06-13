@@ -1,6 +1,6 @@
 ---
 created: 2025-12-10
-published: true
+published: false
 published_at: 2025-12-10
 research_note: obsidian://open?vault=research-notes&file=notes/Observations%20on%20Infrastructure%20Location%20Proofs%20%281%29
 source_note: obsidian://open?vault=xo&file=Notes/Observations%20on%20Infrastructure%20Location%20Proofs%20%281%29
