@@ -33,23 +33,6 @@ echo "🔍 Finding notes to publish..."
 # Use the same Python that has PyYAML installed
 /Users/x25bd/.pyenv/versions/3.8.10/bin/python3 scripts/smart-sync.py
 
-# Sync research-notes → frontend/content
-echo ""
-echo "📦 Syncing to frontend..."
-bash scripts/sync-vault.sh
-
-# Check if there are changes (content or attachments)
-if [[ -z $(git status --porcelain content/ public/attachments/) ]]; then
-  echo ""
-  echo "✅ No new notes to publish!"
-  exit 0
-fi
-
-# Show what will be published
-echo ""
-echo "📋 Changes to be published:"
-git status --short content/ public/attachments/
-
 # Check for existing open PR with our title
 echo ""
 echo "🔍 Checking for existing open PR..."
@@ -66,38 +49,75 @@ else
   USE_EXISTING=false
 fi
 
-# Handle branching
+# Resolve the publish working tree and prepare the branch BEFORE syncing, so
+# content always lands in the directory we'll commit from. The publish branch
+# may already be checked out in a separate worktree (e.g. a dedicated
+# front-publish worktree); git refuses to check it out a second time here, so
+# in that case we publish directly from that worktree instead.
 if [[ "$USE_EXISTING" == "true" ]]; then
   BRANCH_NAME="$EXISTING_BRANCH"
-  echo ""
-  echo "🌿 Switching to existing branch: $BRANCH_NAME"
-  # Stash uncommitted changes before switching
-  git stash -q
-  git fetch origin "$BRANCH_NAME"
-  git checkout "$BRANCH_NAME"
-  # Rebase on main to get latest changes
-  echo "🔄 Rebasing on main..."
-  if ! git rebase main; then
-    echo "⚠️  Rebase conflict, falling back to merge..."
-    git rebase --abort
-    git merge main -m "Merge main into publish branch"
+  WORK_DIR=$(git worktree list --porcelain | awk -v ref="branch refs/heads/$BRANCH_NAME" '
+    /^worktree /{wt=substr($0, 10)}
+    $0==ref{print wt; exit}')
+  if [[ -n "$WORK_DIR" ]]; then
+    echo ""
+    echo "🌿 Branch already checked out in worktree: $WORK_DIR"
+    git -C "$WORK_DIR" fetch origin "$BRANCH_NAME" -q
+  else
+    WORK_DIR="$REPO_DIR"
+    echo ""
+    echo "🌿 Switching to existing branch: $BRANCH_NAME"
+    git -C "$WORK_DIR" fetch origin "$BRANCH_NAME"
+    git -C "$WORK_DIR" checkout "$BRANCH_NAME"
   fi
-  # Restore stashed changes
-  git stash pop -q 2>/dev/null || true
+  # Bring in the latest main (notes depend on code merged there, e.g. the
+  # markdown renderer). Merge rather than rebase: the branch is shared/pushed,
+  # and a merge avoids rewriting history that other worktrees may hold.
+  echo "🔄 Merging main..."
+  if ! git -C "$WORK_DIR" merge main --no-edit; then
+    echo "⚠️  Merge conflict in $WORK_DIR — resolve manually, then re-run."
+    exit 1
+  fi
 else
+  # New PR: stay on main and sync here; the branch is created after we confirm
+  # there's something to publish, so we never leave an empty branch behind.
+  WORK_DIR="$REPO_DIR"
+fi
+
+# Sync research-notes → the resolved publish working tree
+echo ""
+echo "📦 Syncing to frontend..."
+bash "$REPO_DIR/scripts/sync-vault.sh" "$WORK_DIR"
+
+# Check if there are changes (content or attachments)
+if [[ -z $(git -C "$WORK_DIR" status --porcelain content/ public/attachments/) ]]; then
+  echo ""
+  echo "✅ No new notes to publish!"
+  exit 0
+fi
+
+# For a new PR, create the branch now that we know there are changes; the
+# untracked synced files carry over onto it.
+if [[ "$USE_EXISTING" != "true" ]]; then
   TIMESTAMP=$(date +%Y%m%d-%H%M%S)
   BRANCH_NAME="${BRANCH_PREFIX}-${TIMESTAMP}"
   echo ""
   echo "🌿 Creating branch: $BRANCH_NAME"
-  git checkout -b "$BRANCH_NAME"
+  git -C "$WORK_DIR" checkout -b "$BRANCH_NAME"
 fi
 
+# Show what will be published
+echo ""
+echo "📋 Changes to be published:"
+git -C "$WORK_DIR" status --short content/ public/attachments/
+
 # Stage changes
-git add content/ public/attachments/ .beads/
+git -C "$WORK_DIR" add content/ public/attachments/
+[[ -d "$WORK_DIR/.beads" ]] && git -C "$WORK_DIR" add .beads/
 
 # Detect new vs modified notes
-NEW_NOTES=$(git diff --cached --name-only --diff-filter=A content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
-MODIFIED_NOTES=$(git diff --cached --name-only --diff-filter=M content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
+NEW_NOTES=$(git -C "$WORK_DIR" diff --cached --name-only --diff-filter=A content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
+MODIFIED_NOTES=$(git -C "$WORK_DIR" diff --cached --name-only --diff-filter=M content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
 
 # Build commit message
 COMMIT_MSG="content: Publish research notes"
@@ -116,15 +136,15 @@ Updated:
 $(echo "$MODIFIED_NOTES" | sed 's/^/- /')"
 fi
 
-git commit -m "$COMMIT_MSG"
+git -C "$WORK_DIR" commit -m "$COMMIT_MSG"
 
 # Push branch
 echo ""
 echo "⬆️  Pushing to GitHub..."
 if [[ "$USE_EXISTING" == "true" ]]; then
-  git push --force-with-lease origin "$BRANCH_NAME"
+  git -C "$WORK_DIR" push --force-with-lease origin "$BRANCH_NAME"
 else
-  git push -u origin "$BRANCH_NAME"
+  git -C "$WORK_DIR" push -u origin "$BRANCH_NAME"
 fi
 
 # Build PR body (used for both create and update)
@@ -135,8 +155,8 @@ PR_BODY="## Research Notes Update
 This PR publishes notes that were tagged with \`#to-publish\` in the vault."
 
 # Get new and modified notes for PR
-NEW_NOTES_PR=$(git diff --name-only origin/main --diff-filter=A content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
-MODIFIED_NOTES_PR=$(git diff --name-only origin/main --diff-filter=M content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
+NEW_NOTES_PR=$(git -C "$WORK_DIR" diff --name-only origin/main --diff-filter=A content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
+MODIFIED_NOTES_PR=$(git -C "$WORK_DIR" diff --name-only origin/main --diff-filter=M content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
 
 if [[ -n "$NEW_NOTES_PR" ]]; then
   PR_BODY="${PR_BODY}
