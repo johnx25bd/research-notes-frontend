@@ -1,7 +1,7 @@
 ---
 created: 2026-01-07
 featured: true
-featured_order: null
+featured_order: 5
 published: true
 published_at: '2026-01-07'
 research_note: obsidian://open?vault=research-notes&file=notes/Geopositional%20encoding%20for%20language%20models

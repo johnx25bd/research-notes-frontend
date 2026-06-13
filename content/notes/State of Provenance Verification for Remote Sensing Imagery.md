@@ -1,7 +1,7 @@
 ---
 created: 2025-12-17
 featured: true
-featured_order: null
+featured_order: 4
 published: true
 published_at: 2025-12-18
 research_note: obsidian://open?vault=research-notes&file=notes/State%20of%20Provenance%20Verification%20for%20Remote%20Sensing%20Imagery
