@@ -114,10 +114,12 @@ describe('processMarkdown', () => {
   });
 
   describe('Image embeds', () => {
-    test('converts a basic Obsidian image embed', async () => {
+    test('leaves a plain image embed as a bare inline image', async () => {
       const html = await processMarkdown('![[diagram.svg]]', availableNotes);
       expect(html).toContain('src="/attachments/diagram.svg"');
       expect(html).toContain('alt="diagram"');
+      // no hint and no caption → not wrapped in a figure
+      expect(html).not.toContain('<figure');
     });
 
     test('uses a pipe segment as alt text', async () => {
@@ -126,8 +128,9 @@ describe('processMarkdown', () => {
       expect(html).toContain('alt="a nice chart"');
     });
 
-    test('applies a percentage width hint as an inline style', async () => {
+    test('wraps a width hint in a sized figure', async () => {
       const html = await processMarkdown('![[diagram.svg|75%]]', availableNotes);
+      expect(html).toContain('<figure');
       expect(html).toContain('src="/attachments/diagram.svg"');
       expect(html).toContain('width: 75%');
       // fragment is stripped from the served src
@@ -145,37 +148,84 @@ describe('processMarkdown', () => {
       expect(html).toContain('width: 75%');
     });
 
-    test('keeps an adjacent caption line rendering as markdown', async () => {
-      const markdown = '![[diagram.svg|75%]]\n*caption text*';
-      const html = await processMarkdown(markdown, availableNotes);
-      expect(html).toContain('width: 75%');
-      expect(html).toContain('<em>caption text</em>');
-    });
-
-    test('applies the wide layout as a class that bleeds past the column', async () => {
+    test('applies the wide layout as a figure that bleeds past the column', async () => {
       const html = await processMarkdown('![[diagram.svg|wide]]', availableNotes);
       expect(html).toContain('src="/attachments/diagram.svg"');
-      expect(html).toContain('class="img-wide"');
+      expect(html).toContain('class="note-figure img-wide"');
       // fragment is stripped from the served src
       expect(html).not.toContain('#layout=');
     });
 
-    test('applies the full layout as a class', async () => {
+    test('applies the full layout as a figure class', async () => {
       const html = await processMarkdown('![[diagram.svg|full]]', availableNotes);
-      expect(html).toContain('class="img-full"');
+      expect(html).toContain('class="note-figure img-full"');
     });
 
     test('supports both alt text and a wide layout', async () => {
       const html = await processMarkdown('![[diagram.svg|a nice chart|wide]]', availableNotes);
       expect(html).toContain('alt="a nice chart"');
-      expect(html).toContain('class="img-wide"');
+      expect(html).toContain('class="note-figure img-wide"');
     });
 
-    test('keeps an adjacent caption rendering with a wide image', async () => {
-      const markdown = '![[diagram.svg|wide]]\n*caption text*';
+    test('turns a following blockquote into a figcaption', async () => {
+      const markdown = '![[diagram.svg|wide]]\n> A caption with **bold**.';
       const html = await processMarkdown(markdown, availableNotes);
-      expect(html).toContain('class="img-wide"');
-      expect(html).toContain('<em>caption text</em>');
+      expect(html).toContain('class="note-figure img-wide"');
+      expect(html).toContain('<figcaption>');
+      expect(html).toContain('<strong>bold</strong>');
+      // the caption blockquote is consumed, not left as a quote
+      expect(html).not.toContain('<blockquote>');
+    });
+
+    test('supports a multi-line blockquote caption', async () => {
+      const markdown = '![[diagram.svg|wide]]\n> Line one.\n> Line two.';
+      const html = await processMarkdown(markdown, availableNotes);
+      expect(html).toContain('<figcaption>');
+      expect(html).toContain('Line one.');
+      expect(html).toContain('Line two.');
+    });
+
+    test('treats a following italic line as a caption (back-compat)', async () => {
+      const markdown = '![[diagram.svg]]\n*italic caption*';
+      const html = await processMarkdown(markdown, availableNotes);
+      expect(html).toContain('<figure');
+      expect(html).toContain('<figcaption>');
+      expect(html).toContain('<em>italic caption</em>');
+    });
+
+    test('uses a bold line above the image as a title', async () => {
+      const markdown = '**Figure 1**\n\n![[diagram.svg|wide]]';
+      const html = await processMarkdown(markdown, availableNotes);
+      expect(html).toContain('class="note-figure img-wide"');
+      expect(html).toContain('class="figure-title"');
+      expect(html).toContain('Figure 1');
+    });
+
+    test('supports a bold title, image, and caption together', async () => {
+      const markdown = '**Figure 1**\n![[diagram.svg|wide]]\n> The caption.';
+      const html = await processMarkdown(markdown, availableNotes);
+      expect(html).toContain('class="figure-title"');
+      expect(html).toContain('Figure 1');
+      expect(html).toContain('<figcaption>');
+      expect(html).toContain('The caption.');
+    });
+
+    test('does not treat plain text above an image as a title', async () => {
+      const markdown = 'Some intro sentence.\n\n![[diagram.svg|wide]]';
+      const html = await processMarkdown(markdown, availableNotes);
+      expect(html).toContain('class="note-figure img-wide"');
+      expect(html).not.toContain('figure-title');
+      // the sentence stays its own paragraph
+      expect(html).toContain('<p>Some intro sentence.</p>');
+    });
+
+    test('does not consume a callout blockquote as a caption', async () => {
+      const markdown = '![[diagram.svg|wide]]\n\n> [!note]\n> Not a caption.';
+      const html = await processMarkdown(markdown, availableNotes);
+      expect(html).toContain('class="note-figure img-wide"');
+      // the callout is rendered as a callout, not pulled into a figcaption
+      expect(html).toContain('callout');
+      expect(html).not.toContain('<figcaption>');
     });
   });
 

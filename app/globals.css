@@ -299,47 +299,89 @@
 }
 
 /*
- * Image sizing hints (set by rehypeImageLayout from ![[img|wide]] etc.).
- * `img-wide` bleeds the image past the text column with progressively larger
- * negative margins on bigger screens — mirroring the breakout used by the
- * inline map figures (-mx-4 / sm:-mx-8 / lg:-mx-16 / xl:-mx-24). `img-full`
- * bleeds to the full viewport width.
+ * Figures built around image embeds (rehypeImageFigures, from ![[img|wide]]
+ * plus an optional caption blockquote). The opaque background and raised
+ * stacking context keep a bleeding image clear of the page's meridian line.
  */
-.prose img.img-wide {
+.prose .note-figure {
+  position: relative;
+  z-index: 1;
+  margin-block: 2rem;
+  background: var(--background);
+}
+
+.prose .note-figure img {
   display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+}
+
+.prose .note-figure .figure-title {
+  margin: 0 0 0.625rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--foreground);
+}
+
+.prose .note-figure figcaption {
+  margin-top: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--muted-foreground);
+}
+
+.prose .note-figure figcaption p {
+  margin: 0;
+}
+
+.prose .note-figure figcaption p + p {
+  margin-top: 0.4rem;
+}
+
+/* A column-width hint (e.g. |75%) sizes the figure and centers it. */
+.prose .note-figure[style*="width"] {
+  margin-inline: auto;
+}
+
+/*
+ * `img-wide` bleeds past the text column with progressively larger negative
+ * margins on bigger screens — mirroring the breakout used by the inline map
+ * figures (-mx-4 / sm:-mx-8 / lg:-mx-16 / xl:-mx-24).
+ */
+.prose .note-figure.img-wide {
   max-width: none;
   width: calc(100% + 2rem);
   margin-inline: -1rem;
-  height: auto;
 }
 
 @media (min-width: 640px) {
-  .prose img.img-wide {
+  .prose .note-figure.img-wide {
     width: calc(100% + 4rem);
     margin-inline: -2rem;
   }
 }
 
 @media (min-width: 1024px) {
-  .prose img.img-wide {
+  .prose .note-figure.img-wide {
     width: calc(100% + 8rem);
     margin-inline: -4rem;
   }
 }
 
 @media (min-width: 1280px) {
-  .prose img.img-wide {
+  .prose .note-figure.img-wide {
     width: calc(100% + 12rem);
     margin-inline: -6rem;
   }
 }
 
-.prose img.img-full {
-  display: block;
+/* `img-full` bleeds to the full viewport width. */
+.prose .note-figure.img-full {
   width: 100vw;
   max-width: 100vw;
   margin-inline: calc(50% - 50vw);
-  height: auto;
 }
 
 /* Fade-in animation for note titles */
