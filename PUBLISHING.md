@@ -1,6 +1,6 @@
 # Publishing Workflow
 
-This document describes the automated workflow for publishing research notes from your Obsidian vault.
+This document describes the automated workflow for publishing research notes from your Obsidian vault. For content conventions (images, figures, captions, titles), see [AUTHORING.md](./AUTHORING.md).
 
 ## Quick Start
 
