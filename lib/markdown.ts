@@ -22,14 +22,17 @@ export function containsMDX(markdown: string): boolean {
 // ![[image.png]]            → ![image](/attachments/image.png)
 // ![[image.png|alt text]]   → ![alt text](/attachments/image.png)
 //
-// A pipe segment that is a bare number (pixels, Obsidian's convention) or an
-// N% value is treated as a width hint and carried on the src as a #w= fragment
-// rather than as alt text. rehypeImageWidth (below) turns it into an inline
-// style. We keep emitting a standard inline image — not a raw <img> tag — so an
+// A pipe segment can also carry a sizing hint, encoded on the src as a fragment
+// that rehypeImageLayout (below) resolves and then strips:
+//   - a bare number (pixels) or N% value → a width within the text column
+//   - `wide` → the image bleeds past the column margins (like a figure)
+//   - `full` → the image bleeds to the full viewport width
+// We keep emitting a standard inline image — not a raw <img> tag — so an
 // adjacent caption line still renders as markdown instead of being swallowed
 // into an HTML block.
 // ![[image.svg|75%]]        → ![image](/attachments/image.svg#w=75%)
-// ![[image.svg|alt|400]]    → ![alt](/attachments/image.svg#w=400)
+// ![[image.svg|wide]]       → ![image](/attachments/image.svg#layout=wide)
+// ![[image.svg|alt|wide]]   → ![alt](/attachments/image.svg#layout=wide)
 function preprocessObsidianImages(markdown: string): string {
   return markdown.replace(
     /!\[\[([^\]|]+?)(?:\|([^\]]+))?\]\]/g,
@@ -38,9 +41,13 @@ function preprocessObsidianImages(markdown: string): string {
         ? params.split('|').map((p: string) => p.trim())
         : [];
       let width: string | undefined;
+      let layout: string | undefined;
       const altParts: string[] = [];
       for (const part of parts) {
-        if (/^\d+%$/.test(part) || /^\d+$/.test(part)) {
+        const lower = part.toLowerCase();
+        if (lower === 'wide' || lower === 'full') {
+          layout = lower;
+        } else if (/^\d+%$/.test(part) || /^\d+$/.test(part)) {
           width = part;
         } else {
           altParts.push(part);
@@ -48,7 +55,9 @@ function preprocessObsidianImages(markdown: string): string {
       }
       const alt = altParts.join(' ') || filename.replace(/\.[^.]+$/, '');
       let src = `/attachments/${encodeURIComponent(filename)}`;
-      if (width) {
+      if (layout) {
+        src += `#layout=${layout}`;
+      } else if (width) {
         src += `#w=${encodeURIComponent(width)}`;
       }
       return `![${alt}](${src})`;
@@ -56,11 +65,12 @@ function preprocessObsidianImages(markdown: string): string {
   );
 }
 
-// Apply a width hint encoded as a #w= fragment on an image src (see
-// preprocessObsidianImages) as an inline style, then strip the fragment so the
-// served src stays clean. A bare number is treated as pixels, an N% value as a
-// percentage. Walks the tree directly to avoid a unist-util-visit dependency.
-function rehypeImageWidth() {
+// Resolve a sizing hint encoded as a fragment on an image src (see
+// preprocessObsidianImages), then strip the fragment so the served src stays
+// clean. A #w= hint becomes an inline width style; a #layout= hint becomes a
+// class (`img-wide` / `img-full`) styled in globals.css. Walks the tree
+// directly to avoid a unist-util-visit dependency.
+function rehypeImageLayout() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const visit = (node: any): void => {
     if (
@@ -69,9 +79,10 @@ function rehypeImageWidth() {
       node.properties?.src
     ) {
       const src = String(node.properties.src);
-      const match = src.match(/#w=([^#]+)$/);
-      if (match) {
-        const raw = decodeURIComponent(match[1]);
+      const widthMatch = src.match(/#w=([^#]+)$/);
+      const layoutMatch = src.match(/#layout=([^#]+)$/);
+      if (widthMatch) {
+        const raw = decodeURIComponent(widthMatch[1]);
         const width = /^\d+$/.test(raw) ? `${raw}px` : raw;
         node.properties.src = src.replace(/#w=[^#]+$/, '');
         const existing = node.properties.style
@@ -79,6 +90,15 @@ function rehypeImageWidth() {
           : '';
         node.properties.style =
           `${existing}width: ${width}; height: auto; display: block; margin-inline: auto;`;
+      } else if (layoutMatch) {
+        node.properties.src = src.replace(/#layout=[^#]+$/, '');
+        const cls = layoutMatch[1] === 'full' ? 'img-full' : 'img-wide';
+        const existing = Array.isArray(node.properties.className)
+          ? node.properties.className
+          : node.properties.className
+            ? [node.properties.className]
+            : [];
+        node.properties.className = [...existing, cls];
       }
     }
     if (Array.isArray(node.children)) {
@@ -110,7 +130,7 @@ export async function processMarkdown(
       aliasDivider: '|' // Obsidian uses | for aliases, not :
     })
     .use(remarkRehype, { allowDangerousHtml: true })
-    .use(rehypeImageWidth)
+    .use(rehypeImageLayout)
     .use(rehypeCallouts)
     .use(rehypeStringify, { allowDangerousHtml: true });
 
