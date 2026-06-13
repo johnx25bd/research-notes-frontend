@@ -151,6 +151,32 @@ describe('processMarkdown', () => {
       expect(html).toContain('width: 75%');
       expect(html).toContain('<em>caption text</em>');
     });
+
+    test('applies the wide layout as a class that bleeds past the column', async () => {
+      const html = await processMarkdown('![[diagram.svg|wide]]', availableNotes);
+      expect(html).toContain('src="/attachments/diagram.svg"');
+      expect(html).toContain('class="img-wide"');
+      // fragment is stripped from the served src
+      expect(html).not.toContain('#layout=');
+    });
+
+    test('applies the full layout as a class', async () => {
+      const html = await processMarkdown('![[diagram.svg|full]]', availableNotes);
+      expect(html).toContain('class="img-full"');
+    });
+
+    test('supports both alt text and a wide layout', async () => {
+      const html = await processMarkdown('![[diagram.svg|a nice chart|wide]]', availableNotes);
+      expect(html).toContain('alt="a nice chart"');
+      expect(html).toContain('class="img-wide"');
+    });
+
+    test('keeps an adjacent caption rendering with a wide image', async () => {
+      const markdown = '![[diagram.svg|wide]]\n*caption text*';
+      const html = await processMarkdown(markdown, availableNotes);
+      expect(html).toContain('class="img-wide"');
+      expect(html).toContain('<em>caption text</em>');
+    });
   });
 
   describe('Callouts', () => {
