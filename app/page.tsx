@@ -4,6 +4,21 @@ import { getAllNotes } from "@/lib/vault"
 import Link from "next/link"
 import { NoteRow } from "@/components/note-row"
 import { SubscribeForm } from "@/components/subscribe-form"
+import type { Note } from "@/lib/vault"
+
+// Top post pinned above the featured notes in "Orient". Links straight out
+// to the external post in a new tab rather than to an internal note page.
+const topPost: Note = {
+  slug: "spatial-alignment",
+  title: "Spatial Alignment",
+  summary: "Towards spatial governance of intelligent machines",
+  status: "fragment",
+  lastTended: "",
+  tags: [],
+  content: "",
+  filepath: "",
+}
+const TOP_POST_URL = "https://sotaletters.substack.com/p/spatial-alignment"
 
 export default async function HomePage() {
   const notes = await getAllNotes()
@@ -74,8 +89,15 @@ export default async function HomePage() {
             Orient
           </h2>
           <div className="space-y-0">
+            <NoteRow
+              note={topPost}
+              externalUrl={TOP_POST_URL}
+              showDate={false}
+              showStatus={false}
+              wrapSummary
+            />
             {featuredNotes.map((note) => (
-              <NoteRow key={note.slug} note={note} showDate={false} showStatus={false} />
+              <NoteRow key={note.slug} note={note} showDate={false} showStatus={false} wrapSummary />
             ))}
           </div>
         </section>
