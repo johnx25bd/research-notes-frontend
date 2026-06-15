@@ -20,6 +20,16 @@ const topPost: Note = {
 }
 const TOP_POST_URL = "https://sotaletters.substack.com/p/spatial-alignment"
 
+// Tidy up Orient sublines: drop trailing periods for consistency, and glue the
+// last two words with a non-breaking space so we never wrap a single orphan word.
+function formatSubline(summary?: string): string {
+  if (!summary) return ""
+  return summary
+    .trim()
+    .replace(/\.+$/, "")
+    .replace(/\s+(\S+)$/, " $1")
+}
+
 export default async function HomePage() {
   const notes = await getAllNotes()
 
@@ -90,14 +100,20 @@ export default async function HomePage() {
           </h2>
           <div className="space-y-0">
             <NoteRow
-              note={topPost}
+              note={{ ...topPost, summary: formatSubline(topPost.summary) }}
               externalUrl={TOP_POST_URL}
               showDate={false}
               showStatus={false}
               wrapSummary
             />
             {featuredNotes.map((note) => (
-              <NoteRow key={note.slug} note={note} showDate={false} showStatus={false} wrapSummary />
+              <NoteRow
+                key={note.slug}
+                note={{ ...note, summary: formatSubline(note.summary) }}
+                showDate={false}
+                showStatus={false}
+                wrapSummary
+              />
             ))}
           </div>
         </section>
