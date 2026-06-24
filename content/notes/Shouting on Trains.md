@@ -1,7 +1,7 @@
 ---
 created: 2026-06-01
 featured: true
-featured_order: 1
+featured_order: 2
 published: true
 published_at: 2026-06-03
 research_note: obsidian://open?vault=research-notes&file=notes/Shouting%20on%20Trains
@@ -17,7 +17,7 @@ On Saturday I was on a train out to Kent, where I overheard the mother behind me
 
 I love this on many levels. The sentence asserts a context; it firmly but gently instructs the child that *in this context*, shouting is not appropriate; and it preserves the child's agency. (I suspect and hope that in other spaces, she says “We’re outside in the park -- shout as much as you want!”)
 
-In many ways, the process of maturing is a process of learning what is appropriate in which contexts, and learning how to manage our impulses so we constrain our behavior in ways that allow us to live and flourish in a jostling community of others. 
+In many ways, the process of maturing is a process of learning what is appropriate in which contexts, and learning how to manage our impulses so we constrain our behavior in ways that allow us to live and flourish in a jostling community of others. 
 
 ## An odd lens
 

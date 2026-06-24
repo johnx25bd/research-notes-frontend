@@ -4,7 +4,7 @@ author:
 categories:
 - '[[Posts]]'
 created: 2025-12-09
-published: true
+published: false
 published_at: 2025-12-09
 research_note: obsidian://open?vault=research-notes&file=notes/Co-location%20proofs
 source_note: obsidian://open?vault=xo&file=Notes/Co-location%20proofs
@@ -21,10 +21,6 @@ Co-located nodes are especially exposed to correlated risks — a power cut, nat
 
 So, a question comes up: how can we **verify** whether nodes are co-located? Terraform manifests and legal contracts serve as a form of evidence, but we want to challenge ourselves to go a layer deeper, to work out how to generate evidence sources that aren't based on [[Trust-conscious vs. trustless|naive trust]]. (This is a specific application of [[Notes on Location Proofs|location proofs]] — verifying location claims about infrastructure.) 
 
-This deserves a deep dive. One idea: outside of data centers, devices can collect signals from across the radiofrequency spectrum — WiFi BSSIDs, Bluetooth identifi
-# Co-location proofs
-
-Your research note content here...
-ers, etc. The contents and strength of these signals constitute a unique environmental "fingerprint", which is very hard to recreate ... I wonder what kinds of network signals we might be able to collect — including if we were to run some kind of verification node in major data centers around the world. ... 🤔
+This deserves a deep dive. One idea: outside of data centers, devices can collect signals from across the radiofrequency spectrum — WiFi BSSIDs, Bluetooth identifiers, etc. The contents and strength of these signals constitute a unique environmental "fingerprint", which is very hard to recreate ... I wonder what kinds of network signals we might be able to collect — including if we were to run some kind of verification node in major data centers around the world. ... 🤔
 
 
