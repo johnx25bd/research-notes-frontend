@@ -16,6 +16,7 @@ const topPost: Note = {
   lastTended: "",
   tags: [],
   content: "",
+  area: "notes",
   filepath: "",
 }
 const TOP_POST_URL = "https://sotaletters.substack.com/p/spatial-alignment"

@@ -51,7 +51,7 @@ export function NoteRow({
   }
 
   return (
-    <Link href={`/notes/${note.slug}`} className={className}>
+    <Link href={`/${note.area ?? "notes"}/${note.slug}`} className={className}>
       {inner}
     </Link>
   )
