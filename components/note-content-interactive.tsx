@@ -54,7 +54,7 @@ export function NoteContentInteractive({ html, allNotes }: NoteContentInteractiv
       // Check if this is an internal link
       if (domNode.name === 'a' && domNode.attribs?.class?.includes('internal-link')) {
         const href = domNode.attribs.href || ''
-        const slug = href.replace('/notes/', '')
+        const slug = href.replace(/^\/(notes|research)\//, '')
         const linkText = domToReact(domNode.children as DOMNode[], options)
         const note = allNotes.find(n => n.slug === slug)
         const isBroken = domNode.attribs.class?.includes('broken-link')

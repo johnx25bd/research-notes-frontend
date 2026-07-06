@@ -6,7 +6,7 @@ import { NoteContentInteractive } from "@/components/note-content-interactive"
 import { NoteContentMDX } from "@/components/note-content-mdx"
 import { NoteConnections } from "@/components/note-connections"
 import { TagChip } from "@/components/tag-chip"
-import { getAllNotes, getNoteBySlug } from "@/lib/vault"
+import { getAllNotes, getAllResearch, getNoteBySlug } from "@/lib/vault"
 import { processMarkdown, containsMDX } from "@/lib/markdown"
 import { computeBacklinks } from "@/lib/backlinks"
 
@@ -62,13 +62,17 @@ export default async function NotePage({ params }: NotePageProps) {
   // Get all notes for backlinks and related notes
   const allNotes = await getAllNotes()
 
+  // Wikilink resolution spans both areas so cross-area links resolve correctly.
+  const research = await getAllResearch()
+  const linkTargets = [...allNotes, ...research].map(n => ({ slug: n.slug, area: n.area }))
+
   // Detect if content contains MDX (React components)
   const isMDX = containsMDX(note.content)
 
   // Process markdown to HTML (only needed for non-MDX content)
   const html = isMDX
     ? ''
-    : await processMarkdown(note.content, allNotes.map(n => n.slug))
+    : await processMarkdown(note.content, linkTargets, "notes")
 
   // Compute backlinks
   const backlinksMap = computeBacklinks(allNotes)
