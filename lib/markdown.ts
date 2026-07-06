@@ -1,7 +1,9 @@
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 import remarkRehype from 'remark-rehype';
+import rehypeKatex from 'rehype-katex';
 import rehypeStringify from 'rehype-stringify';
 import wikiLinkPlugin from 'remark-wiki-link';
 import rehypeCallouts from 'rehype-callouts';
@@ -16,6 +18,20 @@ export function containsMDX(markdown: string): boolean {
   // This excludes standard HTML tags like <div>, <span>, etc.
   const jsxPattern = /<([A-Z][a-zA-Z0-9]*)\s*[^>]*\/?>/;
   return jsxPattern.test(markdown);
+}
+
+// Strip Obsidian comments and unwrap Obsidian highlights.
+//   %% ... %%   → removed entirely (author-only comments, inline or block)
+//   ==text==    → text (the highlight markers are dropped, content kept)
+// Runs before the markdown parse so neither leaks into the published HTML.
+// Highlights are unwrapped rather than turned into <mark> because published
+// notes use them as author annotations, not as emphasis meant for readers.
+// The non-greedy `==` unwrap leaves inline math ($...$) inside a highlight
+// intact for remark-math to pick up downstream.
+function stripObsidianAnnotations(markdown: string): string {
+  return markdown
+    .replace(/%%[\s\S]*?%%/g, '')
+    .replace(/==([\s\S]+?)==/g, '$1');
 }
 
 // Convert Obsidian image embeds to standard markdown.
@@ -234,10 +250,11 @@ export async function processMarkdown(
   markdown: string,
   availableNotes: string[] = []
 ): Promise<string> {
-  const preprocessed = preprocessObsidianImages(markdown);
+  const preprocessed = preprocessObsidianImages(stripObsidianAnnotations(markdown));
   const processor = unified()
     .use(remarkParse)
     .use(remarkGfm) // Tables, strikethrough, task lists
+    .use(remarkMath) // $inline$ and $$block$$ LaTeX
     .use(wikiLinkPlugin, {
       permalinks: availableNotes,
       pageResolver: (name: string) => {
@@ -251,6 +268,7 @@ export async function processMarkdown(
       aliasDivider: '|' // Obsidian uses | for aliases, not :
     })
     .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeKatex) // Render math nodes to KaTeX HTML
     .use(rehypeCallouts)
     .use(rehypeImageFigures)
     .use(rehypeStringify, { allowDangerousHtml: true });
