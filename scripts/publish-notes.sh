@@ -115,9 +115,9 @@ git -C "$WORK_DIR" status --short content/ public/attachments/
 git -C "$WORK_DIR" add content/ public/attachments/
 [[ -d "$WORK_DIR/.beads" ]] && git -C "$WORK_DIR" add .beads/
 
-# Detect new vs modified notes
-NEW_NOTES=$(git -C "$WORK_DIR" diff --cached --name-only --diff-filter=A content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
-MODIFIED_NOTES=$(git -C "$WORK_DIR" diff --cached --name-only --diff-filter=M content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
+# Detect new vs modified notes across both content areas (notes/ and research/)
+NEW_NOTES=$(git -C "$WORK_DIR" diff --cached --name-only --diff-filter=A content/notes/ content/research/ | sed -E 's#content/(notes|research)/##' | sed 's/\.md$//')
+MODIFIED_NOTES=$(git -C "$WORK_DIR" diff --cached --name-only --diff-filter=M content/notes/ content/research/ | sed -E 's#content/(notes|research)/##' | sed 's/\.md$//')
 
 # Build commit message
 COMMIT_MSG="content: Publish research notes"
@@ -154,9 +154,9 @@ PR_BODY="## Research Notes Update
 
 This PR publishes notes that were tagged with \`#to-publish\` in the vault."
 
-# Get new and modified notes for PR
-NEW_NOTES_PR=$(git -C "$WORK_DIR" diff --name-only origin/main --diff-filter=A content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
-MODIFIED_NOTES_PR=$(git -C "$WORK_DIR" diff --name-only origin/main --diff-filter=M content/notes/ | sed 's/content\/notes\///' | sed 's/\.md$//')
+# Get new and modified notes for PR (both content areas)
+NEW_NOTES_PR=$(git -C "$WORK_DIR" diff --name-only origin/main --diff-filter=A content/notes/ content/research/ | sed -E 's#content/(notes|research)/##' | sed 's/\.md$//')
+MODIFIED_NOTES_PR=$(git -C "$WORK_DIR" diff --name-only origin/main --diff-filter=M content/notes/ content/research/ | sed -E 's#content/(notes|research)/##' | sed 's/\.md$//')
 
 if [[ -n "$NEW_NOTES_PR" ]]; then
   PR_BODY="${PR_BODY}

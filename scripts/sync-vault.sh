@@ -16,8 +16,13 @@ echo "🔄 Syncing notes from Obsidian vault into: $TARGET_DIR"
 # Create content directory if it doesn't exist
 mkdir -p "$CONTENT_DIR"
 
-# Sync notes
-rsync -av --delete "$VAULT_PATH/notes/" "$CONTENT_DIR/notes/"
+# Sync content areas (notes/ and research/). Each maps to a site route.
+for AREA in notes research; do
+  if [ -d "$VAULT_PATH/$AREA" ]; then
+    mkdir -p "$CONTENT_DIR/$AREA"
+    rsync -av --delete "$VAULT_PATH/$AREA/" "$CONTENT_DIR/$AREA/"
+  fi
+done
 
 # Sync attachments to public/ for Next.js static serving
 # Check multiple possible Obsidian attachment folder names
