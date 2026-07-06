@@ -46,9 +46,10 @@ async function loadArea(area: Area): Promise<Note[]> {
         // Get last modified date from git
         const lastTended = await getGitDate(filepath);
 
-        // Generate slug from filename
-        // Normalize special characters: em-dash/en-dash to hyphen, smart quotes to regular
-        const slug = path.basename(file, '.md')
+        // Slug: an explicit `slug:` in frontmatter wins; otherwise derive it
+        // from the filename. Either way, normalize to a clean URL slug
+        // (lowercase, spaces→hyphens, em/en-dash→hyphen, smart quotes flattened).
+        const slug = String(data.slug || path.basename(file, '.md'))
           .toLowerCase()
           .replace(/\s+/g, '-')
           .replace(/[—–]/g, '-')  // em-dash and en-dash to hyphen
