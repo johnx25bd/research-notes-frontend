@@ -457,11 +457,35 @@
   overflow-y: hidden;
 }
 
-/* --- Research article: layout + Tufte-style margin sidenotes --- */
-.research-article {
-  max-width: 42rem;
-  padding: 2.5rem 1.5rem;
+/* Research abstract: set apart from the body — smaller, muted, italic, with the
+   meridian accent and a small-caps label instead of a section heading. */
+.research-article .abstract {
+  border-left: 2px solid var(--meridian);
+  padding-left: 1.5rem;
+  margin-bottom: 2.75rem;
 }
+
+.research-article .abstract > h2 {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted-foreground);
+  margin: 0 0 0.65rem;
+}
+
+.research-article .abstract p {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+/* --- Research article: Tufte-style margin sidenotes ---
+   The article column matches every other page (max-w-2xl mx-auto px-6), so the
+   body's left edge stays consistent site-wide. Sidenotes overflow into the
+   existing right gutter rather than shifting the text column. */
 
 /* Sidenotes: inline by default (narrow screens), styled like a soft aside. */
 .research-article .sidenote {
@@ -490,19 +514,14 @@
   margin-bottom: 0;
 }
 
-/* On wide screens, reserve a right gutter and float each sidenote into it,
-   sitting alongside its reference instead of collected at the foot. */
+/* On wide screens, float each sidenote into the right gutter, alongside its
+   reference, leaving the body column exactly where it sits on every other page. */
 @media (min-width: 1280px) {
-  .research-article {
-    max-width: 62rem;
-    padding-right: 19.5rem;
-  }
-
   .research-article .sidenote {
     float: right;
     clear: right;
-    width: 16rem;
-    margin-right: -18rem;
+    width: 15rem;
+    margin-right: -17rem;
     margin-top: 0.15rem;
     margin-bottom: 1.25rem;
     padding-left: 0;
