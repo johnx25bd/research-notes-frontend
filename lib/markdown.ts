@@ -1,10 +1,13 @@
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 import remarkRehype from 'remark-rehype';
+import rehypeKatex from 'rehype-katex';
 import rehypeStringify from 'rehype-stringify';
 import wikiLinkPlugin from 'remark-wiki-link';
 import rehypeCallouts from 'rehype-callouts';
+import type { Area } from './vault';
 
 /**
  * Detect if content contains MDX (React component) syntax.
@@ -16,6 +19,35 @@ export function containsMDX(markdown: string): boolean {
   // This excludes standard HTML tags like <div>, <span>, etc.
   const jsxPattern = /<([A-Z][a-zA-Z0-9]*)\s*[^>]*\/?>/;
   return jsxPattern.test(markdown);
+}
+
+// Strip Obsidian comments and unwrap Obsidian highlights.
+//   %% ... %%   → removed entirely (author-only comments, inline or block)
+//   ==text==    → text (the highlight markers are dropped, content kept)
+// Runs before the markdown parse so neither leaks into the published HTML.
+// Highlights are unwrapped rather than turned into <mark> because published
+// notes use them as author annotations, not as emphasis meant for readers.
+// The non-greedy `==` unwrap leaves inline math ($...$) inside a highlight
+// intact for remark-math to pick up downstream.
+function stripObsidianAnnotations(markdown: string): string {
+  return markdown
+    .replace(/%%[\s\S]*?%%/g, '')
+    // Unwrap highlights, but only within a single line and with no `=` inside,
+    // so a stray `==` never pairs across paragraphs/code blocks (e.g. two
+    // separate `a == b` comparisons) and swallows the content between them.
+    .replace(/==([^\n=]+?)==/g, '$1');
+}
+
+// remark-math only renders $$…$$ as *display* (block, centered) math when the
+// delimiters sit on their own lines. Obsidian — and this vault — authors
+// single-line `$$…$$` as display too, so expand any line that is entirely one
+// `$$…$$` expression onto fenced lines. Inline `$…$` and mid-sentence `$$` are
+// untouched (the anchors require the whole line to be the expression).
+function normalizeDisplayMath(markdown: string): string {
+  return markdown.replace(
+    /^[ \t]*\$\$(.+?)\$\$[ \t]*$/gm,
+    (_match, expr) => `$$\n${expr}\n$$`
+  );
 }
 
 // Convert Obsidian image embeds to standard markdown.
@@ -230,27 +262,177 @@ function rehypeImageFigures() {
   return (tree: any): void => transform(tree);
 }
 
+// Relocate GFM footnotes into inline margin notes (Tufte-style sidenotes).
+// remark-gfm/remark-rehype emit a trailing <section data-footnotes> with all
+// definitions collected at the foot of the document, plus a <sup> reference at
+// each call site. This transform pulls each definition up next to its
+// reference as an <aside class="sidenote">, so the reader sees the note in the
+// margin without jumping to the bottom. CSS (scoped to .research-article)
+// floats the aside into the right margin on wide screens and inlines it on
+// narrow ones. The original footnotes section is removed.
+// Hand-walks the tree to avoid a unist-util-visit dependency (as elsewhere).
+function rehypeSidenotes() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const textOf = (node: any): string => {
+    if (node.type === 'text') return node.value || '';
+    if (Array.isArray(node.children)) return node.children.map(textOf).join('');
+    return '';
+  };
+
+  // Deep-clone a subtree while dropping the footnote back-reference anchors.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const withoutBackref = (node: any): any | null => {
+    if (
+      node.type === 'element' &&
+      node.tagName === 'a' &&
+      node.properties?.dataFootnoteBackref !== undefined
+    ) {
+      return null;
+    }
+    if (Array.isArray(node.children)) {
+      return {
+        ...node,
+        children: node.children.map(withoutBackref).filter(Boolean),
+      };
+    }
+    return { ...node };
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (tree: any): void => {
+    // 1. Find the footnotes section and collect id → definition content.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let section: any = null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let sectionParent: any = null;
+    let sectionIndex = -1;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const locate = (node: any): void => {
+      if (!node || !Array.isArray(node.children)) return;
+      node.children.forEach((child: any, idx: number) => {
+        if (
+          child.type === 'element' &&
+          child.tagName === 'section' &&
+          child.properties?.dataFootnotes !== undefined
+        ) {
+          section = child;
+          sectionParent = node;
+          sectionIndex = idx;
+        } else {
+          locate(child);
+        }
+      });
+    };
+    locate(tree);
+    if (!section) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const defs = new Map<string, any[]>();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ol = (section.children || []).find((c: any) => c.tagName === 'ol');
+    if (ol) {
+      for (const li of ol.children) {
+        if (li.type !== 'element' || li.tagName !== 'li' || !li.properties?.id) continue;
+        const cleaned = withoutBackref(li);
+        defs.set(String(li.properties.id), cleaned.children);
+      }
+    }
+
+    // 2. Remove the trailing footnotes section (before walking for refs).
+    if (sectionParent && sectionIndex >= 0) {
+      sectionParent.children.splice(sectionIndex, 1);
+    }
+
+    // 3. Insert an <aside> after each footnote-reference <sup>.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const insert = (node: any): void => {
+      if (!node || !Array.isArray(node.children)) return;
+      const kids = node.children;
+      for (let i = 0; i < kids.length; i++) {
+        const child = kids[i];
+        if (child.type === 'element' && child.tagName === 'sup') {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const a = (child.children || []).find(
+            (c: any) =>
+              c.type === 'element' &&
+              c.tagName === 'a' &&
+              c.properties?.dataFootnoteRef !== undefined
+          );
+          if (a) {
+            const id = String(a.properties?.href || '').replace(/^#/, '');
+            const content = defs.get(id);
+            if (content) {
+              const aside = {
+                type: 'element',
+                tagName: 'aside',
+                properties: { className: ['sidenote'] },
+                children: [
+                  {
+                    type: 'element',
+                    tagName: 'sup',
+                    properties: { className: ['sidenote-number'] },
+                    children: [{ type: 'text', value: textOf(a) }],
+                  },
+                  ...content,
+                ],
+              };
+              kids.splice(i + 1, 0, aside);
+              i++; // step past the aside we just inserted
+              continue;
+            }
+          }
+        }
+        insert(child);
+      }
+    };
+    insert(tree);
+  };
+}
+
 export async function processMarkdown(
   markdown: string,
-  availableNotes: string[] = []
+  // Accepts either a bare slug list (back-compat) or slug+area pairs. Bare
+  // slugs are assumed to live in the current area.
+  availableNotes: (string | { slug: string; area: Area })[] = [],
+  currentArea: Area = 'notes'
 ): Promise<string> {
-  const preprocessed = preprocessObsidianImages(markdown);
+  const preprocessed = preprocessObsidianImages(
+    normalizeDisplayMath(stripObsidianAnnotations(markdown))
+  );
+  // Resolve a wikilink to the area its target actually lives in, so links point
+  // at /notes/… or /research/… correctly (and cross-area links resolve too).
+  const normalizedNotes = availableNotes.map(n =>
+    typeof n === 'string' ? { slug: n, area: currentArea } : n
+  );
+  const areaBySlug = new Map(normalizedNotes.map(n => [n.slug, n.area]));
   const processor = unified()
     .use(remarkParse)
     .use(remarkGfm) // Tables, strikethrough, task lists
+    .use(remarkMath) // $inline$ and $$block$$ LaTeX
     .use(wikiLinkPlugin, {
-      permalinks: availableNotes,
+      permalinks: normalizedNotes.map(n => n.slug),
       pageResolver: (name: string) => {
         // Convert page name to slug format (lowercase, spaces to hyphens)
         const slug = name.toLowerCase().replace(/\s+/g, '-');
         return [slug];
       },
-      hrefTemplate: (permalink: string) => `/notes/${permalink}`,
+      hrefTemplate: (permalink: string) =>
+        `/${areaBySlug.get(permalink) ?? currentArea}/${permalink}`,
       wikiLinkClassName: 'internal-link',
       newClassName: 'broken-link',
       aliasDivider: '|' // Obsidian uses | for aliases, not :
     })
     .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeKatex); // Render math nodes to KaTeX HTML
+
+  // Research pieces get Tufte-style margin sidenotes; notes keep the standard
+  // collected footnotes section at the foot of the page.
+  if (currentArea === 'research') {
+    processor.use(rehypeSidenotes);
+  }
+
+  processor
     .use(rehypeCallouts)
     .use(rehypeImageFigures)
     .use(rehypeStringify, { allowDangerousHtml: true });

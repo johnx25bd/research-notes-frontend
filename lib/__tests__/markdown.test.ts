@@ -251,6 +251,69 @@ describe('processMarkdown', () => {
     });
   });
 
+  describe('Math (KaTeX)', () => {
+    test('renders inline $…$ as inline math, not display', async () => {
+      const html = await processMarkdown('The pair $(C, E)$ here.', availableNotes);
+      expect(html).toContain('class="katex');
+      expect(html).not.toContain('katex-display');
+    });
+
+    test('renders a single-line $$…$$ as centered display math', async () => {
+      const markdown = 'Intro:\n\n$$\\mathcal{E} : (C, E) \\mapsto A$$\n\nAfter.';
+      const html = await processMarkdown(markdown, availableNotes);
+      expect(html).toContain('katex-display');
+    });
+
+    test('renders a multi-line $$…$$ block as display math', async () => {
+      const markdown = 'Intro:\n\n$$\nA = (\\pi, Q)\n$$\n\nAfter.';
+      const html = await processMarkdown(markdown, availableNotes);
+      expect(html).toContain('katex-display');
+    });
+  });
+
+  describe('Obsidian annotations', () => {
+    test('strips %% comments entirely', async () => {
+      const html = await processMarkdown('Before %%a private note%% after.', availableNotes);
+      expect(html).toContain('Before');
+      expect(html).toContain('after.');
+      expect(html).not.toContain('private note');
+      expect(html).not.toContain('%%');
+    });
+
+    test('unwraps ==highlights== to plain text', async () => {
+      const html = await processMarkdown('This is ==important== text.', availableNotes);
+      expect(html).toContain('important');
+      expect(html).not.toContain('==');
+      expect(html).not.toContain('<mark>');
+    });
+
+    test('does not pair == across separate code lines', async () => {
+      // Two independent equality comparisons must stay intact, not merge.
+      const markdown = '`a == b`\n\n`c == d`';
+      const html = await processMarkdown(markdown, availableNotes);
+      expect(html).toContain('a == b');
+      expect(html).toContain('c == d');
+    });
+  });
+
+  describe('Sidenotes (research area)', () => {
+    const footnoteMd = 'A claim.[^1]\n\n[^1]: The supporting note.';
+
+    test('relocates footnotes into inline sidenotes on research pages', async () => {
+      const html = await processMarkdown(footnoteMd, [], 'research');
+      expect(html).toContain('class="sidenote"');
+      expect(html).toContain('The supporting note.');
+      // the collected footnotes section is removed in favor of the sidenote
+      expect(html).not.toContain('data-footnotes');
+    });
+
+    test('keeps the standard footnotes section on notes pages', async () => {
+      const html = await processMarkdown(footnoteMd, [], 'notes');
+      expect(html).toContain('data-footnotes');
+      expect(html).not.toContain('class="sidenote"');
+    });
+  });
+
   describe('Edge Cases', () => {
     test('handles empty markdown', async () => {
       const html = await processMarkdown('', availableNotes);

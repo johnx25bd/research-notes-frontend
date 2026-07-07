@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Lora, Inter, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { ThemeProvider } from "@/components/theme-provider"
+import "katex/dist/katex.min.css"
 import "./globals.css"
 
 const lora = Lora({ subsets: ["latin"], variable: "--font-lora" })

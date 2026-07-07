@@ -265,18 +265,36 @@ def create_obsidian_uri(vault_name: str, note_path: str) -> str:
     return f"obsidian://open?vault={vault_name}&file={encoded_path}"
 
 
-def create_live_url(note_name: str) -> str:
+VALID_AREAS = {"notes", "research"}
+
+
+def resolve_area(frontmatter: Optional[Dict[str, Any]]) -> str:
+    """Determine which site area a note publishes to.
+
+    Driven by the `area:` frontmatter flag. Absent, empty, or unrecognized
+    values fall back to 'notes' so existing notes keep publishing as before.
+    """
+    if not frontmatter:
+        return "notes"
+    area = frontmatter.get("area")
+    if isinstance(area, str) and area.strip().lower() in VALID_AREAS:
+        return area.strip().lower()
+    return "notes"
+
+
+def create_live_url(note_name: str, area: str = "notes") -> str:
     """Create a URL for the live published note.
 
     Args:
         note_name: Name of the note (without .md extension)
+        area: Site area the note publishes to ('notes' or 'research')
 
     Returns:
         URL to the published note on johnx.co
     """
     # Convert to slug format: lowercase + spaces to dashes
     slug = note_name.lower().replace(' ', '-')
-    return f"https://johnx.co/notes/{slug}"
+    return f"https://johnx.co/{area}/{slug}"
 
 
 def create_research_notes_uri(note_name: str) -> str:
@@ -344,10 +362,6 @@ def find_modified_published_notes() -> List[Path]:
     if not XO_VAULT_PATH.exists():
         return []
 
-    research_notes_dir = RESEARCH_NOTES_VAULT_PATH / "notes"
-    if not research_notes_dir.exists():
-        return []
-
     # Search for all notes with published: true
     for md_file in XO_VAULT_PATH.rglob("*.md"):
         # Skip hidden files, .obsidian folder, and Templates folder
@@ -360,8 +374,9 @@ def find_modified_published_notes() -> List[Path]:
         if not frontmatter or frontmatter.get('published') != True:
             continue
 
-        # Check if note exists in research-notes
-        research_note_path = research_notes_dir / (md_file.stem + '.md')
+        # Check if note exists in research-notes, under its area subfolder
+        area = resolve_area(frontmatter)
+        research_note_path = RESEARCH_NOTES_VAULT_PATH / area / (md_file.stem + '.md')
         if not research_note_path.exists():
             continue
 
@@ -434,8 +449,11 @@ def sync_note(source_path: Path, created_stubs: Set[str], update_source: bool = 
         # Calculate relative path from xo vault
         rel_path = source_path.relative_to(XO_VAULT_PATH)
 
-        # Destination path in research-notes (Notes folder)
-        dest_path = RESEARCH_NOTES_VAULT_PATH / "notes" / source_path.stem
+        # Which site area this note publishes to (notes/ or research/)
+        area = resolve_area(frontmatter)
+
+        # Destination path in research-notes, under the area subfolder
+        dest_path = RESEARCH_NOTES_VAULT_PATH / area / source_path.stem
         dest_path = dest_path.with_suffix('.md')
         dest_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -519,7 +537,7 @@ def sync_note(source_path: Path, created_stubs: Set[str], update_source: bool = 
                 source_frontmatter['published_at'] = datetime.now().strftime('%Y-%m-%d')
 
             # Add live URL and research-notes link to xo vault
-            source_frontmatter['url'] = create_live_url(source_path.stem)
+            source_frontmatter['url'] = create_live_url(source_path.stem, area)
             source_frontmatter['research_note'] = create_research_notes_uri(source_path.stem)
 
             write_frontmatter(source_path, source_frontmatter, body)

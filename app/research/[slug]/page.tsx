@@ -1,70 +1,69 @@
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { LayoutShell } from "@/components/layout-shell"
-import { StatusBadge } from "@/components/status-badge"
 import { NoteContentInteractive } from "@/components/note-content-interactive"
 import { NoteContentMDX } from "@/components/note-content-mdx"
 import { NoteConnections } from "@/components/note-connections"
 import { TagChip } from "@/components/tag-chip"
-import { getAllNotes, getAllResearch, getNoteBySlug } from "@/lib/vault"
+import { getAllNotes, getAllResearch, getResearchBySlug } from "@/lib/vault"
 import { processMarkdown, containsMDX } from "@/lib/markdown"
 import { computeBacklinks } from "@/lib/backlinks"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://johnx.co'
 
 export async function generateStaticParams() {
-  const notes = await getAllNotes()
-  return notes.map((note) => ({ slug: note.slug }))
+  const research = await getAllResearch()
+  return research.map((note) => ({ slug: note.slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const note = await getNoteBySlug(slug)
+  const note = await getResearchBySlug(slug)
 
   if (!note) {
     return {
-      title: 'Note Not Found',
+      title: 'Not Found',
     }
   }
 
   return {
     title: note.title,
-    description: note.summary || `Research note: ${note.title}`,
+    description: note.summary || `Research: ${note.title}`,
     openGraph: {
       title: note.title,
-      description: note.summary || `Research note: ${note.title}`,
+      description: note.summary || `Research: ${note.title}`,
       type: 'article',
       publishedTime: note.lastTended,
       modifiedTime: note.lastTended,
       tags: note.tags,
-      url: `${siteUrl}/notes/${slug}`,
+      url: `${siteUrl}/research/${slug}`,
     },
     twitter: {
       card: 'summary',
       title: note.title,
-      description: note.summary || `Research note: ${note.title}`,
+      description: note.summary || `Research: ${note.title}`,
     },
   }
 }
 
-interface NotePageProps {
+interface ResearchPageProps {
   params: Promise<{ slug: string }>
 }
 
-export default async function NotePage({ params }: NotePageProps) {
+export default async function ResearchNotePage({ params }: ResearchPageProps) {
   const { slug } = await params
-  const note = await getNoteBySlug(slug)
+  const note = await getResearchBySlug(slug)
 
   if (!note) {
     notFound()
   }
 
-  // Get all notes for backlinks and related notes
-  const allNotes = await getAllNotes()
+  // Corpus for backlinks and related notes: the research area.
+  const allNotes = await getAllResearch()
 
   // Wikilink resolution spans both areas so cross-area links resolve correctly.
-  const research = await getAllResearch()
-  const linkTargets = [...allNotes, ...research].map(n => ({ slug: n.slug, area: n.area }))
+  const notes = await getAllNotes()
+  const linkTargets = [...notes, ...allNotes].map(n => ({ slug: n.slug, area: n.area }))
 
   // Detect if content contains MDX (React components)
   const isMDX = containsMDX(note.content)
@@ -72,7 +71,7 @@ export default async function NotePage({ params }: NotePageProps) {
   // Process markdown to HTML (only needed for non-MDX content)
   const html = isMDX
     ? ''
-    : await processMarkdown(note.content, linkTargets, "notes")
+    : await processMarkdown(note.content, linkTargets, "research")
 
   // Compute backlinks
   const backlinksMap = computeBacklinks(allNotes)
@@ -84,30 +83,19 @@ export default async function NotePage({ params }: NotePageProps) {
     .filter(n => n.tags.some(tag => note.tags.includes(tag)))
     .slice(0, 5)
 
+  // Hide publishing-workflow tags from the reader-facing tag list.
+  const WORKFLOW_TAGS = new Set(["to-publish", "research"])
+  const displayTags = note.tags.filter(tag => !WORKFLOW_TAGS.has(tag))
+
   return (
     <LayoutShell>
-      <article className="max-w-2xl mx-auto px-6 py-10">
+      <article className="research-article mx-auto">
         <div className="compass-line">
           <header className="mb-10 animate-fade-in-up">
             <h1 className="text-3xl sm:text-4xl font-normal text-foreground mb-4 text-balance">{note.title}</h1>
-            <div
-              className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground"
-              style={{ fontFamily: "var(--font-ui)" }}
-            >
-              <StatusBadge status={note.status} />
-              <span className="text-border">·</span>
-              <span>
-                Last tended{" "}
-                {new Date(note.lastTended).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </span>
-            </div>
-            {note.tags.length > 0 && (
+            {displayTags.length > 0 && (
               <div className="flex gap-2 mt-3">
-                {note.tags.slice(0, 3).map((tag) => (
+                {displayTags.slice(0, 3).map((tag) => (
                   <TagChip key={tag} tag={tag} href={`/tags/${tag}`} />
                 ))}
               </div>

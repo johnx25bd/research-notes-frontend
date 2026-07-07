@@ -3,8 +3,14 @@ import path from 'path';
 import matter from 'gray-matter';
 import { getGitDate } from './git';
 
-// Path to synced notes (synced from Obsidian vault via scripts/sync-vault.sh)
-const VAULT_PATH = path.join(process.cwd(), 'content', 'notes');
+// Content areas of the site. Each maps to a folder under content/ and a
+// top-level route (/notes/[slug], /research/[slug]). Files are routed into an
+// area by the `area:` frontmatter flag during sync (defaults to notes).
+export type Area = 'notes' | 'research';
+
+// Root of synced content (populated from the Obsidian vault via
+// scripts/sync-vault.sh). Each area is a subdirectory.
+const CONTENT_ROOT = path.join(process.cwd(), 'content');
 
 export interface Note {
   slug: string;
@@ -14,6 +20,7 @@ export interface Note {
   lastTended: string;  // From git
   tags: string[];
   content: string;
+  area: Area;           // Which site area this belongs to
   featured?: boolean;
   featured_order?: number;  // For sorting featured notes
   filepath: string;
@@ -22,24 +29,27 @@ export interface Note {
   source_note?: string; // Obsidian URI back to source vault
 }
 
-export async function getAllNotes(): Promise<Note[]> {
+// Load and parse every published note in a single content area.
+async function loadArea(area: Area): Promise<Note[]> {
+  const dir = path.join(CONTENT_ROOT, area);
   try {
-    const files = await fs.readdir(VAULT_PATH, { recursive: true });
+    const files = await fs.readdir(dir, { recursive: true });
     const markdownFiles = files
       .filter(f => typeof f === 'string' && f.endsWith('.md'));
 
     const notes = await Promise.all(
       markdownFiles.map(async (file) => {
-        const filepath = path.join(VAULT_PATH, file);
+        const filepath = path.join(dir, file);
         const raw = await fs.readFile(filepath, 'utf-8');
         const { data, content } = matter(raw);
 
         // Get last modified date from git
         const lastTended = await getGitDate(filepath);
 
-        // Generate slug from filename
-        // Normalize special characters: em-dash/en-dash to hyphen, smart quotes to regular
-        const slug = path.basename(file, '.md')
+        // Slug: an explicit `slug:` in frontmatter wins; otherwise derive it
+        // from the filename. Either way, normalize to a clean URL slug
+        // (lowercase, spaces→hyphens, em/en-dash→hyphen, smart quotes flattened).
+        const slug = String(data.slug || path.basename(file, '.md'))
           .toLowerCase()
           .replace(/\s+/g, '-')
           .replace(/[—–]/g, '-')  // em-dash and en-dash to hyphen
@@ -54,6 +64,7 @@ export async function getAllNotes(): Promise<Note[]> {
           lastTended,
           tags: Array.isArray(data.tags) ? data.tags : [],
           content,
+          area,
           featured: data.featured || false,
           featured_order: data.featured_order,
           filepath: file,
@@ -72,7 +83,20 @@ export async function getAllNotes(): Promise<Note[]> {
   }
 }
 
+export async function getAllNotes(): Promise<Note[]> {
+  return loadArea('notes');
+}
+
 export async function getNoteBySlug(slug: string): Promise<Note | null> {
   const notes = await getAllNotes();
   return notes.find(n => n.slug === slug) || null;
+}
+
+export async function getAllResearch(): Promise<Note[]> {
+  return loadArea('research');
+}
+
+export async function getResearchBySlug(slug: string): Promise<Note | null> {
+  const research = await getAllResearch();
+  return research.find(n => n.slug === slug) || null;
 }

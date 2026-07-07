@@ -9,9 +9,17 @@ type NoteStatus = Note['status']
 
 interface NotesPageClientProps {
   notes: Note[]
+  title?: string
+  description?: string
+  searchPlaceholder?: string
 }
 
-export function NotesPageClient({ notes }: NotesPageClientProps) {
+export function NotesPageClient({
+  notes,
+  title = "Map",
+  description = "All notes in the garden, from fresh seeds to evergreen ideas.",
+  searchPlaceholder = "Search notes...",
+}: NotesPageClientProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedStatus, setSelectedStatus] = useState<NoteStatus | null>(null)
 
@@ -44,15 +52,15 @@ export function NotesPageClient({ notes }: NotesPageClientProps) {
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-16">
-      <h1 className="text-3xl sm:text-4xl font-normal text-foreground mb-4 animate-fade-in-up">Map</h1>
-      <p className="text-muted-foreground mb-10">All notes in the garden, from fresh seeds to evergreen ideas.</p>
+      <h1 className="text-3xl sm:text-4xl font-normal text-foreground mb-4 animate-fade-in-up">{title}</h1>
+      <p className="text-muted-foreground mb-10">{description}</p>
 
       <div className="flex flex-col sm:flex-row gap-4 mb-10" style={{ fontFamily: "var(--font-ui)" }}>
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Search notes..."
+            placeholder={searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
