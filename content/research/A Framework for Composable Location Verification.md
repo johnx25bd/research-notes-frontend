@@ -9,7 +9,8 @@ research_note: obsidian://open?vault=research-notes&file=research/A%20Framework%
 slug: location-verification-framework
 source_note: obsidian://open?vault=xo&file=Research/hoopes-2026-framework-for-composable-location-verification/A%20Framework%20for%20Composable%20Location%20Verification
 status: fragment
-summary: null
+summary: Multi-factor location verification for credible location-contingent commitments
+  across use cases
 tags: []
 title: A Framework for Composable Location Verification
 url: https://johnx.co/research/location-verification-framework
