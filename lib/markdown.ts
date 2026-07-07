@@ -390,6 +390,39 @@ function rehypeSidenotes() {
   };
 }
 
+// Wrap a leading "Abstract" section (the h2 plus everything up to the next
+// heading) in <section class="abstract"> so research pages can style it apart
+// from the body. No-op when there is no Abstract heading.
+function rehypeAbstract() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const textOf = (n: any): string =>
+    n.type === 'text' ? (n.value || '') : Array.isArray(n.children) ? n.children.map(textOf).join('') : '';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isHeading = (n: any) => n?.type === 'element' && /^h[1-6]$/.test(n.tagName);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (tree: any): void => {
+    const children = tree.children;
+    if (!Array.isArray(children)) return;
+    const start = children.findIndex(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (c: any) => c?.type === 'element' && c.tagName === 'h2' && textOf(c).trim().toLowerCase() === 'abstract'
+    );
+    if (start === -1) return;
+    let end = children.length;
+    for (let j = start + 1; j < children.length; j++) {
+      if (isHeading(children[j])) { end = j; break; }
+    }
+    const section = {
+      type: 'element',
+      tagName: 'section',
+      properties: { className: ['abstract'] },
+      children: children.slice(start, end),
+    };
+    children.splice(start, end - start, section);
+  };
+}
+
 export async function processMarkdown(
   markdown: string,
   // Accepts either a bare slug list (back-compat) or slug+area pairs. Bare
@@ -426,10 +459,11 @@ export async function processMarkdown(
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeKatex); // Render math nodes to KaTeX HTML
 
-  // Research pieces get Tufte-style margin sidenotes; notes keep the standard
-  // collected footnotes section at the foot of the page.
+  // Research pieces get Tufte-style margin sidenotes and a set-apart abstract;
+  // notes keep the standard collected footnotes section at the foot.
   if (currentArea === 'research') {
     processor.use(rehypeSidenotes);
+    processor.use(rehypeAbstract);
   }
 
   processor

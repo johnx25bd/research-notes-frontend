@@ -89,7 +89,7 @@ export default async function ResearchNotePage({ params }: ResearchPageProps) {
 
   return (
     <LayoutShell>
-      <article className="research-article mx-auto">
+      <article className="research-article max-w-2xl mx-auto px-6 py-10">
         <div className="compass-line">
           <header className="mb-10 animate-fade-in-up">
             <h1 className="text-3xl sm:text-4xl font-normal text-foreground mb-4 text-balance">{note.title}</h1>
