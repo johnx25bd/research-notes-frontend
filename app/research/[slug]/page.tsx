@@ -93,6 +93,9 @@ export default async function ResearchNotePage({ params }: ResearchPageProps) {
         <div className="compass-line">
           <header className="mb-10 animate-fade-in-up">
             <h1 className="text-3xl sm:text-4xl font-normal text-foreground mb-4 text-balance">{note.title}</h1>
+            {note.summary && (
+              <p className="text-lg text-muted-foreground leading-snug mb-4 text-balance">{note.summary}</p>
+            )}
             {displayTags.length > 0 && (
               <div className="flex gap-2 mt-3">
                 {displayTags.slice(0, 3).map((tag) => (
