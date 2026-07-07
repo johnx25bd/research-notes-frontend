@@ -38,6 +38,18 @@ function stripObsidianAnnotations(markdown: string): string {
     .replace(/==([^\n=]+?)==/g, '$1');
 }
 
+// remark-math only renders $$…$$ as *display* (block, centered) math when the
+// delimiters sit on their own lines. Obsidian — and this vault — authors
+// single-line `$$…$$` as display too, so expand any line that is entirely one
+// `$$…$$` expression onto fenced lines. Inline `$…$` and mid-sentence `$$` are
+// untouched (the anchors require the whole line to be the expression).
+function normalizeDisplayMath(markdown: string): string {
+  return markdown.replace(
+    /^[ \t]*\$\$(.+?)\$\$[ \t]*$/gm,
+    (_match, expr) => `$$\n${expr}\n$$`
+  );
+}
+
 // Convert Obsidian image embeds to standard markdown.
 // ![[image.png]]            → ![image](/attachments/image.png)
 // ![[image.png|alt text]]   → ![alt text](/attachments/image.png)
@@ -385,7 +397,9 @@ export async function processMarkdown(
   availableNotes: (string | { slug: string; area: Area })[] = [],
   currentArea: Area = 'notes'
 ): Promise<string> {
-  const preprocessed = preprocessObsidianImages(stripObsidianAnnotations(markdown));
+  const preprocessed = preprocessObsidianImages(
+    normalizeDisplayMath(stripObsidianAnnotations(markdown))
+  );
   // Resolve a wikilink to the area its target actually lives in, so links point
   // at /notes/… or /research/… correctly (and cross-area links resolve too).
   const normalizedNotes = availableNotes.map(n =>
