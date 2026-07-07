@@ -2,15 +2,17 @@
 area: research
 created: 2026-07-07
 featured: true
-featured_order: 4
+featured_order: 2
 published: true
-published_at: '2026-07-07'
+published_at: 2026-07-07
+research_note: obsidian://open?vault=research-notes&file=research/A%20Framework%20for%20Composable%20Location%20Verification
 slug: location-verification-framework
 source_note: obsidian://open?vault=xo&file=Research/hoopes-2026-framework-for-composable-location-verification/A%20Framework%20for%20Composable%20Location%20Verification
 status: fragment
 summary: null
 tags: []
 title: A Framework for Composable Location Verification
+url: https://johnx.co/research/location-verification-framework
 ---
 ## Abstract
 
