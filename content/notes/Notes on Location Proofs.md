@@ -1,7 +1,7 @@
 ---
 created: 2025-12-10
 featured: true
-featured_order: '3'
+featured_order: 7
 published: true
 published_at: 2025-12-10
 research_note: obsidian://open?vault=research-notes&file=notes/Notes%20on%20Location%20Proofs

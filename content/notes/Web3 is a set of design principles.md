@@ -5,7 +5,7 @@ categories:
 - '[[Posts]]'
 created: 2025-12-09
 featured: true
-featured_order: '2'
+featured_order: 6
 published: true
 published_at: 2025-12-09
 research_note: obsidian://open?vault=research-notes&file=notes/Web3%20is%20a%20set%20of%20design%20principles
