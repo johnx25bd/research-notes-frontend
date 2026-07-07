@@ -172,6 +172,15 @@ if [[ -n "$MODIFIED_NOTES_PR" ]]; then
 $(echo "$MODIFIED_NOTES_PR" | sed 's/^/- /')"
 fi
 
+# Include the reconciled featured order (written by smart-sync) so any
+# renumbering is visible in the PR, not just the console.
+FEATURED_SUMMARY="$REPO_DIR/tmp/featured-order.md"
+if [[ -f "$FEATURED_SUMMARY" ]]; then
+  PR_BODY="${PR_BODY}
+
+$(cat "$FEATURED_SUMMARY")"
+fi
+
 PR_BODY="${PR_BODY}
 
 ### Checklist

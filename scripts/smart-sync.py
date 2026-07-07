@@ -560,6 +560,72 @@ def sync_note(source_path: Path, created_stubs: Set[str], update_source: bool = 
         return False
 
 
+def normalize_featured_order() -> List[Tuple[str, Any, int, str]]:
+    """Reconcile featured_order across every featured note in the xo vault.
+
+    featured_order is a single global ranking spanning both areas (the homepage
+    featured list pools notes + research). Authors set integers by hand and
+    conflicts are expected (three notes at "1"). This reconciles intent into a
+    clean deployment:
+
+      1. Collect all notes with `featured: true`.
+      2. Sort by (featured_order asc, mtime desc) — a note you most recently
+         edited wins a tie, so setting an existing value bumps it to the top of
+         that slot.
+      3. Renumber to a dense, unique 1..N and write the corrected value back
+         into each note's frontmatter, so the xo source matches the deployment.
+
+    Notes with unique, already-dense integers are left unchanged (hand-coding a
+    clean order and re-running is a no-op). Returns the final ranking as a list
+    of (title, old_order, new_order, area) for reporting.
+    """
+    candidates = []
+    for md_file in XO_VAULT_PATH.rglob("*.md"):
+        if any(part.startswith('.') for part in md_file.parts):
+            continue
+        if 'Templates' in md_file.parts:
+            continue
+        frontmatter, body = parse_frontmatter(md_file)
+        if not frontmatter or frontmatter.get('featured') is not True:
+            continue
+        raw = frontmatter.get('featured_order')
+        try:
+            order = int(raw)
+        except (TypeError, ValueError):
+            order = 10 ** 6  # missing / blank / non-numeric sort last
+        candidates.append((md_file, order, md_file.stat().st_mtime, frontmatter, body, raw))
+
+    # order asc, then most-recently-modified first for ties
+    candidates.sort(key=lambda c: (c[1], -c[2]))
+
+    ranking: List[Tuple[str, Any, int, str]] = []
+    for idx, (md_file, order, mtime, frontmatter, body, raw) in enumerate(candidates, start=1):
+        title = frontmatter.get('title', md_file.stem)
+        area = resolve_area(frontmatter)
+        if raw != idx:
+            frontmatter['featured_order'] = idx
+            write_frontmatter(md_file, frontmatter, body)
+        ranking.append((title, raw, idx, area))
+    return ranking
+
+
+def write_featured_summary(ranking: List[Tuple[str, Any, int, str]]) -> None:
+    """Write a markdown summary of the reconciled featured order for the PR body.
+
+    publish-notes.sh reads this file (if present) and appends it to the PR
+    description, so the reordering is visible in the PR — not just the console.
+    """
+    if not ranking:
+        return
+    lines = ["### Featured order (reconciled)", ""]
+    for title, old, new, area in ranking:
+        moved = "" if old == new else f"  _(was {old!r})_"
+        lines.append(f"{new}. {title} — `/{area}`{moved}")
+    summary_path = Path("tmp") / "featured-order.md"
+    summary_path.parent.mkdir(parents=True, exist_ok=True)
+    summary_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def main():
     print("🔄 Two-vault sync: xo → research-notes\n")
     print(f"Source vault: {XO_VAULT_PATH}")
@@ -572,6 +638,23 @@ def main():
 
     # Create notes directory in research-notes if needed
     (RESEARCH_NOTES_VAULT_PATH / "notes").mkdir(parents=True, exist_ok=True)
+
+    # Reconcile featured_order across the vault BEFORE finding notes to sync, so
+    # any note whose rank changed is rewritten (and thus picked up as modified
+    # below and re-synced with its corrected order).
+    ranking = normalize_featured_order()
+    if ranking:
+        changed = [r for r in ranking if r[1] != r[2]]
+        print("⭐ Featured order (reconciled):")
+        for title, old, new, area in ranking:
+            flag = "" if old == new else f"   (was {old!r} → {new})"
+            print(f"   {new}. {title}  [/{area}]{flag}")
+        if changed:
+            print(f"   ↳ Renumbered {len(changed)} note(s) in the xo vault to keep 1..N unique.")
+        else:
+            print("   ↳ Already clean; no changes.")
+        print()
+        write_featured_summary(ranking)
 
     # Find new notes to publish (with #to-publish tag)
     notes_to_publish = find_notes_to_publish()
