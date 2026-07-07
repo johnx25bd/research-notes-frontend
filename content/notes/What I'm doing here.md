@@ -1,7 +1,7 @@
 ---
 created: 2025-12-10
 featured: true
-featured_order: 1
+featured_order: 3
 published: true
 published_at: 2025-12-10
 research_note: obsidian://open?vault=research-notes&file=notes/What%20I%27m%20doing%20here

@@ -19,7 +19,7 @@ I'll be writing more about the research agenda as it's taking shape. I'm fleshin
 
 ## FlexHEGs
 
-Towards the end of my reading session, I started digging into the proposals for Flexible Hardware-Enabled Guarantees, a proposal to develop open source hardware that gets integrated in frontier AI chips so they can be monitored and governed remotely. I won't go into explaining technical details -- I'm still getting my head around them, and want to keep my eyes on some of the insights and questions I have -- but if you're interested, these are the papers I've been looking at over the past few days:
+Towards the end of my reading session, I started digging into the proposals for Flexible Hardware-Enabled Guarantees, a proposal to develop open source hardware that gets integrated in frontier AI chips so they can be monitored and governed remotely. I won't go into explaining technical details -- I'm still getting my head around them, and want to keep my eyes on some of the insights and questions I have -- but if you're interested, these are the resources I've been looking at over the past few days:
 - Flexible Hardware-Enabled Guarantees for AI Compute (Petrie, Aarne, Ammann, davidad), Parts [1](https://arxiv.org/abs/2506.15093), [2](https://arxiv.org/abs/2506.03409) and [3](https://arxiv.org/abs/2506.15100)
 - [Embedded Off-Switches for AI Compute](https://arxiv.org/pdf/2509.07637) (Petrie)
 - https://flexheg.com/

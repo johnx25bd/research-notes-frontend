@@ -1,7 +1,7 @@
 ---
 created: 2026-06-01
 featured: true
-featured_order: 1
+featured_order: 2
 published: true
 published_at: 2026-06-03
 research_note: obsidian://open?vault=research-notes&file=notes/Shouting%20on%20Trains
