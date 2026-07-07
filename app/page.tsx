@@ -1,6 +1,6 @@
 import { LayoutShell } from "@/components/layout-shell"
 import { RecentNotesSection } from "@/components/recent-notes-section"
-import { getAllNotes } from "@/lib/vault"
+import { getAllNotes, getAllResearch } from "@/lib/vault"
 import Link from "next/link"
 import { NoteRow } from "@/components/note-row"
 import { SubscribeForm } from "@/components/subscribe-form"
@@ -33,11 +33,20 @@ function formatSubline(summary?: string): string {
 
 export default async function HomePage() {
   const notes = await getAllNotes()
+  const research = await getAllResearch()
 
-  // Featured notes (where featured: true), sorted by featured_order
-  const featuredNotes = notes
+  // Featured pool spans both areas so a featured research post can appear here.
+  // Missing/blank/non-numeric orders sort last (999); NoteRow links each to its
+  // own area (/notes or /research) via note.area.
+  const orderOf = (n: Note) => {
+    const raw = n.featured_order as unknown
+    if (raw === null || raw === undefined || raw === "") return 999
+    const v = Number(raw)
+    return Number.isFinite(v) ? v : 999
+  }
+  const featuredNotes = [...notes, ...research]
     .filter((note) => note.featured)
-    .sort((a, b) => (a.featured_order || 999) - (b.featured_order || 999))
+    .sort((a, b) => orderOf(a) - orderOf(b))
     .slice(0, 4)
 
   // Recently tended (sort by lastTended from git)
