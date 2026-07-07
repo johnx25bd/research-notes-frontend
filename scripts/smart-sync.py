@@ -282,31 +282,36 @@ def resolve_area(frontmatter: Optional[Dict[str, Any]]) -> str:
     return "notes"
 
 
-def create_live_url(note_name: str, area: str = "notes") -> str:
+def create_live_url(note_name: str, area: str = "notes", slug: Optional[str] = None) -> str:
     """Create a URL for the live published note.
 
     Args:
         note_name: Name of the note (without .md extension)
         area: Site area the note publishes to ('notes' or 'research')
+        slug: Explicit slug from frontmatter, if set; otherwise derived from
+            the filename. Must match how lib/vault.ts builds the slug.
 
     Returns:
         URL to the published note on johnx.co
     """
-    # Convert to slug format: lowercase + spaces to dashes
-    slug = note_name.lower().replace(' ', '-')
-    return f"https://johnx.co/{area}/{slug}"
+    # Honor an explicit frontmatter slug; else derive from the filename.
+    # Convert to slug format: lowercase + spaces to dashes.
+    base = slug if slug else note_name
+    slugified = base.lower().replace(' ', '-')
+    return f"https://johnx.co/{area}/{slugified}"
 
 
-def create_research_notes_uri(note_name: str) -> str:
+def create_research_notes_uri(note_name: str, area: str = "notes") -> str:
     """Create an Obsidian URI for the note in research-notes vault.
 
     Args:
         note_name: Name of the note (without .md extension)
+        area: Subfolder the note lives in ('notes' or 'research')
 
     Returns:
         Obsidian URI to open the note in research-notes vault
     """
-    encoded_path = urllib.parse.quote(f"notes/{note_name}")
+    encoded_path = urllib.parse.quote(f"{area}/{note_name}")
     return f"obsidian://open?vault=research-notes&file={encoded_path}"
 
 
@@ -537,8 +542,9 @@ def sync_note(source_path: Path, created_stubs: Set[str], update_source: bool = 
                 source_frontmatter['published_at'] = datetime.now().strftime('%Y-%m-%d')
 
             # Add live URL and research-notes link to xo vault
-            source_frontmatter['url'] = create_live_url(source_path.stem, area)
-            source_frontmatter['research_note'] = create_research_notes_uri(source_path.stem)
+            slug = frontmatter.get('slug') if isinstance(frontmatter.get('slug'), str) and frontmatter.get('slug').strip() else None
+            source_frontmatter['url'] = create_live_url(source_path.stem, area, slug)
+            source_frontmatter['research_note'] = create_research_notes_uri(source_path.stem, area)
 
             write_frontmatter(source_path, source_frontmatter, body)
             print(f"    → Marked as published in xo vault")
