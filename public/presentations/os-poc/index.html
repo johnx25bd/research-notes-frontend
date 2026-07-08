@@ -9,7 +9,7 @@
     <base href="/presentations/os-poc/" />
     <meta name="robots" content="noindex, nofollow" />
 
-    <title>Proof-of-concept build &middot; Geovation</title>
+    <title>Proof-of-concept build · Geovation</title>
     <link rel="shortcut icon" href="./favicon.ico" />
     <link rel="stylesheet" href="./dist/reset.css" />
     <link rel="stylesheet" href="./dist/reveal.css" />
@@ -44,7 +44,7 @@ Note:
 
 ## Approach
 
-A reusable decision framework
+A reusable decision framework<!-- .element: class="fragment" -->
 
 - Learning for OS, HMLR, Geovation <!-- .element: class="fragment" -->
 - Value to the startup <!-- .element: class="fragment" -->
@@ -106,41 +106,84 @@ Note:
 
 --
 
-### Food miles / supermarket origin
-
-<!-- This doesn't really systematically break down and analyze the startup imo. Also, I don't like wall of text, even if we're optimizing this to be read, not spoken -->
-Trace the origin of a supermarket basket and its associated food miles.
-
-Underneath, this is a supply-chain provenance, geocoding and UX problem more than a location-data one. The hard part is sourcing and cleaning origin data; once you have it, the mapping is routine. It exercises addressing and geocoding OS already understands well, and it doesn't obviously open a new market for national location data — the learning would be about consumer behavior, not about OS's data.
-
-A plausible consumer business, but the weakest of the three as a learning vehicle for OS.
+<div class="startup">
+<div class="su-head"><h3>Food miles<span class="su-tag">retail · environment</span></h3></div>
+<p class="su-idea">Trace a supermarket basket back to its origins and tally the food miles behind it.</p>
+<div class="su-grid">
+<dl class="su-specs">
+<div><dt>OS data</dt><dd>AddressBase geocoding, in a supporting role — underneath, this is a supply-chain provenance problem more than a location one.</dd></div>
+<div><dt>Value to OS</dt><dd>Thin. The learning is about consumer behaviour, and it opens no obvious new market for national location data.</dd></div>
+<div><dt>Moat</dt><dd>A thin UI over supply-chain data; buyers may route around it once they see the underlying API.</dd></div>
+</dl>
+<div class="su-score">
+<div class="su-score-head">vs. selection criteria</div>
+<div class="sc"><span>Learning for OS</span><span class="os-dot d-half"><span class="fill"></span></span></div>
+<div class="sc"><span>Falsifiable in 6 wks</span><span class="os-dot d-half"><span class="fill"></span></span></div>
+<div class="sc"><span>Value to startup</span><span class="os-dot d-half"><span class="fill"></span></span></div>
+<div class="sc"><span>Durable artifact</span><span class="os-dot d-empty"><span class="fill"></span></span></div>
+</div>
+</div>
+<div class="su-risk"><b>Riskiest assumption &rarr;</b> that reliable origin and provenance data can be sourced and cleaned at all. If it can't, nothing downstream matters — so a six-week test attacks data availability first.</div>
+<p class="su-read"><b>Read:</b> a plausible consumer business, but the weakest learning vehicle for OS.</p>
+</div>
 
 --
 
-### On-site storage in construction
-
-Reduce the on-site storage developers need during a build.
-
-This is the crispest engineering problem of the three -- site geometry, delivery scheduling, laydown footprint -- and it could draw on OS Buildings and Transport for site access and routing. Well-scoped and tractable in six weeks. The catch is value to OS: it's a logistics problem where national location data plays a supporting rather than central role, and it points at a niche B2B market rather than a new market for OS data. Strong on falsifiability, weak on learning and market.
-
-The one I'd choose if the brief were "show you can scope engineering." It isn't.
+<div class="startup">
+<div class="su-head"><h3>On-site storage<span class="su-tag">built environment · logistics</span></h3></div>
+<p class="su-idea">Reduce the on-site storage and laydown space a developer needs during a build.</p>
+<div class="su-grid">
+<dl class="su-specs">
+<div><dt>OS data</dt><dd>OS Buildings and Transport for site geometry, access and routing — supporting a scheduling problem, not leading it.</dd></div>
+<div><dt>Value to OS</dt><dd>Moderate. Location data assists rather than leads, and it points at a niche B2B market rather than a new market for OS data.</dd></div>
+<div><dt>Moat</dt><dd>Defensible if it owns the scheduling and laydown model, but the ICP is narrow.</dd></div>
+</dl>
+<div class="su-score">
+<div class="su-score-head">vs. selection criteria</div>
+<div class="sc"><span>Learning for OS</span><span class="os-dot d-half"><span class="fill"></span></span></div>
+<div class="sc"><span>Falsifiable in 6 wks</span><span class="os-dot d-full"><span class="fill"></span></span></div>
+<div class="sc"><span>Value to startup</span><span class="os-dot d-half"><span class="fill"></span></span></div>
+<div class="sc"><span>Durable artifact</span><span class="os-dot d-half"><span class="fill"></span></span></div>
+</div>
+</div>
+<div class="su-risk"><b>Riskiest assumption &rarr;</b> that solving it moves the needle for OS at all. The engineering is the crispest of the three; the weak link is the revenue case for OS, so a test sizes the market before it builds.</div>
+<p class="su-read"><b>Read:</b> the one I'd pick to prove engineering scoping — but that isn't the brief.</p>
+</div>
 
 --
 
-### Estate energy independence
-
-Help owners of large estates assess and improve energy independence -- where to add generation and storage to lean less on the grid.
-
-This sits squarely on OS and HMLR data: parcels and extent from HMLR; buildings, roofs, land cover and terrain from OS; combined with irradiance and tariff data and the estate's own metering. It's on OS's stated *Energy and Environment* priorities, and it points at a real and growing market -- energy transition is already visible in the portfolio through Atlas AI and Your Power. It also forces a genuine data-fitness question: how far can OS data carry an energy-independence assessment before you need a survey?
-
-Richest learning, clearest market, checkable against ground truth. The one I'd run.
+<div class="startup">
+<div class="su-head"><h3>Estate energy independence<span class="su-tag">land &amp; property · energy</span></h3></div>
+<p class="su-idea">Help large-estate owners assess and improve energy independence — where to add generation and storage to lean less on the grid.</p>
+<div class="su-grid">
+<dl class="su-specs">
+<div><dt>OS data</dt><dd>Central: HMLR parcels and extent; OS buildings, roofs, land cover and terrain; joined to irradiance, tariffs and the estate's own metering.</dd></div>
+<div><dt>Value to OS</dt><dd>High. It sits on OS's Energy &amp; Environment priority, points at a growing market already in the portfolio (Atlas AI, Your Power), and forces a real data-fitness question.</dd></div>
+<div><dt>Moat</dt><dd>A data-integration and assessment engine, defensible if a zero-touch assessment genuinely holds up.</dd></div>
+</dl>
+<div class="su-score">
+<div class="su-score-head">vs. selection criteria</div>
+<div class="sc"><span>Learning for OS</span><span class="os-dot d-full win"><span class="fill"></span></span></div>
+<div class="sc"><span>Falsifiable in 6 wks</span><span class="os-dot d-full win"><span class="fill"></span></span></div>
+<div class="sc"><span>Value to startup</span><span class="os-dot d-full win"><span class="fill"></span></span></div>
+<div class="sc"><span>Durable artifact</span><span class="os-dot d-full win"><span class="fill"></span></span></div>
+</div>
+</div>
+<div class="su-risk"><b>Riskiest assumption &rarr;</b> that public and remotely-sensed data alone can produce a credible, non-obvious assessment without a site survey. That is precisely the hypothesis we test next.</div>
+<p class="su-read"><b>Read:</b> richest learning, clearest market, checkable against ground truth. The one I'd run.</p>
+</div>
 
 ---
 
 ## Hypothesis
 
-**Hypothesis:** For a large UK estate, an assessment generated purely from public / commercially-available and remotely-sensed data will be judged by an expert land agent or estate manager as both credible (accurate enough to act on for triage) and non-obvious (surfacing at least one estate-specific insight they hadn't already costed). 
+**Hypothesis:** For a large UK estate, an assessment generated purely from public / commercially-available and remotely-sensed data will be judged by an expert land agent or estate manager as both credible and non-obvious.
 <!-- .element: class="fragment" -->
+<ul>
+<li class="fragment"><strong>output</strong>: a generated assessment to be provided to estate manager</li>
+<li class="fragment"><strong>credible</strong>: accurate enough to act on for triage</li>
+<li class="fragment"><strong>non-obvious</strong>: surfaces at least one estate-specific insight they hadn't already costed</li>
+</ul>
 
 **Falsified if:** for the majority of test estates, the expert judges the output wrong, generic, or something they wouldn't attach their name to. 
 <!-- .element: class="fragment" -->
@@ -168,9 +211,13 @@ Note:
 
 ### **Why this, this sprint**
 
-Six weeks should resolve the one question that decides what company this is: scalable product or consultancy. That fork determines where the founders invest for the next year — a product justifies building the pipeline and engine; a consultancy justifies relationships and billable judgement. Building toward the wrong one is the most expensive mistake available.
+Six weeks should resolve the one question that decides what company this is: scalable product or consultancy. 
 
-The hypothesis forks it in a single test: an assessment from public / commercially-available data alone, judged by an expert as _credible_ (accurate enough to trust) and _non-obvious_ (surfacing something they hadn't costed). Credible tests accuracy; public-data-only tests cost-to-serve. Pass, the product thesis survives; fail, you're a consultancy — and you've learned it in six weeks, not twelve months.
+That question determines where the founders invest for the next year — a product justifies building the pipeline and engine (and possibly raising venture financing); a consultancy justifies relationships and billable judgement. Building toward the wrong one is an expensive mistake to make.
+
+The hypothesis derisks the key question in this fork: an assessment produced from public / commercially-available data alone, judged by an expert as _credible_ (accurate enough to trust) and _non-obvious_ (surfacing something they hadn't costed). 
+
+Credible tests accuracy; public-data-only tests cost-to-serve. Pass, the product thesis survives; fail, you're a consultancy — and you've learned it in six weeks, not twelve months.
 
 **Alternatives rejected:**
 
@@ -313,7 +360,7 @@ Notes:
 
 
 
-**Rationale**
+**Rationale** <!-- .element: class="fragment" -->
 
 <ul>
 <li class="fragment"><strong>Familiar</strong>: the standard geospatial stack</li>
