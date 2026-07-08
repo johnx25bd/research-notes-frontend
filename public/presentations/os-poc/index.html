@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <!-- Served under a sub-path via the /presentations/os-poc rewrite; base keeps
+         reveal-md's relative asset URLs resolving correctly without a trailing slash. -->
+    <base href="/presentations/os-poc/" />
+    <meta name="robots" content="noindex, nofollow" />
+
+    <title>Proof-of-concept build &middot; Geovation</title>
+    <link rel="shortcut icon" href="./favicon.ico" />
+    <link rel="stylesheet" href="./dist/reset.css" />
+    <link rel="stylesheet" href="./dist/reveal.css" />
+    <link rel="stylesheet" href="./_assets/theme.css" id="theme" />
+    <link rel="stylesheet" href="./css/highlight/base16/zenburn.css" />
+
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section data-markdown data-separator="\r?\n---\r?\n" data-separator-vertical="\r?\n--\r?\n">
+          <textarea data-template>
+            
+
+<!-- .slide: data-background-color="#453c90" -->
+<div class="hero">
+<img class="os-logo os-logo--white" src="assets/os-logo.svg" alt="Ordnance Survey">
+<p class="cover-eyebrow">Geovation Incubator · Task 1</p>
+<h1>Proof-of-concept build</h1>
+<p class="cover-sub">A six-week experiment to benefit OS and a Geovation portfolio startup</p>
+<p class="cover-byline">John Hoopes &middot; Candidate, Technology &amp; Incubator Lead</p>
+</div>
+
+Note:
+
+- Task: one startup, one POC, a clear read on whether it worked.
+- They said the pick doesn't matter — method and value to OS do.
+- Frame: the experiment is a sensing instrument for OS, not a favor to a founder.
+
+---
+<!-- The spacing on this slide -- and all of them -- is off. It's too small and floated too high  -->
+
+## Approach
+
+A reusable decision framework
+
+- Learning for OS, HMLR, Geovation <!-- .element: class="fragment" -->
+- Value to the startup <!-- .element: class="fragment" -->
+- Falsifiable in 6 weeks <!-- .element: class="fragment" -->
+- Explicitly targeted value creation <!-- .element: class="fragment" -->
+- Durable, socialized learnings <!-- .element: class="fragment" -->
+
+Note:
+- OS, HMLR, Geovation strategic priorities, revenue, tech, etc
+	- Strategic priorities and our internal theses that we're constantly refining
+- We do well if our startups do well. Think like a founder
+- Limited time, limited resources: what is the most important question we can realistically answer?
+- Dimensions of value creation -- technical (data, software), relational (startups, partners, investors, customers), 
+	- This framework is a guide -- optimising will depend a bit on intuition and current needs
+- Documenting and sharing our learning is a core output of this work -- each iteration should build our knowledge, network and skills
+
+---
+
+## Selection Logic
+
+<div class="os-matrix">
+  <div class="cell col-head"></div>
+  <div class="cell col-head">Food<br>miles</div>
+  <div class="cell col-head">On-site<br>storage</div>
+  <div class="cell col-head col-win">Estate<br>energy</div>
+
+  <div class="cell row-head">Learning for OS</div>
+  <div class="cell dotcell"><span class="os-dot d-half"><span class="fill"></span></span></div>
+  <div class="cell dotcell"><span class="os-dot d-half"><span class="fill"></span></span></div>
+  <div class="cell dotcell col-win"><span class="os-dot d-full win"><span class="fill"></span></span></div>
+
+  <div class="cell row-head">Falsifiable in 6 wks</div>
+  <div class="cell dotcell"><span class="os-dot d-half"><span class="fill"></span></span></div>
+  <div class="cell dotcell"><span class="os-dot d-full"><span class="fill"></span></span></div>
+  <div class="cell dotcell col-win"><span class="os-dot d-full win"><span class="fill"></span></span></div>
+
+  <div class="cell row-head">Value to startup</div>
+  <div class="cell dotcell"><span class="os-dot d-half"><span class="fill"></span></span></div>
+  <div class="cell dotcell"><span class="os-dot d-half"><span class="fill"></span></span></div>
+  <div class="cell dotcell col-win"><span class="os-dot d-full win"><span class="fill"></span></span></div>
+
+  <div class="cell row-head">Durable artifact</div>
+  <div class="cell dotcell"><span class="os-dot d-empty"><span class="fill"></span></span></div>
+  <div class="cell dotcell"><span class="os-dot d-half"><span class="fill"></span></span></div>
+  <div class="cell dotcell col-win row-last"><span class="os-dot d-full win"><span class="fill"></span></span></div>
+</div>
+
+<div class="os-matrix-legend">
+  <span class="lg"><span class="os-dot d-empty"><span class="fill"></span></span> weak</span>
+  <span class="lg"><span class="os-dot d-half"><span class="fill"></span></span> partial</span>
+  <span class="lg"><span class="os-dot d-full"><span class="fill"></span></span> strong</span>
+</div>
+
+Note:
+
+- Show all three against the four criteria — they're marking the reasoning, not the pick.
+- Say plainly why the two drop.
+- Third wins on learning + market, not because it's "correct."
+
+--
+
+### Food miles / supermarket origin
+
+<!-- This doesn't really systematically break down and analyze the startup imo. Also, I don't like wall of text, even if we're optimizing this to be read, not spoken -->
+Trace the origin of a supermarket basket and its associated food miles.
+
+Underneath, this is a supply-chain provenance, geocoding and UX problem more than a location-data one. The hard part is sourcing and cleaning origin data; once you have it, the mapping is routine. It exercises addressing and geocoding OS already understands well, and it doesn't obviously open a new market for national location data — the learning would be about consumer behavior, not about OS's data.
+
+A plausible consumer business, but the weakest of the three as a learning vehicle for OS.
+
+--
+
+### On-site storage in construction
+
+Reduce the on-site storage developers need during a build.
+
+This is the crispest engineering problem of the three -- site geometry, delivery scheduling, laydown footprint -- and it could draw on OS Buildings and Transport for site access and routing. Well-scoped and tractable in six weeks. The catch is value to OS: it's a logistics problem where national location data plays a supporting rather than central role, and it points at a niche B2B market rather than a new market for OS data. Strong on falsifiability, weak on learning and market.
+
+The one I'd choose if the brief were "show you can scope engineering." It isn't.
+
+--
+
+### Estate energy independence
+
+Help owners of large estates assess and improve energy independence -- where to add generation and storage to lean less on the grid.
+
+This sits squarely on OS and HMLR data: parcels and extent from HMLR; buildings, roofs, land cover and terrain from OS; combined with irradiance and tariff data and the estate's own metering. It's on OS's stated *Energy and Environment* priorities, and it points at a real and growing market -- energy transition is already visible in the portfolio through Atlas AI and Your Power. It also forces a genuine data-fitness question: how far can OS data carry an energy-independence assessment before you need a survey?
+
+Richest learning, clearest market, checkable against ground truth. The one I'd run.
+
+---
+
+## Hypothesis
+
+**Hypothesis:** For a large UK estate, an assessment generated purely from public / commercially-available and remotely-sensed data will be judged by an expert land agent or estate manager as both credible (accurate enough to act on for triage) and non-obvious (surfacing at least one estate-specific insight they hadn't already costed). 
+<!-- .element: class="fragment" -->
+
+**Falsified if:** for the majority of test estates, the expert judges the output wrong, generic, or something they wouldn't attach their name to. 
+<!-- .element: class="fragment" -->
+
+<br /> 
+<br />
+
+
+**Benefits for the startup:** it's the cheapest test of the question that decides the whole company: is this a scalable product or a consultancy? 
+<!-- .element: class="fragment" -->
+
+**Benefits for OS:** it's a live test of whether OS data can support zero-touch assessments in this vertical, and a concrete instance of the ecosystem model working, a third party creating a new use case on the OS data estate that OS itself wouldn't build.
+<!-- .element: class="fragment" -->
+
+Note:
+
+- Riskiest assumption I can test with this team in this time — not the easiest: is this a scalable product?
+- Founder framing: trust + decision + unit economics.
+- Ground truth: assume the startup has it.
+- Three ways to fail on purpose. A clean "no" is still a result.
+
+--
+
+<!-- .slide: class="subcols" -->
+
+### **Why this, this sprint**
+
+Six weeks should resolve the one question that decides what company this is: scalable product or consultancy. That fork determines where the founders invest for the next year — a product justifies building the pipeline and engine; a consultancy justifies relationships and billable judgement. Building toward the wrong one is the most expensive mistake available.
+
+The hypothesis forks it in a single test: an assessment from public / commercially-available data alone, judged by an expert as _credible_ (accurate enough to trust) and _non-obvious_ (surfacing something they hadn't costed). Credible tests accuracy; public-data-only tests cost-to-serve. Pass, the product thesis survives; fail, you're a consultancy — and you've learned it in six weeks, not twelve months.
+
+**Alternatives rejected:**
+
+- _Optimisation engine_ — the expensive build you only justify _after_ the feasibility of credible data-driven assessment is tested. Premature.
+- _Polished SaaS shell_ — assumes the product thesis instead of testing it.
+- _Data-integration automation_ — a scaling problem, not a validation one. Tests nothing yet.
+- _Pure market research_ — weaker than an expert reacting to a real assessment of an estate they know. (Runs in parallel anyway; needs no engineers.)
+
+Each rejected option feels like progress while leaving the company-defining question unanswered. The chosen one, resolved either way, tells the founders where to invest.
+
+---
+
+## Experiment Design
+
+<div class="sprint-wrap">
+<div class="sprint-head">
+<p class="sprint-framing">A validation sprint designed so even the <strong>failure branch</strong> produces evidence useful to OS.</p>
+<div class="sprint-legend">
+<span class="lg"><span class="sw" style="background:#453c90"></span> Discover &amp; Frame</span>
+<span class="lg"><span class="sw" style="background:#1e50c9"></span> Develop</span>
+<span class="lg"><span class="sw" style="background:#0b7f88"></span> Test &amp; Synthesise</span>
+<span class="lg"><span class="dia"></span> artifact → audience</span>
+<span class="lg"><span class="dash"></span> parallel · no engineers</span>
+</div>
+</div>
+
+<div class="sprint">
+<div class="ph p1 fragment" data-fragment-index="1" style="grid-column:2/4"><b>Discover &amp; Frame</b><span class="wk">W1–2</span></div>
+<div class="ph p2 fragment" data-fragment-index="2" style="grid-column:4/6"><b>Develop</b><span class="wk">W3–4</span></div>
+<div class="ph p3 fragment" data-fragment-index="3" style="grid-column:6/8"><b>Test &amp; Synthesise</b><span class="wk">W5–6</span></div>
+
+<div class="wk-cell" style="grid-column:2/3">W1</div>
+<div class="wk-cell" style="grid-column:3/4">W2</div>
+<div class="wk-cell" style="grid-column:4/5">W3</div>
+<div class="wk-cell" style="grid-column:5/6">W4</div>
+<div class="wk-cell" style="grid-column:6/7">W5</div>
+<div class="wk-cell" style="grid-column:7/8">W6</div>
+
+<div class="lane" style="grid-row:3"><b>Framing &amp; design</b><span>whole team</span></div>
+<div class="blk p1 fragment" data-fragment-index="1" style="grid-row:3;grid-column:2/3">Fix sample · set pass bar</div>
+<div class="blk p1 fragment" data-fragment-index="1" style="grid-row:3;grid-column:3/4">Audit OS data</div>
+
+<div class="lane" style="grid-row:4"><b>Geospatial pipeline</b><span>2 engineers</span></div>
+<div class="blk p1 fragment" data-fragment-index="1" style="grid-row:4;grid-column:2/3">Assemble OS layers</div>
+<div class="blk p1 fragment" data-fragment-index="1" style="grid-row:4;grid-column:3/4">Roof planes + irradiance</div>
+<div class="blk p2 fragment" data-fragment-index="2" style="grid-row:4;grid-column:4/5">Heat load</div>
+<div class="blk p2 fragment" data-fragment-index="2" style="grid-row:4;grid-column:5/6">Recommend options</div>
+<div class="blk ghost fragment" data-fragment-index="3" style="grid-row:4;grid-column:6/8">Support fixes only — no new build</div>
+
+<div class="lane" style="grid-row:5"><b>Front-end / report</b><span>1 engineer</span></div>
+<div class="blk p2 fragment" data-fragment-index="2" style="grid-row:5;grid-column:4/5">Design estate report</div>
+<div class="blk p2 fragment" data-fragment-index="2" style="grid-row:5;grid-column:5/6">Populate all estates</div>
+<div class="blk p3 fragment" data-fragment-index="3" style="grid-row:5;grid-column:6/7">Present-ready</div>
+
+<div class="lane" style="grid-row:6"><b>Expert &amp; stakeholder</b><span>engagement</span></div>
+<div class="blk p1 fragment" data-fragment-index="1" style="grid-row:6;grid-column:2/3">Confirm experts</div>
+<div class="blk p3 fragment" data-fragment-index="3" style="grid-row:6;grid-column:6/7">Experts react to reports</div>
+<div class="blk p3 fragment" data-fragment-index="3" style="grid-row:6;grid-column:7/8">Debrief</div>
+
+<div class="lane parallel" style="grid-row:7"><b>Market / WTP</b><span>parallel · no eng</span></div>
+<div class="blk dash fragment" data-fragment-index="1" style="grid-row:7;grid-column:2/6">WTP interviews — agents &amp; owners</div>
+<div class="blk dash fragment" data-fragment-index="3" style="grid-row:7;grid-column:6/8">Product-vs-consultancy signal</div>
+
+<div class="art fragment" data-fragment-index="1" style="grid-row:8;grid-column:3/4"><span class="dia"></span><small>Data-fitness map<em>→ OS</em></small></div>
+<div class="art-dual fragment" data-fragment-index="2" style="grid-row:8;grid-column:5/6"><span class="art"><span class="dia"></span><small>Methodology<em>→ OS + founders</em></small></span><span class="art"><span class="dia"></span><small>Estate report<em>→ test tool</em></small></span></div>
+<div class="art fragment" data-fragment-index="3" style="grid-row:8;grid-column:7/8"><span class="dia"></span><small>Findings synthesis<em>→ founders + OS</em></small></div>
+</div>
+
+<div class="sprint-kill fragment" data-fragment-index="3"><b>Kill criterion · end W6</b> If most estates are judged wrong, generic, or something an expert wouldn't attach their name to — the zero-touch thesis is dead: a consultancy, not a scalable product.</div>
+</div>
+
+Note:
+
+- Six weeks is a box, not a Gantt — the spikes overlap; the plan flexes as each returns.
+- Step the three phases in one at a time; let the panel read the shape before the detail.
+- I'd enrol the front-end engineer in the design process — not a report-builder bolted on at the end; I want their read on the user.
+- Geospatial detail is deliberately light here — the next slide goes deep on the technical stack.
+- The WTP lane needs no engineers — the founders own it, running in parallel throughout.
+- Every phase lands an artifact OS keeps — point at the diamonds.
+- Land on the kill criterion: even the failure branch tells OS exactly where its data stops.
+--
+
+<!-- .slide: class="subcols" -->
+### The three spikes
+
+Six weeks is the box, not a schedule. The spikes run in risk order and overlap; the plan flexes as each returns.
+
+**Spike 1 — Data fitness.** _Retires input risk._ Before modeling anything, establish which OS and HMLR layers exist for the estate and whether they're usable — roof geometry and aspect, land cover, terrain, parcel extent. This is the start of the data-fitness map. If the inputs aren't there, we learn it first and cheaply.
+
+**Spike 2 — Generation and ranking accuracy.** _Retires the core risk._ Model generation and storage potential, produce a ranked set of interventions with an explicit confidence level, and check it against the startup's ground truth. Credibility is won or lost here.
+
+**Spike 3 — Decision-value.** _Retires the "so what."_ Put the ranking — made legible by the frontend — in front of the owner and their advisor. Would it change what they'd do? Accurate-but-inert is a real outcome, and one worth catching.
+
+**Deliberately out of scope:** a full estate demand model, a grid-connection engine, anything that needs a site visit. Naming the boundary is part of the design.
+
+---
+
+## Technical Content
+
+**Principles**
+- Spec-driven <!-- .element: class="fragment" -->
+- Modular: clean interfaces between components <!-- .element: class="fragment" -->
+- Testing, observability, evals in early <!-- .element: class="fragment" -->
+- Resist feature bloat <!-- .element: class="fragment" -->
+- Rapid MVP, then experiment component-by-component <!-- .element: class="fragment" -->
+- Automatable, not automated <!-- .element: class="fragment" -->
+
+Notes:
+- ADRs and documented requirements from the outset
+- Modular means we can swap, upgrade, debug, delegate
+- Visibility into how well things are working, and the impact a change makes
+- Avoid hand-rolled GIS outputs -- don't recreate pipeline from ipython notebooks or QGIS projects
+
+--
+
+### Stack &amp; algorithms
+
+
+
+<div class="stack-flow" style="padding-bottom: 5%;">
+<div class="stack-logos">
+<div class="stack-logo"><img src="assets/logos/python.svg" alt="Python"><b>Python</b></div>
+<div class="stack-logo"><img src="assets/logos/postgresql.svg" alt="PostGIS"><b>PostGIS</b></div>
+<div class="stack-logo"><img src="assets/logos/gdal.svg" alt="GDAL"><b>GDAL</b></div>
+<div class="stack-logo"><img src="assets/logos/geopandas.svg" alt="GeoPandas"><b>GeoPandas</b></div>
+<div class="stack-logo"><img src="assets/logos/github.svg" alt="GitHub"><b>GitHub</b></div>
+</div>
+
+<div class="stack-chips">
+<span class="lbl">+ libraries &amp; standards</span>
+<span class="stack-chip">rasterio</span>
+<span class="stack-chip">PDAL</span>
+<span class="stack-chip">Shapely</span>
+<span class="stack-chip">COG</span>
+<span class="stack-chip">STAC</span>
+</div>
+
+
+</div>
+
+
+
+**Rationale**
+
+<ul>
+<li class="fragment"><strong>Familiar</strong>: the standard geospatial stack</li>
+<li class="fragment"><strong>Well-documented</strong>: mature OSS, open standards, better for agents</li>
+<li class="fragment"><strong>Simple modules</strong>: small, single-purpose steps with clean interfaces; swappable and testable.</li>
+<li class="fragment"><strong>Automatable, not automated</strong>: code + version control means later automation is wiring, not a rewrite.</li>
+</ul>
+
+
+Note:
+
+- Stack (20s), fast — talk to the shape, don't read cards.
+- Familiar tech over relearning, unless there's a real reason: a customer requirement or a capability gap.
+- Classical over learned — interpretable, fast, and no training data exists yet anyway.
+- Everything's in code and on GitHub from day one. Even the parts we wizard-of-oz, we stitch by hand — but each step is a script, not clicks in a QGIS project. Manual → automated later is just wiring, not a rewrite.
+- The interface that matters is data-shape-IN to a stable estate record — hold that contract and every model behind it is swappable. That's what lets us experiment component-by-component.
+--
+
+
+### Data to consider
+
+| Source | Licence / cost | Output | Why it's valuable |
+|---|---|---|---|
+| EA National LiDAR (1m DSM/DTM) | OGL, free | Roof planes, shading, terrain | Roof geometry for free — no site visit |
+| OS building features | Free ↔ premium | Footprints, clustering | Heat-network candidates |
+| Constraints (listed, National Landscapes, SSSI, TPO) | Mostly open | Kill/enable overlay | The non-obvious insight, cheaply |
+| EPC register | Open | Floor area, fuel, fabric proxy | Heat load — the dominant load — zero-touch |
+| DNO capacity maps | Free, fragmented | Export headroom | The binding constraint |
+
+Notes:
+- Narrow brainstorm: work with geospatial engineers
+- Also listen to customer and stakeholders about key requirements
+- Startup may have access to proprietary datasets to ingest as well
+
+---
+
+## Success & Value
+
+<div class="os-exchange">
+  <div class="os-node fragment" data-fragment-index="2">
+    <div class="node-label">Startup</div>
+    <ul>
+      <li>Working POC</li>
+      <li>IP they own</li>
+      <li>Sharper pitch</li>
+    </ul>
+  </div>
+  <div class="os-arrow fragment" data-fragment-index="2"><svg viewBox="0 0 54 24" fill="none"><path d="M52 12H4M12 4 4 12l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="os-node center fragment" data-fragment-index="1">
+    <div class="node-label">The experiment</div>
+    <div class="center-big">£10k · 6 wks</div>
+    <div class="center-sub">2 geospatial + 1 frontend</div>
+  </div>
+  <div class="os-arrow fragment" data-fragment-index="3"><svg viewBox="0 0 54 24" fill="none"><path d="M2 12h48M42 4l8 8-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="os-node fragment" data-fragment-index="3">
+    <div class="node-label">Ordnance Survey</div>
+    <ul>
+      <li>New-market signal</li>
+      <li>Data-fitness insight</li>
+      <li>Reusable method</li>
+    </ul>
+  </div>
+</div>
+
+Succeeds even if the hypothesis is false. <!-- .element: class="fragment" data-fragment-index="4" -->
+
+Note:
+
+- Two scorecards; both must hold.
+- Slow down on the false-hypothesis line — that's the philosophy in a sentence.
+- Metrics are decision-shaped, not vanity.
+
+
+---
+
+<!-- .slide: data-background-color="#453c90" -->
+<div class="hero">
+<img class="os-logo os-logo--white" src="assets/os-logo.svg" alt="Ordnance Survey">
+<p class="closing-name">John Hoopes</p>
+<p class="closing-role">Candidate &middot; Technology &amp; Incubator Lead</p>
+</div>
+
+Note:
+
+- Callback: sensing instrument, not a favor.
+- How I'd run the whole program in miniature.
+- Stop. Don't over-talk it.
+          </textarea>
+        </section>
+      </div>
+    </div>
+
+    <script src="./dist/reveal.js"></script>
+
+    <script src="./plugin/markdown/markdown.js"></script>
+    <script src="./plugin/highlight/highlight.js"></script>
+    <script src="./plugin/zoom/zoom.js"></script>
+    <script src="./plugin/notes/notes.js"></script>
+    <script>
+      function extend() {
+        var target = {};
+        for (var i = 0; i < arguments.length; i++) {
+          var source = arguments[i];
+          for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+              target[key] = source[key];
+            }
+          }
+        }
+        return target;
+      }
+
+      // default options to init reveal.js
+      var defaultOptions = {
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        slideNumber: true,
+        highlight: {
+          highlightOnLoad: false
+        },
+        plugins: [
+          RevealMarkdown,
+          RevealHighlight,
+          RevealZoom,
+          RevealNotes
+        ]
+      };
+
+      // options from URL query string
+      var queryOptions = Reveal().getQueryHash() || {};
+
+      var options = extend(defaultOptions, {"center":false,"transition":"slide","transitionSpeed":"fast","width":1240,"height":720,"margin":0.04,"minScale":0.2,"maxScale":1.5,"controls":true,"progress":true,"hash":true,"_":["PRESENTATION.md"],"theme":"theme.css","vertical-separator":"\\r?\\n--\\r?\\n","verticalSeparator":"\\r?\\n--\\r?\\n"}, queryOptions);
+    </script>
+
+
+    <script>
+      Reveal.initialize(options);
+      Reveal.addEventListener('ready', function (event) {
+        const blocks = Reveal.getRevealElement().querySelectorAll('pre code:not(.mermaid)');
+        const hlp = Reveal.getPlugin('highlight');
+        blocks.forEach(hlp.highlightBlock);
+      });
+    </script>
+  </body>
+</html>

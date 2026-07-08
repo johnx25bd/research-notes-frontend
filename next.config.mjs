@@ -25,6 +25,10 @@ const nextConfig = {
         source: '/presentations/ai-agents',
         destination: '/presentations/ai-agents/index.html',
       },
+      {
+        source: '/presentations/os-poc',
+        destination: '/presentations/os-poc/index.html',
+      },
     ]
   },
   async headers() {
