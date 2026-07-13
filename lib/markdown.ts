@@ -390,6 +390,151 @@ function rehypeSidenotes() {
   };
 }
 
+// Inline each GFM footnote definition at its call site as
+// <span class="footnote">…</span>, so a paginator (Paged.js `float: footnote`)
+// can lift it to the foot of the printed page and number it automatically.
+// This is the print counterpart to rehypeSidenotes: same collection of
+// id → definition, but the original <sup> reference is replaced outright
+// (Paged.js emits its own call number) and the trailing footnotes section is
+// removed. Used only for the PDF build; the web keeps margin sidenotes.
+// Self-contained (own tree-walk and back-ref stripping) so the web path is
+// never touched.
+function rehypePrintFootnotes() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const withoutBackref = (node: any): any | null => {
+    if (
+      node.type === 'element' &&
+      node.tagName === 'a' &&
+      node.properties?.dataFootnoteBackref !== undefined
+    ) {
+      return null;
+    }
+    if (Array.isArray(node.children)) {
+      return {
+        ...node,
+        children: node.children.map(withoutBackref).filter(Boolean),
+      };
+    }
+    return { ...node };
+  };
+
+  // Flatten a footnote definition to purely inline content. A block element
+  // (<p>, <ul>, blockquote, …) cannot legally nest inside the inline footnote
+  // <span>: the HTML parser would eject it, floating an empty note to the page
+  // foot and stranding the text in the body. So we recursively unwrap every
+  // block container to its inline children, joining siblings and list items
+  // with a space. Inline formatting (em/strong/code/links) is preserved.
+  const BLOCK_CONTAINERS = new Set(['p', 'div', 'blockquote', 'section']);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const flattenToInline = (nodes: any[]): any[] => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const out: any[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pushSpaced = (children: any[]) => {
+      if (out.length > 0) out.push({ type: 'text', value: ' ' });
+      out.push(...flattenToInline(children));
+    };
+    for (const node of nodes) {
+      if (node.type === 'element' && BLOCK_CONTAINERS.has(node.tagName)) {
+        pushSpaced(node.children || []);
+      } else if (
+        node.type === 'element' &&
+        (node.tagName === 'ul' || node.tagName === 'ol')
+      ) {
+        for (const li of node.children || []) {
+          if (li.type === 'element' && li.tagName === 'li') {
+            pushSpaced(li.children || []);
+          }
+        }
+      } else {
+        out.push(node);
+      }
+    }
+    return out;
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (tree: any): void => {
+    // 1. Locate the collected footnotes section and index its definitions.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let section: any = null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let sectionParent: any = null;
+    let sectionIndex = -1;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const locate = (node: any): void => {
+      if (!node || !Array.isArray(node.children)) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      node.children.forEach((child: any, idx: number) => {
+        if (
+          child.type === 'element' &&
+          child.tagName === 'section' &&
+          child.properties?.dataFootnotes !== undefined
+        ) {
+          section = child;
+          sectionParent = node;
+          sectionIndex = idx;
+        } else {
+          locate(child);
+        }
+      });
+    };
+    locate(tree);
+    if (!section) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const defs = new Map<string, any[]>();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ol = (section.children || []).find((c: any) => c.tagName === 'ol');
+    if (ol) {
+      for (const li of ol.children) {
+        if (li.type !== 'element' || li.tagName !== 'li' || !li.properties?.id) continue;
+        const cleaned = withoutBackref(li);
+        defs.set(String(li.properties.id), cleaned.children);
+      }
+    }
+
+    // 2. Drop the trailing section (before walking for references).
+    if (sectionParent && sectionIndex >= 0) {
+      sectionParent.children.splice(sectionIndex, 1);
+    }
+
+    // 3. Replace each footnote-reference <sup> with a floatable footnote span.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const replace = (node: any): void => {
+      if (!node || !Array.isArray(node.children)) return;
+      const kids = node.children;
+      for (let i = 0; i < kids.length; i++) {
+        const child = kids[i];
+        if (child.type === 'element' && child.tagName === 'sup') {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const a = (child.children || []).find(
+            (c: any) =>
+              c.type === 'element' &&
+              c.tagName === 'a' &&
+              c.properties?.dataFootnoteRef !== undefined
+          );
+          if (a) {
+            const id = String(a.properties?.href || '').replace(/^#/, '');
+            const content = defs.get(id);
+            if (content) {
+              kids[i] = {
+                type: 'element',
+                tagName: 'span',
+                properties: { className: ['footnote'] },
+                children: flattenToInline(content),
+              };
+              continue;
+            }
+          }
+        }
+        replace(child);
+      }
+    };
+    replace(tree);
+  };
+}
+
 // Wrap a leading "Abstract" section (the h2 plus everything up to the next
 // heading) in <section class="abstract"> so research pages can style it apart
 // from the body. No-op when there is no Abstract heading.
@@ -423,12 +568,21 @@ function rehypeAbstract() {
   };
 }
 
+export interface ProcessMarkdownOptions {
+  // How research footnotes are placed. 'sidenotes' (default) floats each into
+  // the right margin as a Tufte-style aside — the web reading experience.
+  // 'print' inlines each definition as a <span class="footnote"> at its call
+  // site so a paginator (Paged.js) can lift it to the foot of the printed page.
+  footnoteStyle?: 'sidenotes' | 'print';
+}
+
 export async function processMarkdown(
   markdown: string,
   // Accepts either a bare slug list (back-compat) or slug+area pairs. Bare
   // slugs are assumed to live in the current area.
   availableNotes: (string | { slug: string; area: Area })[] = [],
-  currentArea: Area = 'notes'
+  currentArea: Area = 'notes',
+  options: ProcessMarkdownOptions = {}
 ): Promise<string> {
   const preprocessed = preprocessObsidianImages(
     normalizeDisplayMath(stripObsidianAnnotations(markdown))
@@ -462,7 +616,9 @@ export async function processMarkdown(
   // Research pieces get Tufte-style margin sidenotes and a set-apart abstract;
   // notes keep the standard collected footnotes section at the foot.
   if (currentArea === 'research') {
-    processor.use(rehypeSidenotes);
+    processor.use(
+      options.footnoteStyle === 'print' ? rehypePrintFootnotes : rehypeSidenotes
+    );
     processor.use(rehypeAbstract);
   }
 

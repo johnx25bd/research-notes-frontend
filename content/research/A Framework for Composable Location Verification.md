@@ -3,6 +3,7 @@ area: research
 created: 2026-07-07
 featured: true
 featured_order: 2
+pdf: true
 published: true
 published_at: 2026-07-07
 research_note: obsidian://open?vault=research-notes&file=research/A%20Framework%20for%20Composable%20Location%20Verification
