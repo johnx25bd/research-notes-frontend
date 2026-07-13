@@ -79,8 +79,9 @@ export default async function ResearchPage() {
 
   return (
     <LayoutShell>
-      <div className="max-w-5xl mx-auto px-6 py-10">
-        {/* Prose stays at the site's reading measure; card grids run wider. */}
+      {/* Dashboard layout: a wide, bounded container. The intro stays at the
+          site's reading measure; each track below is a full-width band. */}
+      <div className="max-w-7xl mx-auto px-6 py-10">
         <header className="max-w-2xl mx-auto mb-14 animate-fade-in-up">
           <h1 className="text-3xl sm:text-4xl font-normal text-foreground mb-6 text-balance">
             {index.title}
@@ -91,7 +92,12 @@ export default async function ResearchPage() {
           />
         </header>
 
-        <div className="space-y-14">
+        {/* Each track is a two-column band: the left third holds the section
+            context (heading + subhead) and sticks within its band on desktop,
+            so the framing stays in view while the cards scroll past — a tour
+            of the agenda with relevant context alongside. On small screens the
+            context stacks above the cards and sticky is off. */}
+        <div className="divide-y divide-[var(--entry-divider)]">
           {index.tracks.map((track) => {
             const entries = sortTrackEntries(
               trackEntries.filter((n) => n.tracks?.includes(track.slug)),
@@ -104,48 +110,52 @@ export default async function ResearchPage() {
             const compact = rest.filter(isCompact)
 
             return (
-              <section key={track.slug}>
-                {/* Section header: a real h2 — the site's Lora serif, bold, no
-                    small caps — left-aligned so it sits flush with the left
-                    edge of the card grid rather than centered over it. */}
-                <div className="mb-6">
+              <section key={track.slug} className="py-12 lg:grid lg:grid-cols-3 lg:gap-12">
+                {/* Context column: the strong serif h2 (left-aligned in this
+                    layout) and the one-sentence subhead, with room for future
+                    section prose. Sticky offset clears the h-14 site header. */}
+                <div className="mb-8 lg:mb-0 lg:sticky lg:top-20 lg:self-start">
                   <h2 className="text-2xl sm:text-3xl font-semibold text-foreground text-balance">
                     {track.title}
                   </h2>
                   {track.subhead && (
-                    <p className="text-base text-muted-foreground leading-relaxed mt-2 max-w-2xl">
+                    <p className="text-base text-muted-foreground leading-relaxed mt-3">
                       {track.subhead}
                     </p>
                   )}
                 </div>
 
-                {featured.map((artifact) => (
-                  <div key={artifact.slug} className="mb-4">
-                    <FeaturedArtifactCard artifact={artifact} />
-                  </div>
-                ))}
+                {/* Card column: featured card spans the column, full cards sit
+                    two across, compact rows follow. */}
+                <div className="lg:col-span-2">
+                  {featured.map((artifact) => (
+                    <div key={artifact.slug} className="mb-4">
+                      <FeaturedArtifactCard artifact={artifact} />
+                    </div>
+                  ))}
 
-                {fullCards.length > 0 && (
-                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {fullCards.map((artifact) => (
-                      <ArtifactCard key={artifact.slug} artifact={artifact} />
-                    ))}
-                  </div>
-                )}
+                  {fullCards.length > 0 && (
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {fullCards.map((artifact) => (
+                        <ArtifactCard key={artifact.slug} artifact={artifact} />
+                      ))}
+                    </div>
+                  )}
 
-                {compact.length > 0 && (
-                  <div className="mt-4">
-                    {compact.map((artifact) => (
-                      <ArtifactCompactRow
-                        key={artifact.slug}
-                        artifact={artifact}
-                        supersededByNote={
-                          artifact.supersededBy ? bySlug.get(artifact.supersededBy) : undefined
-                        }
-                      />
-                    ))}
-                  </div>
-                )}
+                  {compact.length > 0 && (
+                    <div className="mt-4">
+                      {compact.map((artifact) => (
+                        <ArtifactCompactRow
+                          key={artifact.slug}
+                          artifact={artifact}
+                          supersededByNote={
+                            artifact.supersededBy ? bySlug.get(artifact.supersededBy) : undefined
+                          }
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
               </section>
             )
           })}
