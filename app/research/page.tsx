@@ -105,15 +105,15 @@ export default async function ResearchPage() {
 
             return (
               <section key={track.slug}>
-                <div className="max-w-2xl mx-auto mb-6">
-                  <h2
-                    className="section-header text-lg tracking-[0.12em] opacity-60"
-                    style={{ fontFamily: "var(--font-ui)" }}
-                  >
+                {/* Section header: a real h2 — the site's Lora serif, bold, no
+                    small caps — left-aligned so it sits flush with the left
+                    edge of the card grid rather than centered over it. */}
+                <div className="mb-6">
+                  <h2 className="text-2xl sm:text-3xl font-semibold text-foreground text-balance">
                     {track.title}
                   </h2>
                   {track.subhead && (
-                    <p className="text-base text-muted-foreground leading-relaxed mt-2">
+                    <p className="text-base text-muted-foreground leading-relaxed mt-2 max-w-2xl">
                       {track.subhead}
                     </p>
                   )}
