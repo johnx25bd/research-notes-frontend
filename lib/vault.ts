@@ -12,6 +12,13 @@ export type Area = 'notes' | 'research';
 // scripts/sync-vault.sh). Each area is a subdirectory.
 const CONTENT_ROOT = path.join(process.cwd(), 'content');
 
+// Artifact status vocabulary:
+//   active      — currently developed or built upon
+//   preview     — research preview: early but live
+//   historical  — early experiment, no longer developed
+//   forthcoming — announced, not yet published (rendered unlinked and dimmed)
+export type ArtifactStatus = 'active' | 'preview' | 'historical' | 'forthcoming';
+
 // Artifact-kind vocabulary for curated research entries.
 export type ArtifactKind =
   | 'paper'
@@ -34,8 +41,9 @@ export interface Note {
   slug: string;
   title: string;
   summary?: string;
-  // Hosted notes use fragment/working/stable; artifacts use active/historical.
-  status: 'fragment' | 'working' | 'stable' | 'active' | 'historical';
+  // Hosted notes use fragment/working/stable; artifacts use
+  // active/preview/historical/forthcoming.
+  status: 'fragment' | 'working' | 'stable' | ArtifactStatus;
   lastTended: string;  // From git
   tags: string[];
   content: string;
@@ -58,12 +66,16 @@ export interface Note {
   fits?: string;              // How it fits the broader thesis
   role?: string;              // John's role: author, co-author, built it, proposed it
   links?: ResearchLink[];     // Links out; links[0] is treated as primary
+  supersededBy?: string;      // Slug of the entry that absorbed this work
+  startHere?: boolean;        // Featured "Start here" card at the top of its track
+  clause?: string;            // Short clause for compact one-line entries
 }
 
 // An ordered track defined by the research index note's frontmatter.
 export interface ResearchTrack {
   slug: string;
   title: string;
+  subhead?: string;  // One-sentence framing under the track heading
 }
 
 // The research index note (content/research/index.md, `type: research-index`).
@@ -137,6 +149,9 @@ async function loadArea(area: Area): Promise<Note[]> {
           fits: data.fits,
           role: data.role,
           links,
+          supersededBy: data.superseded_by,
+          startHere: data.start_here === true,
+          clause: data.clause,
         };
       })
     );
@@ -183,7 +198,11 @@ export async function getResearchIndex(): Promise<ResearchIndex | null> {
       ? data.tracks
           .filter((t: unknown): t is { slug?: string; title?: string } =>
             typeof t === 'object' && t !== null && typeof (t as { slug?: unknown }).slug === 'string')
-          .map((t) => ({ slug: String(t.slug), title: String(t.title ?? t.slug) }))
+          .map((t: { slug?: string; title?: string; subhead?: string }) => ({
+            slug: String(t.slug),
+            title: String(t.title ?? t.slug),
+            subhead: t.subhead ? String(t.subhead) : undefined,
+          }))
       : [];
     return {
       title: data.title || 'Research',

@@ -26,9 +26,17 @@ const statusConfig: Record<string, { label: string; className: string }> = {
     label: "Active",
     className: "text-primary/70 bg-primary/5",
   },
+  preview: {
+    label: "Preview",
+    className: "text-primary/70 bg-primary/5",
+  },
   historical: {
     label: "Historical",
     className: "text-muted-foreground/80 bg-muted/60",
+  },
+  forthcoming: {
+    label: "Forthcoming",
+    className: "text-muted-foreground/70 bg-transparent border border-dashed border-current/40",
   },
   // Legacy status values (backward compatibility)
   seed: {

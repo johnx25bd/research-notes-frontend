@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-import { getAllNotes, getAllResearch, getResearchIndex, type ArtifactKind } from '../lib/vault';
+import { getAllNotes, getAllResearch, getResearchIndex, type ArtifactKind, type ArtifactStatus } from '../lib/vault';
 
 interface ValidationIssue {
   filepath: string;
@@ -10,6 +10,8 @@ interface ValidationIssue {
 const ARTIFACT_KINDS: ArtifactKind[] = [
   'paper', 'spec', 'talk', 'prototype', 'post', 'report', 'thread', 'library',
 ];
+
+const ARTIFACT_STATUSES: ArtifactStatus[] = ['active', 'preview', 'historical', 'forthcoming'];
 
 // Validate the research area: curated artifacts and the framing index. Returns
 // issues to fold into the main report. Every `type: artifact` entry must carry
@@ -59,8 +61,18 @@ async function validateResearch(): Promise<ValidationIssue[]> {
       if (!entry.tracks || entry.tracks.length === 0) {
         issues.push({ filepath: where, severity: 'error', message: 'Artifact must declare at least one track' });
       }
-      if (!entry.links || entry.links.length === 0) {
+      if (!ARTIFACT_STATUSES.includes(entry.status as ArtifactStatus)) {
+        issues.push({ filepath: where, severity: 'error', message: `Artifact status "${entry.status}" is not one of: ${ARTIFACT_STATUSES.join(', ')}` });
+      }
+      // Forthcoming entries are announced but unpublished — they are the one
+      // case allowed to have no link yet. Publishing later means adding a URL
+      // and flipping the status.
+      if (entry.status !== 'forthcoming' && (!entry.links || entry.links.length === 0)) {
         issues.push({ filepath: where, severity: 'error', message: 'Artifact must have at least one link with a URL (external or on-site)' });
+      }
+      // A lineage pointer must name a real research entry.
+      if (entry.supersededBy && !research.some(n => n.slug === entry.supersededBy)) {
+        issues.push({ filepath: where, severity: 'error', message: `superseded_by "${entry.supersededBy}" does not match any research entry slug` });
       }
     }
 
