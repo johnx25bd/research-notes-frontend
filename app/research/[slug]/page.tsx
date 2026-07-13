@@ -7,7 +7,7 @@ import { NoteContentInteractive } from "@/components/note-content-interactive"
 import { NoteContentMDX } from "@/components/note-content-mdx"
 import { NoteConnections } from "@/components/note-connections"
 import { TagChip } from "@/components/tag-chip"
-import { KIND_LABELS } from "@/components/artifact-card"
+import { ArtifactStatusBadge, KIND_LABELS } from "@/components/artifact-card"
 import { getAllNotes, getAllResearch, getResearchBySlug } from "@/lib/vault"
 import { processMarkdown, containsMDX } from "@/lib/markdown"
 import { computeBacklinks } from "@/lib/backlinks"
@@ -133,6 +133,9 @@ export default async function ResearchNotePage({ params }: ResearchPageProps) {
     const year = note.date ? note.date.slice(0, 4) : null
     const meta = [kindLabel, year, note.role].filter(Boolean) as string[]
     const hasBody = note.content.trim().length > 0
+    const supersededByNote = note.supersededBy
+      ? allNotes.find(n => n.slug === note.supersededBy)
+      : undefined
 
     return (
       <LayoutShell>
@@ -146,15 +149,22 @@ export default async function ResearchNotePage({ params }: ResearchPageProps) {
                   style={{ fontFamily: "var(--font-ui)" }}
                 >
                   <span>{meta.join("  ·  ")}</span>
-                  {note.status === "historical" && (
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[0.65rem] text-muted-foreground/80 bg-muted/60">
-                      Historical
-                    </span>
-                  )}
+                  <ArtifactStatusBadge status={note.status} />
                 </div>
               )}
               {note.summary && (
                 <p className="text-lg text-foreground/90 leading-snug text-balance">{note.summary}</p>
+              )}
+              {supersededByNote && (
+                <p className="text-sm text-muted-foreground mt-3" style={{ fontFamily: "var(--font-ui)" }}>
+                  Superseded by{" "}
+                  <Link
+                    href={`/research/${supersededByNote.slug}`}
+                    className="text-primary hover:underline"
+                  >
+                    {supersededByNote.title} {"→"}
+                  </Link>
+                </p>
               )}
             </header>
 
