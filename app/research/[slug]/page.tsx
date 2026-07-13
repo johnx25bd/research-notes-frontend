@@ -1,3 +1,5 @@
+import fs from "fs"
+import path from "path"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { LayoutShell } from "@/components/layout-shell"
@@ -87,6 +89,12 @@ export default async function ResearchNotePage({ params }: ResearchPageProps) {
   const WORKFLOW_TAGS = new Set(["to-publish", "research"])
   const displayTags = note.tags.filter(tag => !WORKFLOW_TAGS.has(tag))
 
+  // Offer the print-ready PDF when the note opted in (pdf: true) and the file
+  // has actually been generated — so the link is never dead.
+  const pdfExists =
+    note.pdf === true &&
+    fs.existsSync(path.join(process.cwd(), "public", "research", `${note.slug}.pdf`))
+
   return (
     <LayoutShell>
       <article className="research-article max-w-2xl mx-auto px-6 py-10">
@@ -101,6 +109,16 @@ export default async function ResearchNotePage({ params }: ResearchPageProps) {
                 {displayTags.slice(0, 3).map((tag) => (
                   <TagChip key={tag} tag={tag} href={`/tags/${tag}`} />
                 ))}
+              </div>
+            )}
+            {pdfExists && (
+              <div className="mt-4">
+                <a
+                  href={`/research/${note.slug}.pdf`}
+                  className="text-sm text-muted-foreground hover:text-foreground underline underline-offset-4 transition-colors"
+                >
+                  Download PDF
+                </a>
               </div>
             )}
           </header>
