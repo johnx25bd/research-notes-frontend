@@ -34,7 +34,8 @@ export interface Note {
   slug: string;
   title: string;
   summary?: string;
-  status: 'fragment' | 'working' | 'stable';
+  // Hosted notes use fragment/working/stable; artifacts use active/historical.
+  status: 'fragment' | 'working' | 'stable' | 'active' | 'historical';
   lastTended: string;  // From git
   tags: string[];
   content: string;
