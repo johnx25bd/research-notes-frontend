@@ -12,6 +12,24 @@ export type Area = 'notes' | 'research';
 // scripts/sync-vault.sh). Each area is a subdirectory.
 const CONTENT_ROOT = path.join(process.cwd(), 'content');
 
+// Artifact-kind vocabulary for curated research entries.
+export type ArtifactKind =
+  | 'paper'
+  | 'spec'
+  | 'talk'
+  | 'prototype'
+  | 'post'
+  | 'report'
+  | 'thread'
+  | 'library';
+
+// A link out from an artifact. `url` may be an absolute external URL
+// (https://…) or an on-site path (/notes/…).
+export interface ResearchLink {
+  label: string;
+  url: string;
+}
+
 export interface Note {
   slug: string;
   title: string;
@@ -27,6 +45,32 @@ export interface Note {
   published?: boolean;  // Set by smart-sync.py
   stub?: boolean;       // Auto-generated stub notes
   source_note?: string; // Obsidian URI back to source vault
+
+  // --- Research-artifact fields ---
+  // `type: artifact` entries are curation metadata rather than full notes.
+  // A hosted note (like the framework paper) may also carry the track/fits
+  // fields so it appears in track sections while still rendering its body.
+  type?: string;              // 'artifact' | 'research-index' | undefined (hosted note)
+  artifactKind?: ArtifactKind;
+  date?: string;              // YYYY or YYYY-MM, for ordering and an eventual timeline
+  tracks?: string[];          // Track slugs this entry belongs to
+  fits?: string;              // How it fits the broader thesis
+  role?: string;              // John's role: author, co-author, built it, proposed it
+  links?: ResearchLink[];     // Links out; links[0] is treated as primary
+}
+
+// An ordered track defined by the research index note's frontmatter.
+export interface ResearchTrack {
+  slug: string;
+  title: string;
+}
+
+// The research index note (content/research/index.md, `type: research-index`).
+// Holds John's framing prose plus the ordered track list.
+export interface ResearchIndex {
+  title: string;
+  content: string;
+  tracks: ResearchTrack[];
 }
 
 // Load and parse every published note in a single content area.
@@ -56,11 +100,23 @@ async function loadArea(area: Area): Promise<Note[]> {
           .replace(/['']/g, "'")  // smart single quotes
           .replace(/[""]/g, '"'); // smart double quotes
 
+        // Normalize the artifact links list: accept only entries with a URL.
+        const links: ResearchLink[] = Array.isArray(data.links)
+          ? data.links
+              .filter((l: unknown): l is { label?: string; url?: string } =>
+                typeof l === 'object' && l !== null && typeof (l as { url?: unknown }).url === 'string')
+              .map((l) => ({ label: String(l.label ?? l.url), url: String(l.url) }))
+          : [];
+
+        // `status` may arrive as a single value or a YAML list (some notes use
+        // `status: [working]`); normalize to the first string.
+        const rawStatus = Array.isArray(data.status) ? data.status[0] : data.status;
+
         return {
           slug,
           title: data.title || path.basename(file, '.md'),
           summary: data.summary || data.description || '',
-          status: data.status || 'fragment',
+          status: rawStatus || 'fragment',
           lastTended,
           tags: Array.isArray(data.tags) ? data.tags : [],
           content,
@@ -70,13 +126,26 @@ async function loadArea(area: Area): Promise<Note[]> {
           filepath: file,
           published: data.published,
           stub: data.stub,
-          source_note: data.source_note
+          source_note: data.source_note,
+          type: data.type,
+          artifactKind: data.artifact_kind,
+          date: data.date ? String(data.date) : undefined,
+          tracks: Array.isArray(data.tracks)
+            ? data.tracks.filter((t: unknown): t is string => typeof t === 'string')
+            : undefined,
+          fits: data.fits,
+          role: data.role,
+          links,
         };
       })
     );
 
-    // Filter out unpublished notes (only show explicitly published: true)
-    return notes.filter(n => n !== null && n.published === true && !n.stub);
+    // Filter out unpublished notes (only show explicitly published: true).
+    // The research index note (`type: research-index`) is framing, not an
+    // entry — it is loaded separately via getResearchIndex().
+    return notes.filter(
+      n => n !== null && n.published === true && !n.stub && n.type !== 'research-index'
+    );
   } catch (error) {
     // Silently return empty array on error - errors will surface during build
     return [];
@@ -99,4 +168,28 @@ export async function getAllResearch(): Promise<Note[]> {
 export async function getResearchBySlug(slug: string): Promise<Note | null> {
   const research = await getAllResearch();
   return research.find(n => n.slug === slug) || null;
+}
+
+// Load the research index note (content/research/index.md). Holds the framing
+// prose (returned as raw markdown for the page to render) and the ordered list
+// of tracks that structures the index. Returns null if absent.
+export async function getResearchIndex(): Promise<ResearchIndex | null> {
+  const filepath = path.join(CONTENT_ROOT, 'research', 'index.md');
+  try {
+    const raw = await fs.readFile(filepath, 'utf-8');
+    const { data, content } = matter(raw);
+    const tracks: ResearchTrack[] = Array.isArray(data.tracks)
+      ? data.tracks
+          .filter((t: unknown): t is { slug?: string; title?: string } =>
+            typeof t === 'object' && t !== null && typeof (t as { slug?: unknown }).slug === 'string')
+          .map((t) => ({ slug: String(t.slug), title: String(t.title ?? t.slug) }))
+      : [];
+    return {
+      title: data.title || 'Research',
+      content,
+      tracks,
+    };
+  } catch {
+    return null;
+  }
 }
