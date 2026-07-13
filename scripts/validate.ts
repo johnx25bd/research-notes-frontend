@@ -1,10 +1,83 @@
 #!/usr/bin/env tsx
-import { getAllNotes } from '../lib/vault';
+import { getAllNotes, getAllResearch, getResearchIndex, type ArtifactKind } from '../lib/vault';
 
 interface ValidationIssue {
   filepath: string;
   severity: 'error' | 'warning' | 'info';
   message: string;
+}
+
+const ARTIFACT_KINDS: ArtifactKind[] = [
+  'paper', 'spec', 'talk', 'prototype', 'post', 'report', 'thread', 'library',
+];
+
+// Validate the research area: curated artifacts and the framing index. Returns
+// issues to fold into the main report. Every `type: artifact` entry must carry
+// the curation fields the index and artifact pages depend on, and any research
+// entry that claims a track must name a track the index actually defines.
+async function validateResearch(): Promise<ValidationIssue[]> {
+  const issues: ValidationIssue[] = [];
+  const research = await getAllResearch();
+  const index = await getResearchIndex();
+
+  if (!index) {
+    issues.push({
+      filepath: 'content/research/index.md',
+      severity: 'error',
+      message: 'Missing research index note (type: research-index) with a tracks list',
+    });
+    return issues;
+  }
+
+  const validTracks = new Set(index.tracks.map(t => t.slug));
+  if (validTracks.size === 0) {
+    issues.push({
+      filepath: 'content/research/index.md',
+      severity: 'error',
+      message: 'Research index defines no tracks',
+    });
+  }
+
+  research.forEach(entry => {
+    const where = entry.filepath;
+
+    if (entry.type === 'artifact') {
+      if (!entry.summary) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact missing summary' });
+      }
+      if (!entry.fits) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact missing fits (how it fits the thesis)' });
+      }
+      if (!entry.date) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact missing date (YYYY or YYYY-MM)' });
+      }
+      if (!entry.artifactKind) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact missing artifact_kind' });
+      } else if (!ARTIFACT_KINDS.includes(entry.artifactKind)) {
+        issues.push({ filepath: where, severity: 'error', message: `Unknown artifact_kind "${entry.artifactKind}" (expected one of: ${ARTIFACT_KINDS.join(', ')})` });
+      }
+      if (!entry.tracks || entry.tracks.length === 0) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact must declare at least one track' });
+      }
+      if (!entry.links || entry.links.length === 0) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact must have at least one link with a URL (external or on-site)' });
+      }
+    }
+
+    // Any research entry that claims tracks (artifacts and hosted notes alike)
+    // must reference tracks the index defines.
+    (entry.tracks ?? []).forEach(track => {
+      if (!validTracks.has(track)) {
+        issues.push({
+          filepath: where,
+          severity: 'error',
+          message: `Track "${track}" is not defined in the research index track list`,
+        });
+      }
+    });
+  });
+
+  return issues;
 }
 
 const SENSITIVE_KEYWORDS = [
@@ -24,6 +97,10 @@ async function validate() {
   }
 
   console.log(`Found ${notes.length} notes\n`);
+
+  // Fold in research-area validation (artifacts + framing index).
+  const researchIssues = await validateResearch();
+  issues.push(...researchIssues);
 
   notes.forEach(note => {
     // Check required frontmatter
