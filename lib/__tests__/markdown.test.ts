@@ -314,6 +314,38 @@ describe('processMarkdown', () => {
     });
   });
 
+  describe('Print footnotes (research PDF)', () => {
+    const footnoteMd = 'A claim.[^1]\n\n[^1]: The supporting note.';
+
+    test('inlines footnotes as floatable spans for the PDF build', async () => {
+      const html = await processMarkdown(footnoteMd, [], 'research', {
+        footnoteStyle: 'print',
+      });
+      // Definition inlined at the call site as a footnote span (Paged.js floats
+      // it to the page foot), not a margin sidenote.
+      expect(html).toContain('class="footnote"');
+      expect(html).toContain('The supporting note.');
+      expect(html).not.toContain('class="sidenote"');
+      // The collected footnotes section is removed.
+      expect(html).not.toContain('data-footnotes');
+    });
+
+    test('unwraps the definition paragraph so no <p> nests in the span', async () => {
+      const html = await processMarkdown(footnoteMd, [], 'research', {
+        footnoteStyle: 'print',
+      });
+      // A <p> inside the inline span would be ejected by the HTML parser,
+      // stranding the note text — the definition must be flattened to inline.
+      expect(html).not.toMatch(/<span class="footnote"><p>/);
+    });
+
+    test('defaults to sidenotes when no footnoteStyle is given', async () => {
+      const html = await processMarkdown(footnoteMd, [], 'research');
+      expect(html).toContain('class="sidenote"');
+      expect(html).not.toContain('class="footnote"');
+    });
+  });
+
   describe('Edge Cases', () => {
     test('handles empty markdown', async () => {
       const html = await processMarkdown('', availableNotes);
