@@ -27,6 +27,8 @@ export interface Note {
   published?: boolean;  // Set by smart-sync.py
   stub?: boolean;       // Auto-generated stub notes
   source_note?: string; // Obsidian URI back to source vault
+  pdf?: boolean;        // Opt-in: generate a print-ready PDF at /research/<slug>.pdf
+  author?: string;      // Byline for the PDF; defaults applied at render time
 }
 
 // Load and parse every published note in a single content area.
@@ -70,7 +72,9 @@ async function loadArea(area: Area): Promise<Note[]> {
           filepath: file,
           published: data.published,
           stub: data.stub,
-          source_note: data.source_note
+          source_note: data.source_note,
+          pdf: data.pdf === true,
+          author: data.author
         };
       })
     );
