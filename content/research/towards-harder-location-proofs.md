@@ -7,8 +7,10 @@ date: 2025-10
 tracks: [location-verification]
 tags: [proof-of-location, adversarial, gnss]
 status: active
+superseded_by: location-verification-framework
 role: Author
-summary: A forum post on why proof-of-location mechanisms need to get harder under adversarial conditions, and where current techniques fall short when the prover is motivated to deceive.
+clause: early notes on making location proofs adversary-resistant
+summary: This forum post asks what it takes for location proofs to hold up when the prover is motivated to deceive, and where current techniques fall short.
 fits: The mechanism-side companion to the framework. It asks what it takes for a single location proof to survive a determined adversary -- the durability the evidence model depends on.
 links:
   - { label: "collective.flashbots.net", url: "https://collective.flashbots.net/t/towards-harder-location-proofs/5323" }

@@ -8,7 +8,7 @@ tracks: [location-verification]
 tags: [astral, foss4g, location-proofs]
 status: active
 role: Co-presenter
-summary: A FOSS4G North America 2025 talk introducing Astral -- the Location Protocol for signed spatial records, a modular library of location-proof strategies, and Spatial.sol smart-contract utilities -- and how it bridges traditional GIS with decentralized systems.
+summary: "This FOSS4G North America 2025 talk introduces Astral: the Location Protocol for signed spatial records, a modular library of location-proof strategies, and Spatial.sol utilities for smart contracts."
 fits: The public overview of the Astral toolkit, tying the location-proof and registry work together for a geospatial audience.
 links:
   - { label: "FOSS4G NA 2025 program", url: "https://talks.osgeo.org/foss4g-na-2025/talk/TRMHTE/" }

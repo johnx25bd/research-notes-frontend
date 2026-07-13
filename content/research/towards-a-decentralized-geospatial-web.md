@@ -8,7 +8,7 @@ tracks: [vision]
 tags: [geospatial, giscience, web3]
 status: active
 role: Co-author
-summary: A preprint on how decentralized-web technologies could apply to GIScience, organized around three primitives -- proof-of-location, verifiable geocomputation, and peer-to-peer spatial data management.
+summary: This preprint maps decentralized-web techniques onto GIScience through three primitives -- proof-of-location, verifiable geocomputation, and peer-to-peer spatial data management.
 fits: Names the three technical pillars this research is built on and argues why each matters for trustworthy geospatial systems. The tracks below map onto its primitives.
 links:
   - { label: "osf.io preprint", url: "https://osf.io/preprints/osf/bg2uq_v1" }

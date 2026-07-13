@@ -11,14 +11,16 @@ fits: The conceptual backbone of the current work -- it structures diverse verif
 published: true
 published_at: 2026-07-07
 role: Lead author
+start_here: true
 tracks:
 - location-verification
 research_note: obsidian://open?vault=research-notes&file=research/A%20Framework%20for%20Composable%20Location%20Verification
 slug: location-verification-framework
 source_note: obsidian://open?vault=xo&file=Research/hoopes-2026-framework-for-composable-location-verification/A%20Framework%20for%20Composable%20Location%20Verification
 status: fragment
-summary: Multi-factor location verification for credible location-contingent commitments
-  across use cases
+summary: This framework composes evidence from independent location verification
+  systems into credibility assessments, so verifiers can quantify confidence in
+  claims about where things happened.
 tags: []
 title: A Framework for Composable Location Verification
 url: https://johnx.co/research/location-verification-framework
