@@ -48,6 +48,8 @@ export function ArtifactStatusBadge({
 
 interface ArtifactCardProps {
   artifact: Note
+  /** Extra classes on the card root (e.g. a grid col-span from the page). */
+  className?: string
 }
 
 // A full card for a research artifact, shown within a track section on the
@@ -55,7 +57,7 @@ interface ArtifactCardProps {
 // when the artifact has a primary external link, a small glyph offers a direct
 // shortcut out (it sits above the card-wide link via z-index). Forthcoming
 // entries render unlinked and dimmed — announced, not yet published.
-export function ArtifactCard({ artifact }: ArtifactCardProps) {
+export function ArtifactCard({ artifact, className }: ArtifactCardProps) {
   const forthcoming = artifact.status === "forthcoming"
   const primary = artifact.links?.[0]
   const isExternal = primary ? /^https?:\/\//.test(primary.url) : false
@@ -70,7 +72,7 @@ export function ArtifactCard({ artifact }: ArtifactCardProps) {
         forthcoming
           ? "border-dashed border-border opacity-70"
           : "border-border hover:border-primary/30"
-      }`}
+      } ${className ?? ""}`}
     >
       {!forthcoming && (
         <Link
@@ -168,9 +170,12 @@ interface ArtifactCompactRowProps {
   supersededByNote?: Note
 }
 
-// A compact one-line entry for historical or superseded artifacts: title, a
-// short clause, kind and year, then either a "superseded by" pointer (more
-// informative than a badge where lineage exists) or the status badge.
+// A compact one-line entry for historical or superseded artifacts. Two
+// explicit clusters that can never collide: the left cluster (title + clause)
+// wraps within its own space, and the right cluster (kind, year, status or
+// superseded pointer) stays on one line, separated by a minimum gap. Below sm
+// the metadata cluster drops onto its own line under the title instead of
+// squeezing.
 export function ArtifactCompactRow({ artifact, supersededByNote }: ArtifactCompactRowProps) {
   const kindLabel = artifact.artifactKind
     ? KIND_LABELS[artifact.artifactKind] ?? artifact.artifactKind
@@ -179,20 +184,22 @@ export function ArtifactCompactRow({ artifact, supersededByNote }: ArtifactCompa
 
   return (
     <div
-      className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 py-2.5 text-sm"
+      className="py-2.5 text-sm sm:flex sm:items-baseline sm:justify-between sm:gap-6"
       style={{ borderBottom: "1px solid var(--entry-divider)" }}
     >
-      <Link
-        href={`/research/${artifact.slug}`}
-        className="font-medium text-foreground hover:text-primary transition-colors"
-      >
-        {artifact.title}
-      </Link>
-      <span className="text-muted-foreground">
-        {"—"} {artifact.clause || artifact.summary}
-      </span>
+      <p className="min-w-0">
+        <Link
+          href={`/research/${artifact.slug}`}
+          className="font-medium text-foreground hover:text-primary transition-colors"
+        >
+          {artifact.title}
+        </Link>{" "}
+        <span className="text-muted-foreground">
+          {"—"} {artifact.clause || artifact.summary}
+        </span>
+      </p>
       <span
-        className="ml-auto flex items-baseline gap-2.5 text-xs text-muted-foreground/70 whitespace-nowrap"
+        className="mt-1 flex items-baseline gap-2.5 text-xs text-muted-foreground/70 whitespace-nowrap sm:mt-0 sm:shrink-0"
         style={{ fontFamily: "var(--font-ui)" }}
       >
         {kindLabel && <span className="uppercase tracking-wide text-[0.65rem]">{kindLabel}</span>}

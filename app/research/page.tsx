@@ -78,11 +78,14 @@ export default async function ResearchPage() {
   const framingHtml = await processMarkdown(index.content, linkTargets, "research")
 
   return (
-    <LayoutShell>
-      {/* Dashboard layout: a wide, bounded container. The intro stays at the
-          site's reading measure; each track below is a full-width band. */}
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        <header className="max-w-2xl mx-auto mb-14 animate-fade-in-up">
+    <LayoutShell wide>
+      {/* One container, one left edge: everything on this page — nav and
+          footer (via LayoutShell wide), intro, and all section bands — aligns
+          to the same max-w-6xl container. */}
+      <div className="max-w-6xl mx-auto px-6 py-10">
+        {/* Intro: capped at a readable measure but left-aligned to the
+            container edge, sharing its left edge with the section rails. */}
+        <header className="max-w-[70ch] mb-14 animate-fade-in-up">
           <h1 className="text-3xl sm:text-4xl font-normal text-foreground mb-6 text-balance">
             {index.title}
           </h1>
@@ -109,11 +112,19 @@ export default async function ResearchPage() {
             const fullCards = rest.filter((n) => !isCompact(n))
             const compact = rest.filter(isCompact)
 
+            // Odd-count rule: when a section has an odd number of full cards,
+            // the first card spans both columns so the grid never leaves an
+            // orphan gap. Applied identically in every section.
+            const oddCount = fullCards.length % 2 === 1
+
             return (
-              <section key={track.slug} className="py-12 lg:grid lg:grid-cols-3 lg:gap-12">
-                {/* Context column: the strong serif h2 (left-aligned in this
-                    layout) and the one-sentence subhead, with room for future
-                    section prose. Sticky offset clears the h-14 site header. */}
+              <section
+                key={track.slug}
+                className="py-12 lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-12"
+              >
+                {/* Context rail: fixed 300px in every section so the internal
+                    vertical axis is identical down the page. Sticky within its
+                    band on desktop; offset clears the h-14 site header. */}
                 <div className="mb-8 lg:mb-0 lg:sticky lg:top-20 lg:self-start">
                   <h2 className="text-2xl sm:text-3xl font-semibold text-foreground text-balance">
                     {track.title}
@@ -125,9 +136,10 @@ export default async function ResearchPage() {
                   )}
                 </div>
 
-                {/* Card column: featured card spans the column, full cards sit
-                    two across, compact rows follow. */}
-                <div className="lg:col-span-2">
+                {/* Card area: featured card spans the full area, full cards sit
+                    two across, compact rows follow. min-w-0 lets the grid track
+                    shrink instead of overflowing the band. */}
+                <div className="min-w-0">
                   {featured.map((artifact) => (
                     <div key={artifact.slug} className="mb-4">
                       <FeaturedArtifactCard artifact={artifact} />
@@ -136,8 +148,12 @@ export default async function ResearchPage() {
 
                   {fullCards.length > 0 && (
                     <div className="grid gap-3 sm:grid-cols-2">
-                      {fullCards.map((artifact) => (
-                        <ArtifactCard key={artifact.slug} artifact={artifact} />
+                      {fullCards.map((artifact, i) => (
+                        <ArtifactCard
+                          key={artifact.slug}
+                          artifact={artifact}
+                          className={oddCount && i === 0 ? "sm:col-span-2" : undefined}
+                        />
                       ))}
                     </div>
                   )}
