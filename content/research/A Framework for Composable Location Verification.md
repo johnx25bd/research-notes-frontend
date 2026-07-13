@@ -1,10 +1,18 @@
 ---
 area: research
+artifact_kind: paper
 created: 2026-07-07
+date: 2026-07
 featured: true
 featured_order: 2
+fits: The conceptual backbone of the current work -- it structures diverse verification
+  systems as composable evidence, which is what a credible location-contingent commitment
+  ultimately rests on.
 published: true
 published_at: 2026-07-07
+role: Lead author
+tracks:
+- location-verification
 research_note: obsidian://open?vault=research-notes&file=research/A%20Framework%20for%20Composable%20Location%20Verification
 slug: location-verification-framework
 source_note: obsidian://open?vault=xo&file=Research/hoopes-2026-framework-for-composable-location-verification/A%20Framework%20for%20Composable%20Location%20Verification
