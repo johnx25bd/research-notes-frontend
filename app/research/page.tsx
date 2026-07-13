@@ -17,11 +17,15 @@ export const metadata = {
 
 // Sort key for a track's cards: featured_order first (missing sorts last),
 // then date descending. Dates are YYYY or YYYY-MM; fold to a comparable number.
+// The "missing" sentinel must be finite: Infinity - Infinity is NaN, which a
+// sort comparator treats as "equal" and silently falls back to file order.
+const UNORDERED = Number.MAX_SAFE_INTEGER
+
 function orderOf(note: Note): number {
   const raw = note.featured_order as unknown
-  if (raw === null || raw === undefined || raw === "") return Number.POSITIVE_INFINITY
+  if (raw === null || raw === undefined || raw === "") return UNORDERED
   const v = Number(raw)
-  return Number.isFinite(v) ? v : Number.POSITIVE_INFINITY
+  return Number.isFinite(v) ? v : UNORDERED
 }
 
 function dateScore(date?: string): number {
