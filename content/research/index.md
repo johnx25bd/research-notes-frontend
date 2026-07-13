@@ -21,10 +21,10 @@ For several years I have been building and prototyping at the intersection of sp
 
 These patterns hold across use cases even when the mechanisms differ. A drone proving a delivery and a data center proving where its chips run face the same underlying problem -- convincing a skeptical, remote verifier of a claim about where something happened -- and reach for different tools to solve it.
 
-Right now my focus is on advancing the frontier of technical capability, specifically verifying the location of sensitive, static AI deployments: the advanced chips whose whereabouts are becoming a governance lever. That is the sharpest current instance of the broader question I keep returning to.
+Right now my focus is on advancing the frontier of technical capability, specifically verifying the location of sensitive, static AI deployments: the advanced chips whose whereabouts are becoming a governance lever.
 
 ## A note on the web3 framing
 
-Much of the earlier work below carries a "decentralized" or "web3" framing, and it is worth saying plainly why. A lot of it was designed to integrate with smart-contract applications, so that vocabulary came along with the tools.
+Much of the earlier work below carries a "decentralized" or "web3" framing. A lot of it was designed to integrate with smart-contract applications, so that vocabulary came along with the tools.
 
 I have come to think of blockchains as useful in a narrow but real set of cases: where mutually untrusting agents need a shared digital system to coordinate around, as markets and nation states do. Smart contracts also share an interesting property with AI agents. Data submitted to them cannot simply be trusted -- a coordinate is just a number, and nothing about receiving it tells you it is true. The usual client-server assumption, where a server trusts its own inputs, does not hold. That property, rather than any enthusiasm for blockchains as such, is the through-line connecting this earlier work to the questions I care about now.
