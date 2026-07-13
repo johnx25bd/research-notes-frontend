@@ -30,12 +30,17 @@ function GlobalTriangle() {
   )
 }
 
-export function Header() {
+interface HeaderProps {
+  /** Widen the nav container to match wide-layout pages (e.g. /research). */
+  wide?: boolean
+}
+
+export function Header({ wide = false }: HeaderProps) {
   const pathname = usePathname()
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm">
-      <div className="max-w-2xl mx-auto px-6">
+      <div className={cn("mx-auto px-6", wide ? "max-w-6xl" : "max-w-2xl")}>
         <div className="flex items-center justify-between h-14">
           <Link
             href="/"
