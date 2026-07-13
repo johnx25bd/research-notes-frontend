@@ -76,6 +76,8 @@ Optional fields:
 - `featured` - Set to `true` for homepage
 - `created` - Creation date
 - `notify` - Set to `true` to announce this note to email subscribers (see [Notifying subscribers](#notifying-subscribers))
+- `pdf` - Set to `true` (research notes only) to generate a print-ready academic PDF at `/research/<slug>.pdf` (see [Research PDF export](#research-pdf-export))
+- `author` - Byline for the PDF; defaults to "John Robison Hoopes"
 
 ## Raycast Setup
 
@@ -141,6 +143,23 @@ These live in `.env.local` (local) and Vercel project settings (production):
 - `RESEND_API_KEY` — existing Resend key (also used by the deck-request form)
 - `RESEND_AUDIENCE_ID` — the Audience to add subscribers to / broadcast from
 - `SUBSCRIBE_FROM` — optional sender, defaults to `"John <john@johnx.co>"`
+
+## Research PDF export
+
+Research notes can be published with a print-ready academic PDF served alongside the web post:
+
+- `johnx.co/research/<slug>` — the interactive web post
+- `johnx.co/research/<slug>.pdf` — the same content in the house academic format (A4, Computer Modern serif, numbered sections, page-foot footnotes)
+
+**Opt in** by setting `pdf: true` in the note's frontmatter (optionally `author:` for the byline). It is off by default — only flagged notes get a PDF.
+
+The PDF is generated from the *same* markdown pipeline as the web post, so the two never drift. Generation runs automatically as part of `sync-vault.sh` (and can be run directly with `pnpm generate:pdfs`), rendering with headless Chrome via Paged.js. It is **content-hash cached** — only changed notes re-render — and the resulting PDFs are committed to `public/research/`, so the Vercel build just serves them as static files (no browser needed in the build).
+
+Requirements and notes:
+- Google Chrome (or set `PUPPETEER_EXECUTABLE_PATH`) must be available where the generator runs. `pnpm install` never downloads Chromium.
+- `pnpm generate:pdfs --force` rebuilds all; `pnpm generate:pdfs <slug>` restricts to one note.
+- MDX/React-component notes are skipped (no faithful paper form) with a build-log warning.
+- The full design and resolved decisions are in [`docs/research-pdf-export.md`](./docs/research-pdf-export.md); the approved visual target is [`docs/research-pdf-export-reference.typ`](./docs/research-pdf-export-reference.typ).
 
 ## Workflow Tips
 
