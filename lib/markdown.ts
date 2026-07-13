@@ -418,6 +418,41 @@ function rehypePrintFootnotes() {
     return { ...node };
   };
 
+  // Flatten a footnote definition to purely inline content. A block element
+  // (<p>, <ul>, blockquote, …) cannot legally nest inside the inline footnote
+  // <span>: the HTML parser would eject it, floating an empty note to the page
+  // foot and stranding the text in the body. So we recursively unwrap every
+  // block container to its inline children, joining siblings and list items
+  // with a space. Inline formatting (em/strong/code/links) is preserved.
+  const BLOCK_CONTAINERS = new Set(['p', 'div', 'blockquote', 'section']);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const flattenToInline = (nodes: any[]): any[] => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const out: any[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pushSpaced = (children: any[]) => {
+      if (out.length > 0) out.push({ type: 'text', value: ' ' });
+      out.push(...flattenToInline(children));
+    };
+    for (const node of nodes) {
+      if (node.type === 'element' && BLOCK_CONTAINERS.has(node.tagName)) {
+        pushSpaced(node.children || []);
+      } else if (
+        node.type === 'element' &&
+        (node.tagName === 'ul' || node.tagName === 'ol')
+      ) {
+        for (const li of node.children || []) {
+          if (li.type === 'element' && li.tagName === 'li') {
+            pushSpaced(li.children || []);
+          }
+        }
+      } else {
+        out.push(node);
+      }
+    }
+    return out;
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (tree: any): void => {
     // 1. Locate the collected footnotes section and index its definitions.
@@ -483,26 +518,11 @@ function rehypePrintFootnotes() {
             const id = String(a.properties?.href || '').replace(/^#/, '');
             const content = defs.get(id);
             if (content) {
-              // Flatten the definition's block <p> wrappers into inline content:
-              // a <p> cannot legally nest inside the inline footnote <span>, and
-              // the HTML parser would otherwise eject it (leaving an empty span
-              // for Paged.js to float and the text stranded in the body). Join
-              // multiple paragraphs with a space.
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const inline: any[] = [];
-              content.forEach((node: any, idx: number) => {
-                if (node.type === 'element' && node.tagName === 'p') {
-                  if (idx > 0) inline.push({ type: 'text', value: ' ' });
-                  inline.push(...(node.children || []));
-                } else {
-                  inline.push(node);
-                }
-              });
               kids[i] = {
                 type: 'element',
                 tagName: 'span',
                 properties: { className: ['footnote'] },
-                children: inline,
+                children: flattenToInline(content),
               };
               continue;
             }

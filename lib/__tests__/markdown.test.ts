@@ -344,6 +344,22 @@ describe('processMarkdown', () => {
       expect(html).toContain('class="sidenote"');
       expect(html).not.toContain('class="footnote"');
     });
+
+    test('flattens block content (lists) inside a footnote to inline', async () => {
+      // A footnote whose definition carries a list must not leak the list into
+      // the body — all of its text stays inside the footnote span.
+      const md = 'A claim.[^1]\n\n[^1]: Lead in:\n\n    - alpha\n    - beta';
+      const html = await processMarkdown(md, [], 'research', {
+        footnoteStyle: 'print',
+      });
+      expect(html).toContain('class="footnote"');
+      // No block element survives inside the inline footnote span.
+      expect(html).not.toMatch(/<span class="footnote">[^<]*<(p|ul|ol|li)\b/);
+      // The list items' text is preserved in the footnote.
+      const span = html.match(/<span class="footnote">([\s\S]*?)<\/span>/)?.[1] ?? '';
+      expect(span).toContain('alpha');
+      expect(span).toContain('beta');
+    });
   });
 
   describe('Edge Cases', () => {
