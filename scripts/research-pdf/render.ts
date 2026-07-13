@@ -39,10 +39,6 @@ async function findChrome(): Promise<string> {
     process.env.CHROME_PATH,
     '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
     '/Applications/Chromium.app/Contents/MacOS/Chromium',
-    path.join(
-      process.env.HOME || '',
-      '.cache/puppeteer/chrome-headless-shell'
-    ),
     '/usr/bin/google-chrome',
     '/usr/bin/chromium',
     '/usr/bin/chromium-browser',
@@ -50,8 +46,10 @@ async function findChrome(): Promise<string> {
 
   for (const candidate of candidates) {
     try {
-      await fs.access(candidate);
-      return candidate;
+      const stat = await fs.stat(candidate);
+      // Must be an actual executable file, not a directory — a bare cache dir
+      // would satisfy access() but fail launch with a confusing error.
+      if (stat.isFile()) return candidate;
     } catch {
       // keep looking
     }

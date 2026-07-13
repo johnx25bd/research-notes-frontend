@@ -84,11 +84,8 @@ async function main() {
 
   let built = 0;
   let skipped = 0;
-  const seen = new Set<string>();
 
   for (const note of targets) {
-    seen.add(note.slug);
-
     // A React-component note has no faithful paper form — skip loudly.
     if (containsMDX(note.content)) {
       console.warn(`  ⚠️  ${note.slug}: contains MDX/React components — skipped (no paper form).`);
