@@ -457,6 +457,38 @@
   overflow-y: hidden;
 }
 
+/* Inline CTA to the longer framing note on the research index: the site's
+   quiet outline button (subscribe treatment), sized down to sit inline in the
+   intro's running text. Scoped under .prose to override its link styles. */
+.prose a.research-framing-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 0.15rem;
+  vertical-align: baseline;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid color-mix(in oklab, var(--foreground) 80%, transparent);
+  border-radius: 0.125rem;
+  color: var(--foreground);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.prose a.research-framing-cta:hover {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.prose a.research-framing-cta svg {
+  width: 0.8em;
+  height: 0.8em;
+}
+
 /* Research abstract: set apart from the body — smaller, muted, italic, with the
    meridian accent and a small-caps label instead of a section heading. */
 .research-article .abstract {

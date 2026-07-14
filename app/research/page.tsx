@@ -1,5 +1,3 @@
-import Link from "next/link"
-import { ArrowRight } from "lucide-react"
 import { LayoutShell } from "@/components/layout-shell"
 import { NotesPageClient } from "@/components/notes-page-client"
 import {
@@ -79,6 +77,22 @@ export default async function ResearchPage() {
   const linkTargets = [...notes, ...research].map((n) => ({ slug: n.slug, area: n.area }))
   const framingHtml = await processMarkdown(index.content, linkTargets, "research")
 
+  // The framing CTA rides inline at the end of the intro's last paragraph —
+  // still the quiet outline button (styled by .research-framing-cta in
+  // globals.css), sized down to sit in running text. Injected into the
+  // rendered HTML because the intro is markdown; falls back to its own
+  // trailing paragraph if the body ever stops ending with one.
+  const arrowSvg =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
+  const ctaHtml = index.framingHref
+    ? ` <a href="${index.framingHref}" class="research-framing-cta">${index.framingLabel ?? "Read the longer framing"}${arrowSvg}</a>`
+    : ""
+  const introHtml = !ctaHtml
+    ? framingHtml
+    : /<\/p>\s*$/.test(framingHtml)
+      ? framingHtml.replace(/<\/p>\s*$/, `${ctaHtml}</p>`)
+      : `${framingHtml}<p>${ctaHtml.trim()}</p>`
+
   // Track subheads and notes run through the markdown pipeline too, so YAML
   // block scalars (`subhead: |`) with blank lines render as separate
   // paragraphs in the rail — and markdown links work (the vision note's
@@ -108,22 +122,8 @@ export default async function ResearchPage() {
           </h1>
           <div
             className="prose text-foreground"
-            dangerouslySetInnerHTML={{ __html: framingHtml }}
+            dangerouslySetInnerHTML={{ __html: introHtml }}
           />
-          {/* CTA to the longer framing note — the site's quiet outline button
-              (matches the subscribe treatment), not a loud filled one. */}
-          {index.framingHref && (
-            <div className="mt-8">
-              <Link
-                href={index.framingHref}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-foreground/80 rounded-sm hover:bg-foreground hover:text-background transition-colors"
-                style={{ fontFamily: "var(--font-ui)" }}
-              >
-                {index.framingLabel ?? "Read the longer framing"}
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-          )}
         </header>
 
         {/* Each track is a two-column band: the left third holds the section
