@@ -79,13 +79,18 @@ export default async function ResearchPage() {
   const linkTargets = [...notes, ...research].map((n) => ({ slug: n.slug, area: n.area }))
   const framingHtml = await processMarkdown(index.content, linkTargets, "research")
 
-  // Track subheads run through the markdown pipeline too, so YAML block
-  // scalars (`subhead: |`) with blank lines render as separate paragraphs in
-  // the rail — and links or emphasis work if John ever wants them.
+  // Track subheads and notes run through the markdown pipeline too, so YAML
+  // block scalars (`subhead: |`) with blank lines render as separate
+  // paragraphs in the rail — and markdown links work (the vision note's
+  // pointer to the longer framing relies on this).
   const subheadHtml = new Map<string, string>()
+  const noteHtml = new Map<string, string>()
   for (const track of index.tracks) {
     if (track.subhead) {
       subheadHtml.set(track.slug, await processMarkdown(track.subhead, linkTargets, "research"))
+    }
+    if (track.note) {
+      noteHtml.set(track.slug, await processMarkdown(track.note, linkTargets, "research"))
     }
   }
 
@@ -197,6 +202,15 @@ export default async function ResearchPage() {
                         />
                       ))}
                     </div>
+                  )}
+
+                  {/* Small muted note at the foot of the track's card area
+                      (e.g. the web3-framing note under Vision). */}
+                  {track.note && (
+                    <div
+                      className="mt-6 text-sm text-muted-foreground leading-relaxed space-y-1.5 [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2"
+                      dangerouslySetInnerHTML={{ __html: noteHtml.get(track.slug) ?? "" }}
+                    />
                   )}
                 </div>
               </section>

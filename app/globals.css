@@ -457,24 +457,6 @@
   overflow-y: hidden;
 }
 
-/* Research index: the quiet aside under the intro (the condensed web3 note).
-   Smaller and muted, set off by the same hairline accent as blockquotes. */
-.prose aside.research-aside {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--muted-foreground);
-  margin-top: 1.5rem;
-  padding-left: 1rem;
-  border-left: 2px solid var(--border);
-}
-
-.prose aside.research-aside a {
-  color: var(--primary);
-  text-decoration: underline;
-  text-decoration-color: rgba(47, 111, 130, 0.3);
-  text-underline-offset: 2px;
-}
-
 /* Research abstract: set apart from the body — smaller, muted, italic, with the
    meridian accent and a small-caps label instead of a section heading. */
 .research-article .abstract {

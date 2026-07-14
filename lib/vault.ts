@@ -76,6 +76,7 @@ export interface ResearchTrack {
   slug: string;
   title: string;
   subhead?: string;  // One-sentence framing under the track heading
+  note?: string;     // Small muted note (markdown) at the foot of the track's card area
 }
 
 // The research index note (content/research/index.md, `type: research-index`).
@@ -200,10 +201,11 @@ export async function getResearchIndex(): Promise<ResearchIndex | null> {
       ? data.tracks
           .filter((t: unknown): t is { slug?: string; title?: string } =>
             typeof t === 'object' && t !== null && typeof (t as { slug?: unknown }).slug === 'string')
-          .map((t: { slug?: string; title?: string; subhead?: string }) => ({
+          .map((t: { slug?: string; title?: string; subhead?: string; note?: string }) => ({
             slug: String(t.slug),
             title: String(t.title ?? t.slug),
             subhead: t.subhead ? String(t.subhead) : undefined,
+            note: t.note ? String(t.note) : undefined,
           }))
       : [];
     return {
