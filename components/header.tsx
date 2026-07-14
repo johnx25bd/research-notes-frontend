@@ -5,9 +5,10 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "./theme-toggle"
 
+// Research takes the lead slot (Index left the menu with it); /services stays
+// a live route but is deliberately unlisted.
 const navItems = [
-  { href: "/notes", label: "Index" },
-  { href: "/services", label: "Services" },
+  { href: "/research", label: "Research" },
   { href: "/about", label: "About" },
 ]
 
@@ -40,7 +41,7 @@ export function Header({ wide = false }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm">
-      <div className={cn("mx-auto px-6", wide ? "max-w-6xl" : "max-w-2xl")}>
+      <div className={cn(wide ? "container-wide" : "max-w-2xl mx-auto px-6")}>
         <div className="flex items-center justify-between h-14">
           <Link
             href="/"

@@ -457,6 +457,24 @@
   overflow-y: hidden;
 }
 
+/* Shared wide container for the research page and its nav/footer: centered by
+   default; on wide screens it sits slightly left of true center so the section
+   rails, which hang into the left margin under the intro, keep breathing room
+   without crowding the viewport edge. All three (nav, page, footer) use this
+   class, so the page keeps one continuous left edge. */
+.container-wide {
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+@media (min-width: 80rem) {
+  .container-wide {
+    margin-left: max(0px, calc((100% - 72rem) / 2 - 1.5rem));
+    margin-right: auto;
+  }
+}
+
 /* Inline CTA to the longer framing note on the research index: the site's
    quiet outline button (subscribe treatment), sized down to sit inline in the
    intro's running text. Scoped under .prose to override its link styles. */

@@ -112,19 +112,25 @@ export default async function ResearchPage() {
   return (
     <LayoutShell wide>
       {/* One container, one left edge: everything on this page — nav and
-          footer (via LayoutShell wide), intro, and all section bands — aligns
-          to the same max-w-6xl container. */}
-      <div className="max-w-6xl mx-auto px-6 py-10">
-        {/* Intro: capped at a readable measure but left-aligned to the
-            container edge, sharing its left edge with the section rails. */}
-        <header className="max-w-[70ch] mb-14 animate-fade-in-up">
-          <h1 className="text-3xl sm:text-4xl font-normal text-foreground mb-6 text-balance">
-            {index.title}
-          </h1>
-          <div
-            className="prose text-foreground"
-            dangerouslySetInnerHTML={{ __html: introHtml }}
-          />
+          footer (via LayoutShell wide), intro, and all section bands — shares
+          the .container-wide box (nudged slightly left of true center on wide
+          screens so the hanging rails don't crowd the viewport edge). */}
+      <div className="container-wide py-10">
+        {/* Intro: aligned to the CARD COLUMN's left edge — an empty cell
+            mirrors the section grid template, so the rails beneath read as
+            hanging out into the left margin while the content column is the
+            page's dominant axis. Below lg everything stacks on one edge. */}
+        <header className="mb-14 animate-fade-in-up lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-12">
+          <div className="hidden lg:block" aria-hidden />
+          <div className="max-w-[70ch] min-w-0">
+            <h1 className="text-3xl sm:text-4xl font-normal text-foreground mb-6 text-balance">
+              {index.title}
+            </h1>
+            <div
+              className="prose text-foreground"
+              dangerouslySetInnerHTML={{ __html: introHtml }}
+            />
+          </div>
         </header>
 
         {/* Each track is a two-column band: the left third holds the section

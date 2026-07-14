@@ -10,7 +10,7 @@ interface FooterProps {
 export function Footer({ noteSlugs, wide = false }: FooterProps) {
   return (
     <footer className="py-12 mt-8">
-      <div className={`mx-auto px-6 ${wide ? "max-w-6xl" : "max-w-2xl"}`}>
+      <div className={wide ? "container-wide" : "max-w-2xl mx-auto px-6"}>
         <div className="pt-8 border-t border-border/50 space-y-6">
           <div className="space-y-2">
             <p
