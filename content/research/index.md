@@ -3,6 +3,8 @@ type: research-index
 title: Research
 published: true
 published_at: 2026-07-13
+framing_href: /research/framing
+framing_label: Read the longer framing
 tracks:
   - slug: vision
     title: Vision
@@ -29,6 +31,5 @@ These technologies are useful for:
 - the governance of AI compute,
 - consistent governance in under-governed spaces. 
 
-The most effective credible commitments will require every input to be verifiable all the way back to the sensor or the issuing institution, and that requirement gives the work below its shape. [Read the longer framing →](/research/framing)
-<!--This Framing should be a nicer button please-->
+The most effective credible commitments will require every input to be verifiable all the way back to the sensor or the issuing institution, and that requirement gives the work below its shape.
 <aside class="research-aside">Some earlier artifacts here carry a "web3" or "decentralized web" framing because they were built to integrate with smart contract applications; much of the logic carries through to multi-agent systems. <a href="/research/framing">The longer framing</a> explains the through-line.</aside>

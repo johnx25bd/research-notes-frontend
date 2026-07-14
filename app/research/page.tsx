@@ -1,3 +1,5 @@
+import Link from "next/link"
+import { ArrowRight } from "lucide-react"
 import { LayoutShell } from "@/components/layout-shell"
 import { NotesPageClient } from "@/components/notes-page-client"
 import {
@@ -103,6 +105,20 @@ export default async function ResearchPage() {
             className="prose text-foreground"
             dangerouslySetInnerHTML={{ __html: framingHtml }}
           />
+          {/* CTA to the longer framing note — the site's quiet outline button
+              (matches the subscribe treatment), not a loud filled one. */}
+          {index.framingHref && (
+            <div className="mt-8">
+              <Link
+                href={index.framingHref}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-foreground/80 rounded-sm hover:bg-foreground hover:text-background transition-colors"
+                style={{ fontFamily: "var(--font-ui)" }}
+              >
+                {index.framingLabel ?? "Read the longer framing"}
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          )}
         </header>
 
         {/* Each track is a two-column band: the left third holds the section

@@ -84,6 +84,8 @@ export interface ResearchIndex {
   title: string;
   content: string;
   tracks: ResearchTrack[];
+  framingHref?: string;   // CTA target after the intro (e.g. /research/framing)
+  framingLabel?: string;  // CTA label (e.g. "Read the longer framing")
 }
 
 // Load and parse every published note in a single content area.
@@ -208,6 +210,8 @@ export async function getResearchIndex(): Promise<ResearchIndex | null> {
       title: data.title || 'Research',
       content,
       tracks,
+      framingHref: data.framing_href ? String(data.framing_href) : undefined,
+      framingLabel: data.framing_label ? String(data.framing_label) : undefined,
     };
   } catch {
     return null;
