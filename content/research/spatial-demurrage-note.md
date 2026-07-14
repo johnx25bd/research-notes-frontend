@@ -6,7 +6,7 @@ artifact_kind: post
 date: 2022
 tracks: [applications]
 tier: note
-order: 1
+order: 2
 tags: [web3, geospatial, astral]
 status: active
 role: Author

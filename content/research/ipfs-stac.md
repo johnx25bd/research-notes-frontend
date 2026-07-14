@@ -13,7 +13,7 @@ role: DecentralizedGeo collaboration
 summary: ipfs-stac is a Python client for STAC catalogs enriched with IPFS, so spatial-asset catalogs can reference and retrieve imagery held on content-addressed storage.
 purpose: Spatial-asset catalogs assume HTTP hosts; content-addressed storage needs a bridge so catalogs can reference and retrieve imagery on IPFS.
 approach: A Python client for STAC catalogs enriched with IPFS metadata, built with the EASIER Data Initiative at the University of Maryland as part of the DecentralizedGeo collaboration.
-status_note: Open source, maintained under DecentralizedGeo.
+status_note: Stable; open source under DecentralizedGeo.
 links:
   - { label: "github.com/DecentralizedGeo/ipfs-stac", url: "https://github.com/DecentralizedGeo/ipfs-stac" }
 published: true
