@@ -77,6 +77,16 @@ export default async function ResearchPage() {
   const linkTargets = [...notes, ...research].map((n) => ({ slug: n.slug, area: n.area }))
   const framingHtml = await processMarkdown(index.content, linkTargets, "research")
 
+  // Track subheads run through the markdown pipeline too, so YAML block
+  // scalars (`subhead: |`) with blank lines render as separate paragraphs in
+  // the rail — and links or emphasis work if John ever wants them.
+  const subheadHtml = new Map<string, string>()
+  for (const track of index.tracks) {
+    if (track.subhead) {
+      subheadHtml.set(track.slug, await processMarkdown(track.subhead, linkTargets, "research"))
+    }
+  }
+
   return (
     <LayoutShell wide>
       {/* One container, one left edge: everything on this page — nav and
@@ -130,9 +140,10 @@ export default async function ResearchPage() {
                     {track.title}
                   </h2>
                   {track.subhead && (
-                    <p className="text-base text-muted-foreground leading-relaxed mt-3">
-                      {track.subhead}
-                    </p>
+                    <div
+                      className="text-base text-muted-foreground leading-relaxed mt-3 space-y-2.5 [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2"
+                      dangerouslySetInnerHTML={{ __html: subheadHtml.get(track.slug) ?? "" }}
+                    />
                   )}
                 </div>
 

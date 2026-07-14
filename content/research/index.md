@@ -9,7 +9,10 @@ tracks:
     subhead: High level writing that articulates the case for spatial governance technologies and defines key terms.
   - slug: location-verification
     title: Location verification
-    subhead: The key enabling technologies involve reliably verifying the timing and location of devices, people and events. Location cannot be "proven" in a mathematical sense; instead, verification requires the collection and evaluation of hard-to-forge location evidence that holds up in adversarial conditions.
+    subhead: |
+      The key enabling technologies involve reliably verifying the timing and location of devices, people and events.
+
+      Location cannot be "proven" in a mathematical sense; instead, verification requires the collection and evaluation of hard-to-forge location evidence that holds up in adversarial conditions.
   - slug: spatial-registries
     title: Verifiable spatial data registries
     subhead: "Verified location is only one part of location-contingent policy evaluation. The geographic policy zones an evaluation pulls in must be trustworthy too: resolvable, efficiently fetchable, and cryptographically controlled by the appropriate parties."
