@@ -13,7 +13,8 @@ tracks:
       Some earlier artifacts here carry a "web3" or "decentralized web" framing
       because they were built to integrate with smart contract applications;
       much of the logic carries through to multi-agent systems.
-      [The longer framing](/research/framing) explains the through-line.
+      [The longer framing](/research/framing) explains the through-line; see also
+      [Web3 is a set of design principles](/notes/web3-is-a-set-of-design-principles).
   - slug: location-verification
     title: Location verification
     subhead: |
