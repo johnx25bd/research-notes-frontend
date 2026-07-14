@@ -168,29 +168,36 @@ interface ArtifactCompactRowProps {
   artifact: Note
 }
 
-// A compact one-line entry for note-tier artifacts. Two explicit clusters
-// that can never collide: the left cluster (title + clause) wraps within its
-// own space, and the right cluster (kind, year, status) stays on one line,
-// separated by a minimum gap. Below sm the metadata cluster drops onto its
-// own line under the title instead of squeezing.
+// A compact one-line entry for note-tier artifacts. The whole row links to
+// the artifact's /research page via an absolutely positioned overlay (like
+// the cards); the small up-right arrow is a shortcut straight out to the
+// primary external link, opening in a new tab above the overlay via z-index.
+// Two explicit clusters that can never collide: the left cluster (title +
+// clause) wraps within its own space, and the right cluster (kind, year,
+// status, arrow) stays on one line behind a minimum gap. Below sm the
+// metadata cluster drops onto its own line under the title.
 export function ArtifactCompactRow({ artifact }: ArtifactCompactRowProps) {
   const kindLabel = artifact.artifactKind
     ? KIND_LABELS[artifact.artifactKind] ?? artifact.artifactKind
     : null
   const year = yearOf(artifact.date)
+  const primary = artifact.links?.[0]
+  const isExternal = primary ? /^https?:\/\//.test(primary.url) : false
 
   return (
     <div
-      className="py-2.5 text-sm sm:flex sm:items-baseline sm:justify-between sm:gap-6"
+      className="group relative py-2.5 text-sm transition-colors hover:bg-muted/30 -mx-2 px-2 sm:flex sm:items-baseline sm:justify-between sm:gap-6"
       style={{ borderBottom: "1px solid var(--entry-divider)" }}
     >
+      <Link
+        href={`/research/${artifact.slug}`}
+        className="absolute inset-0 focus:outline-none focus:ring-2 focus:ring-primary"
+        aria-label={artifact.title}
+      />
       <p className="min-w-0">
-        <Link
-          href={`/research/${artifact.slug}`}
-          className="font-medium text-foreground hover:text-primary transition-colors"
-        >
+        <span className="font-medium text-foreground group-hover:text-primary transition-colors">
           {artifact.title}
-        </Link>{" "}
+        </span>{" "}
         <span className="text-muted-foreground">
           {"—"} {artifact.clause || artifact.summary}
         </span>
@@ -202,6 +209,18 @@ export function ArtifactCompactRow({ artifact }: ArtifactCompactRowProps) {
         {kindLabel && <span className="uppercase tracking-wide text-[0.65rem]">{kindLabel}</span>}
         {year && <span>{year}</span>}
         <ArtifactStatusBadge status={artifact.status} />
+        {isExternal && primary && (
+          <a
+            href={primary.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative z-10 self-center text-muted-foreground/50 hover:text-primary transition-colors"
+            aria-label={`Open ${primary.label}`}
+            title={primary.label}
+          >
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </a>
+        )}
       </span>
     </div>
   )
