@@ -1,10 +1,124 @@
 #!/usr/bin/env tsx
-import { getAllNotes } from '../lib/vault';
+import { getAllNotes, getAllResearch, getResearchIndex, type ArtifactKind, type ArtifactStatus, type ArtifactTier } from '../lib/vault';
 
 interface ValidationIssue {
   filepath: string;
   severity: 'error' | 'warning' | 'info';
   message: string;
+}
+
+const ARTIFACT_KINDS: ArtifactKind[] = [
+  'paper', 'spec', 'talk', 'prototype', 'post', 'report', 'thread', 'library',
+];
+
+const ARTIFACT_STATUSES: ArtifactStatus[] = ['active', 'preview', 'historical', 'forthcoming'];
+
+const ARTIFACT_TIERS: ArtifactTier[] = ['card', 'note'];
+
+// Validate the research area: curated artifacts and the framing index. Returns
+// issues to fold into the main report. Every `type: artifact` entry must carry
+// the curation fields the index and artifact pages depend on, and any research
+// entry that claims a track must name a track the index actually defines.
+async function validateResearch(): Promise<ValidationIssue[]> {
+  const issues: ValidationIssue[] = [];
+  const research = await getAllResearch();
+  const index = await getResearchIndex();
+
+  if (!index) {
+    issues.push({
+      filepath: 'content/research/index.md',
+      severity: 'error',
+      message: 'Missing research index note (type: research-index) with a tracks list',
+    });
+    return issues;
+  }
+
+  const validTracks = new Set(index.tracks.map(t => t.slug));
+  if (validTracks.size === 0) {
+    issues.push({
+      filepath: 'content/research/index.md',
+      severity: 'error',
+      message: 'Research index defines no tracks',
+    });
+  }
+
+  // Duplicate slugs in the research area silently shadow each other (routes,
+  // wikilinks, static params). This happens most easily when a vault note is
+  // published over an existing placeholder -- fail loudly instead.
+  const seen = new Map<string, string>();
+  research.forEach(entry => {
+    const existing = seen.get(entry.slug);
+    if (existing) {
+      issues.push({
+        filepath: entry.filepath,
+        severity: 'error',
+        message: `Duplicate research slug "${entry.slug}" (also used by ${existing}) -- if this replaces a placeholder, remove or merge the placeholder entry`,
+      });
+    } else {
+      seen.set(entry.slug, entry.filepath);
+    }
+  });
+
+  research.forEach(entry => {
+    const where = entry.filepath;
+
+    if (entry.type === 'artifact') {
+      if (!entry.summary) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact missing summary' });
+      }
+      if (!entry.purpose) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact missing purpose (the motivating problem)' });
+      }
+      if (!entry.approach) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact missing approach (what it is / how it works)' });
+      }
+      if (!entry.statusNote) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact missing status_note (current state, plainly)' });
+      }
+      if (!entry.date) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact missing date (YYYY or YYYY-MM)' });
+      }
+      if (!entry.artifactKind) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact missing artifact_kind' });
+      } else if (!ARTIFACT_KINDS.includes(entry.artifactKind)) {
+        issues.push({ filepath: where, severity: 'error', message: `Unknown artifact_kind "${entry.artifactKind}" (expected one of: ${ARTIFACT_KINDS.join(', ')})` });
+      }
+      if (!entry.tracks || entry.tracks.length === 0) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact must declare at least one track' });
+      }
+      if (!ARTIFACT_STATUSES.includes(entry.status as ArtifactStatus)) {
+        issues.push({ filepath: where, severity: 'error', message: `Artifact status "${entry.status}" is not one of: ${ARTIFACT_STATUSES.join(', ')}` });
+      }
+      // Forthcoming entries are announced but unpublished — they are the one
+      // case allowed to have no link yet. Publishing later means adding a URL
+      // and flipping the status.
+      if (entry.status !== 'forthcoming' && (!entry.links || entry.links.length === 0)) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact must have at least one link with a URL (external or on-site)' });
+      }
+    }
+
+    // Any research entry that claims tracks (artifacts and hosted notes alike)
+    // must reference tracks the index defines, and must declare an editorial
+    // tier so the page knows whether it renders as a card or a compact row.
+    (entry.tracks ?? []).forEach(track => {
+      if (!validTracks.has(track)) {
+        issues.push({
+          filepath: where,
+          severity: 'error',
+          message: `Track "${track}" is not defined in the research index track list`,
+        });
+      }
+    });
+    if ((entry.tracks?.length ?? 0) > 0 && !ARTIFACT_TIERS.includes(entry.tier as ArtifactTier)) {
+      issues.push({
+        filepath: where,
+        severity: 'error',
+        message: `Tracked research entry must declare tier: card | note (got "${entry.tier ?? 'none'}")`,
+      });
+    }
+  });
+
+  return issues;
 }
 
 const SENSITIVE_KEYWORDS = [
@@ -24,6 +138,10 @@ async function validate() {
   }
 
   console.log(`Found ${notes.length} notes\n`);
+
+  // Fold in research-area validation (artifacts + framing index).
+  const researchIssues = await validateResearch();
+  issues.push(...researchIssues);
 
   notes.forEach(note => {
     // Check required frontmatter

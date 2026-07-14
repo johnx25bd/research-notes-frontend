@@ -21,6 +21,23 @@ const statusConfig: Record<string, { label: string; className: string }> = {
     label: "Stable",
     className: "text-primary/70 bg-primary/5",
   },
+  // Artifact status values
+  active: {
+    label: "Active",
+    className: "text-primary/70 bg-primary/5",
+  },
+  preview: {
+    label: "Preview",
+    className: "text-primary/70 bg-primary/5",
+  },
+  historical: {
+    label: "Historical",
+    className: "text-muted-foreground/80 bg-muted/60",
+  },
+  forthcoming: {
+    label: "Forthcoming",
+    className: "text-muted-foreground/70 bg-transparent border border-dashed border-current/40",
+  },
   // Legacy status values (backward compatibility)
   seed: {
     label: "Fragment",
@@ -37,7 +54,7 @@ const statusConfig: Record<string, { label: string; className: string }> = {
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
-  const config = statusConfig[status]
+  const config = statusConfig[status] ?? statusConfig.fragment
 
   return (
     <span

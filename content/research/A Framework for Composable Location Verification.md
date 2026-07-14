@@ -1,17 +1,33 @@
 ---
 area: research
+artifact_kind: paper
 created: 2026-07-07
+date: 2026-07
 featured: true
 featured_order: 2
 pdf: true
+purpose: No single location verification technique serves every setting, and each
+  can be defeated. Verifiers need a way to combine imperfect evidence from independent
+  systems into decisions they can defend.
+approach: A framework treating location verification as evidence evaluation -- signed
+  location stamps compose into evidence, evidence functions produce multidimensional
+  credibility assessments, and application-specific decision rules map assessments
+  to decisions.
+status_note: Working note under active development; feedback invited.
 published: true
 published_at: 2026-07-07
+role: Lead author
+tier: card
+order: 1
+tracks:
+- location-verification
 research_note: obsidian://open?vault=research-notes&file=research/A%20Framework%20for%20Composable%20Location%20Verification
 slug: location-verification-framework
 source_note: obsidian://open?vault=xo&file=Research/hoopes-2026-framework-for-composable-location-verification/A%20Framework%20for%20Composable%20Location%20Verification
 status: fragment
-summary: Multi-factor location verification for credible location-contingent commitments
-  across use cases
+summary: This framework composes evidence from independent location verification
+  systems into credibility assessments, so verifiers can quantify confidence in
+  claims about where things happened.
 tags: []
 title: A Framework for Composable Location Verification
 url: https://johnx.co/research/location-verification-framework
