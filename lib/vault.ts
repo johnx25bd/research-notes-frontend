@@ -19,6 +19,11 @@ const CONTENT_ROOT = path.join(process.cwd(), 'content');
 //   forthcoming — announced, not yet published (rendered unlinked and dimmed)
 export type ArtifactStatus = 'active' | 'preview' | 'historical' | 'forthcoming';
 
+// Editorial tier: 'card' renders as a full card in its track's grid; 'note'
+// renders as a compact one-line row beneath the cards. Tier is a curation
+// decision, independent of status (which tracks freshness/lineage).
+export type ArtifactTier = 'card' | 'note';
+
 // Artifact-kind vocabulary for curated research entries.
 export type ArtifactKind =
   | 'paper'
@@ -69,6 +74,8 @@ export interface Note {
   supersededBy?: string;      // Slug of the entry that absorbed this work
   startHere?: boolean;        // Featured "Start here" card at the top of its track
   clause?: string;            // Short clause for compact one-line entries
+  tier?: ArtifactTier;        // 'card' (grid card) or 'note' (compact row)
+  order?: number;             // Position within the track+tier group (ascending)
 }
 
 // An ordered track defined by the research index note's frontmatter.
@@ -155,6 +162,8 @@ async function loadArea(area: Area): Promise<Note[]> {
           supersededBy: data.superseded_by,
           startHere: data.start_here === true,
           clause: data.clause,
+          tier: data.tier,
+          order: typeof data.order === 'number' ? data.order : undefined,
         };
       })
     );

@@ -15,17 +15,16 @@ export const metadata = {
     "Verifiable geospatial technologies and the spatial governance of intelligent machines.",
 }
 
-// Sort key for a track's cards: featured_order first (missing sorts last),
-// then date descending. Dates are YYYY or YYYY-MM; fold to a comparable number.
+// Sort key within a track's tier group: explicit `order` first (missing
+// sorts last), then date descending. Dates are YYYY or YYYY-MM.
 // The "missing" sentinel must be finite: Infinity - Infinity is NaN, which a
 // sort comparator treats as "equal" and silently falls back to file order.
 const UNORDERED = Number.MAX_SAFE_INTEGER
 
 function orderOf(note: Note): number {
-  const raw = note.featured_order as unknown
-  if (raw === null || raw === undefined || raw === "") return UNORDERED
-  const v = Number(raw)
-  return Number.isFinite(v) ? v : UNORDERED
+  return typeof note.order === "number" && Number.isFinite(note.order)
+    ? note.order
+    : UNORDERED
 }
 
 function dateScore(date?: string): number {
@@ -42,10 +41,10 @@ function sortTrackEntries(entries: Note[]): Note[] {
   })
 }
 
-// Compact one-line treatment for historical or superseded work; everything
-// else gets a full card. The featured (start_here) entry is pulled out first.
+// Tier is editorial frontmatter: 'note' renders as a compact row, everything
+// else (tier: card) as a full card. The start_here entry is pulled out first.
 function isCompact(note: Note): boolean {
-  return note.status === "historical" || Boolean(note.supersededBy)
+  return note.tier === "note"
 }
 
 export default async function ResearchPage() {

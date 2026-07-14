@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-import { getAllNotes, getAllResearch, getResearchIndex, type ArtifactKind, type ArtifactStatus } from '../lib/vault';
+import { getAllNotes, getAllResearch, getResearchIndex, type ArtifactKind, type ArtifactStatus, type ArtifactTier } from '../lib/vault';
 
 interface ValidationIssue {
   filepath: string;
@@ -12,6 +12,8 @@ const ARTIFACT_KINDS: ArtifactKind[] = [
 ];
 
 const ARTIFACT_STATUSES: ArtifactStatus[] = ['active', 'preview', 'historical', 'forthcoming'];
+
+const ARTIFACT_TIERS: ArtifactTier[] = ['card', 'note'];
 
 // Validate the research area: curated artifacts and the framing index. Returns
 // issues to fold into the main report. Every `type: artifact` entry must carry
@@ -77,7 +79,8 @@ async function validateResearch(): Promise<ValidationIssue[]> {
     }
 
     // Any research entry that claims tracks (artifacts and hosted notes alike)
-    // must reference tracks the index defines.
+    // must reference tracks the index defines, and must declare an editorial
+    // tier so the page knows whether it renders as a card or a compact row.
     (entry.tracks ?? []).forEach(track => {
       if (!validTracks.has(track)) {
         issues.push({
@@ -87,6 +90,13 @@ async function validateResearch(): Promise<ValidationIssue[]> {
         });
       }
     });
+    if ((entry.tracks?.length ?? 0) > 0 && !ARTIFACT_TIERS.includes(entry.tier as ArtifactTier)) {
+      issues.push({
+        filepath: where,
+        severity: 'error',
+        message: `Tracked research entry must declare tier: card | note (got "${entry.tier ?? 'none'}")`,
+      });
+    }
   });
 
   return issues;
