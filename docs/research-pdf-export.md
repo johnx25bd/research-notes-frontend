@@ -1,8 +1,22 @@
 # Spec: automatic PDF export for research notes
 
-**Status:** proposed — not yet implemented
+**Status:** implemented (Option A) — see "Implementation" below
 **Owner:** John
 **Related:** PR #91 (the first PDF, produced by hand), `docs/research-pdf-export-reference.typ` (the approved visual target), [NicklasVraa/Obsidian-academic-export](https://github.com/NicklasVraa/Obsidian-academic-export) (the aesthetic reference)
+
+## Implementation
+
+Built as **Option A** (reuse the unified HTML pipeline → print CSS → Paged.js in headless Chromium), generated locally and committed (the low-risk path recommended below), and **opt-in** via `pdf: true` in a note's frontmatter.
+
+- `scripts/generate-research-pdfs.ts` (`pnpm generate:pdfs`) — enumerates published research notes that set `pdf: true`, renders each via the same `processMarkdown(..., "research", { footnoteStyle: "print" })` pipeline as the web post, paginates with Paged.js, and writes `public/research/<slug>.pdf`. Content-hash cached in `public/research/.pdf-manifest.json`; `--force` rebuilds, and passing slugs restricts the run.
+- `scripts/research-pdf/render.ts` + `scripts/research-pdf/print.css` — the print HTML assembly and the house academic stylesheet. Body type is KaTeX_Main (a Computer Modern clone already shipped with KaTeX), so prose and math share one typeface and the fonts embed straight into the PDF.
+- `lib/markdown.ts` — a `footnoteStyle: "print"` option turns the web's margin sidenotes into page-foot footnotes (Paged.js `float: footnote`); the default is unchanged.
+- `scripts/sync-vault.sh` runs the generator after a sync, so publishing regenerates PDFs. Uses **puppeteer-core** — no Chromium is downloaded during `pnpm install`, so the Vercel build is untouched and just serves the committed static files.
+- The web post shows a "Download PDF" link when the file exists.
+
+Resolved open questions: **1** — Option A. **2** — local sync-time, committed PDFs. **3** — opt-in (`pdf: true`). **4** — `author:` frontmatter, defaulting to "John Robison Hoopes". **5** — download link included. **6** — A4. Remaining known follow-ups: section numbering covers h2 only (h3s are left as authored, since some are hand-numbered content); no automated visual-regression snapshot yet.
+
+Everything below is the original design spec, kept for context.
 
 ## Goal
 

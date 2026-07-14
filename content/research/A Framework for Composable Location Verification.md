@@ -5,6 +5,7 @@ created: 2026-07-07
 date: 2026-07
 featured: true
 featured_order: 2
+pdf: true
 purpose: No single location verification technique serves every setting, and each
   can be defeated. Verifiers need a way to combine imperfect evidence from independent
   systems into decisions they can defend.

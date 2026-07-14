@@ -5,6 +5,7 @@
   "scripts": {
     "build": "pnpm validate && next build",
     "dev": "next dev",
+    "generate:pdfs": "tsx scripts/generate-research-pdfs.ts",
     "lint": "eslint .",
     "notify": "tsx scripts/notify-subscribers.ts",
     "start": "next start",
@@ -90,7 +91,9 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitest/ui": "^4.0.15",
+    "pagedjs": "^0.4.3",
     "postcss": "^8.5",
+    "puppeteer-core": "^25.3.0",
     "tailwindcss": "^4.1.9",
     "tsx": "^4.21.0",
     "tw-animate-css": "1.3.3",

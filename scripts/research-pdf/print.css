@@ -1,0 +1,256 @@
+/*
+ * Print stylesheet for research-note PDFs — the house academic format.
+ * Consumed by scripts/research-pdf/render.ts, paginated with Paged.js in
+ * headless Chromium. Reproduces docs/research-pdf-export-reference.typ
+ * (the approved visual target): A4, Computer Modern serif, single column,
+ * auto-numbered sections, centered small-caps title, page-foot footnotes.
+ *
+ * Body type is KaTeX_Main — a Computer Modern clone shipped with KaTeX — so the
+ * prose and the math render as one typeface. `__ASSET__` is rewritten to the
+ * absolute file:// fonts directory at render time.
+ */
+
+@font-face {
+  font-family: "CM Serif";
+  src: url("__ASSET__/KaTeX_Main-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "CM Serif";
+  src: url("__ASSET__/KaTeX_Main-Italic.woff2") format("woff2");
+  font-weight: normal;
+  font-style: italic;
+}
+@font-face {
+  font-family: "CM Serif";
+  src: url("__ASSET__/KaTeX_Main-Bold.woff2") format("woff2");
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: "CM Serif";
+  src: url("__ASSET__/KaTeX_Main-BoldItalic.woff2") format("woff2");
+  font-weight: bold;
+  font-style: italic;
+}
+
+/* ── Page: A4, 2cm margins, running footer ─────────────────────────── */
+@page {
+  size: A4;
+  margin: 2cm;
+
+  @bottom-left {
+    content: "johnx.co/research";
+    font-family: "CM Serif", Georgia, serif;
+    font-size: 8pt;
+    color: #6e6e6e;
+    vertical-align: bottom;
+  }
+  @bottom-center {
+    content: counter(page);
+    font-family: "CM Serif", Georgia, serif;
+    font-size: 8pt;
+    color: #6e6e6e;
+    vertical-align: bottom;
+  }
+
+  /* Page-foot footnote area, with a short separator rule above. No max-height:
+     Paged.js splits a long note across pages rather than clipping it, and the
+     running footer sits lower in the bottom margin so they never collide. */
+  @footnote {
+    border-top: 0.5pt solid #999;
+    padding-top: 0.4em;
+    margin-top: 0.8em;
+  }
+}
+
+/* ── Body ──────────────────────────────────────────────────────────── */
+html {
+  font-family: "CM Serif", Georgia, "Times New Roman", serif;
+  font-size: 10pt;
+  line-height: 1.32;
+  color: #111;
+}
+body {
+  margin: 0;
+}
+
+.research-pdf {
+  hyphens: auto;
+}
+
+.research-pdf-content {
+  text-align: justify;
+  /* Justify interior lines only; never stretch the final line of a block. */
+  text-align-last: left;
+}
+
+.research-pdf-content p,
+.research-pdf-content li {
+  text-align-last: left;
+}
+
+.research-pdf-content p {
+  margin: 0 0 1.1em 0;
+  orphans: 2;
+  widows: 2;
+}
+
+/* Lists stay tight — no extra gap between items (matches the reference). */
+.research-pdf-content ul,
+.research-pdf-content ol {
+  margin: 0 0 1.1em 0;
+  padding-left: 1.4em;
+}
+.research-pdf-content li {
+  margin: 0 0 0.15em 0;
+}
+
+/* ── Title block ───────────────────────────────────────────────────── */
+.pdf-titleblock {
+  text-align: center;
+  margin: 0 0 1.6em 0;
+}
+.pdf-title {
+  font-size: 18pt;
+  font-weight: normal;
+  font-variant: small-caps;
+  letter-spacing: 0.02em;
+  margin: 0 0 0.4em 0;
+  line-height: 1.2;
+}
+.pdf-subtitle {
+  font-size: 11pt;
+  font-variant: small-caps;
+  margin: 0 0 0.6em 0;
+  line-height: 1.25;
+}
+.pdf-author {
+  font-size: 10pt;
+  margin: 0;
+}
+
+/* ── Abstract (unnumbered, centered heading, narrower body) ─────────── */
+.research-pdf-content .abstract {
+  margin: 0 auto 1.6em auto;
+  padding: 0 2.4em;
+}
+.research-pdf-content .abstract h2 {
+  text-align: center;
+  font-size: 12pt;
+  font-weight: bold;
+  margin: 0 0 0.3em 0;
+  counter-increment: none;
+}
+.research-pdf-content .abstract h2::before {
+  content: none;
+}
+.research-pdf-content .abstract p {
+  margin: 0;
+}
+
+/* ── Headings: auto-numbered sections and subsections ──────────────── */
+.research-pdf-content h2,
+.research-pdf-content h3 {
+  font-weight: bold;
+  text-align: left;
+  text-align-last: left;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+.research-pdf-content h2 {
+  font-size: 12pt;
+  margin: 1.4em 0 0.55em 0;
+}
+.research-pdf-content h3 {
+  font-size: 11pt;
+  margin: 1.1em 0 0.45em 0;
+}
+
+/* ── Footnotes: lifted to the page foot, auto-numbered by Paged.js ──── */
+.research-pdf-content .footnote {
+  float: footnote;
+  font-size: 8pt;
+}
+.pagedjs_footnote_content {
+  font-size: 8pt;
+  line-height: 1.25;
+}
+.pagedjs_footnote_content p {
+  margin: 0 0 0.3em 0;
+  text-align: left;
+}
+::footnote-call {
+  font-size: 0.75em;
+  vertical-align: super;
+  line-height: 1;
+}
+::footnote-marker {
+  font-size: 8pt;
+}
+
+/* ── Callouts: thin-bordered aside with a bold lead line ───────────── */
+.research-pdf-content .callout {
+  border: 0.5pt solid #999;
+  padding: 0.5em 0.8em;
+  margin: 0 0 1.1em 0;
+  break-inside: avoid;
+}
+.research-pdf-content .callout-title {
+  font-weight: bold;
+  margin: 0 0 0.2em 0;
+}
+.research-pdf-content .callout-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Figures ───────────────────────────────────────────────────────── */
+.research-pdf-content figure {
+  margin: 1.1em 0;
+  text-align: center;
+  break-inside: avoid;
+}
+.research-pdf-content figure img {
+  max-width: 100%;
+  height: auto;
+}
+.research-pdf-content .figure-title {
+  font-weight: bold;
+  margin: 0 0 0.3em 0;
+}
+.research-pdf-content figcaption {
+  font-size: 9pt;
+  color: #444;
+  margin-top: 0.3em;
+}
+
+/* ── References: unnumbered heading, hanging indent ────────────────── */
+.research-pdf-content .references-list p,
+.research-pdf-content .references-list li {
+  font-size: 9.5pt;
+  padding-left: 1.5em;
+  text-indent: -1.5em;
+  text-align: left;
+  margin: 0 0 0.3em 0;
+}
+
+/* Links: keep them readable on paper, no jarring color. */
+.research-pdf-content a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Tables */
+.research-pdf-content table {
+  border-collapse: collapse;
+  font-size: 9pt;
+  margin: 0 0 1.1em 0;
+  width: 100%;
+}
+.research-pdf-content th,
+.research-pdf-content td {
+  border: 0.5pt solid #999;
+  padding: 0.3em 0.5em;
+  text-align: left;
+}

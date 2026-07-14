@@ -59,6 +59,8 @@ export interface Note {
   published?: boolean;  // Set by smart-sync.py
   stub?: boolean;       // Auto-generated stub notes
   source_note?: string; // Obsidian URI back to source vault
+  pdf?: boolean;        // Opt-in: generate a print-ready PDF at /research/<slug>.pdf
+  author?: string;      // Byline for the PDF; defaults applied at render time
 
   // --- Research-artifact fields ---
   // `type: artifact` entries are curation metadata rather than full notes.
@@ -151,6 +153,8 @@ async function loadArea(area: Area): Promise<Note[]> {
           published: data.published,
           stub: data.stub,
           source_note: data.source_note,
+          pdf: data.pdf === true,
+          author: data.author,
           type: data.type,
           artifactKind: data.artifact_kind,
           date: data.date ? String(data.date) : undefined,

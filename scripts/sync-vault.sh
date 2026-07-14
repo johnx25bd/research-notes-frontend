@@ -41,6 +41,17 @@ if [ -f "$VAULT_PATH/About.md" ]; then
   echo "  About.md synced"
 fi
 
+# Regenerate print-ready PDFs for research notes that opt in with `pdf: true`.
+# Content-hash cached, so only changed notes re-render. Requires Chrome plus the
+# project's devDependencies; skipped with a notice if the toolchain is absent
+# (e.g. a bare content-only sync), so a missing browser never blocks a sync.
+if command -v pnpm >/dev/null 2>&1 && [ -f "$TARGET_DIR/package.json" ]; then
+  echo ""
+  echo "📄 Generating research PDFs..."
+  ( cd "$TARGET_DIR" && pnpm generate:pdfs ) || \
+    echo "  ⚠️  PDF generation skipped/failed — see output above."
+fi
+
 echo ""
 echo "✅ Sync complete!"
 echo ""

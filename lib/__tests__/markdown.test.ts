@@ -314,6 +314,54 @@ describe('processMarkdown', () => {
     });
   });
 
+  describe('Print footnotes (research PDF)', () => {
+    const footnoteMd = 'A claim.[^1]\n\n[^1]: The supporting note.';
+
+    test('inlines footnotes as floatable spans for the PDF build', async () => {
+      const html = await processMarkdown(footnoteMd, [], 'research', {
+        footnoteStyle: 'print',
+      });
+      // Definition inlined at the call site as a footnote span (Paged.js floats
+      // it to the page foot), not a margin sidenote.
+      expect(html).toContain('class="footnote"');
+      expect(html).toContain('The supporting note.');
+      expect(html).not.toContain('class="sidenote"');
+      // The collected footnotes section is removed.
+      expect(html).not.toContain('data-footnotes');
+    });
+
+    test('unwraps the definition paragraph so no <p> nests in the span', async () => {
+      const html = await processMarkdown(footnoteMd, [], 'research', {
+        footnoteStyle: 'print',
+      });
+      // A <p> inside the inline span would be ejected by the HTML parser,
+      // stranding the note text — the definition must be flattened to inline.
+      expect(html).not.toMatch(/<span class="footnote"><p>/);
+    });
+
+    test('defaults to sidenotes when no footnoteStyle is given', async () => {
+      const html = await processMarkdown(footnoteMd, [], 'research');
+      expect(html).toContain('class="sidenote"');
+      expect(html).not.toContain('class="footnote"');
+    });
+
+    test('flattens block content (lists) inside a footnote to inline', async () => {
+      // A footnote whose definition carries a list must not leak the list into
+      // the body — all of its text stays inside the footnote span.
+      const md = 'A claim.[^1]\n\n[^1]: Lead in:\n\n    - alpha\n    - beta';
+      const html = await processMarkdown(md, [], 'research', {
+        footnoteStyle: 'print',
+      });
+      expect(html).toContain('class="footnote"');
+      // No block element survives inside the inline footnote span.
+      expect(html).not.toMatch(/<span class="footnote">[^<]*<(p|ul|ol|li)\b/);
+      // The list items' text is preserved in the footnote.
+      const span = html.match(/<span class="footnote">([\s\S]*?)<\/span>/)?.[1] ?? '';
+      expect(span).toContain('alpha');
+      expect(span).toContain('beta');
+    });
+  });
+
   describe('Edge Cases', () => {
     test('handles empty markdown', async () => {
       const html = await processMarkdown('', availableNotes);
