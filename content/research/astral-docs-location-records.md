@@ -11,7 +11,9 @@ tags: [astral, location-records, documentation]
 status: active
 role: Co-founder, Astral
 summary: The Astral documentation describes location records -- signed, verifiable location data artifacts that add cryptographic attribution and integrity checking to raw geospatial data.
-fits: The functional prototype of a verifiable spatial data registry record -- what a signed, checkable spatial record looks like in practice.
+purpose: A verifiable spatial data registry needs a concrete record format. This documents ours, as implemented.
+approach: Documentation for location records in Astral -- signed location data artifacts adding attribution and integrity checking to raw GeoJSON. A functional prototype of the registry record concept.
+status_note: Live documentation, maintained.
 links:
   - { label: "docs.astral.global", url: "https://docs.astral.global/concepts/location-records" }
 published: true

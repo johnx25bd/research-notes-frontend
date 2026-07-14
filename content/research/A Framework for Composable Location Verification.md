@@ -5,9 +5,14 @@ created: 2026-07-07
 date: 2026-07
 featured: true
 featured_order: 2
-fits: The conceptual backbone of the current work -- it structures diverse verification
-  systems as composable evidence, which is what a credible location-contingent commitment
-  ultimately rests on.
+purpose: No single location verification technique serves every setting, and each
+  can be defeated. Verifiers need a way to combine imperfect evidence from independent
+  systems into decisions they can defend.
+approach: A framework treating location verification as evidence evaluation -- signed
+  location stamps compose into evidence, evidence functions produce multidimensional
+  credibility assessments, and application-specific decision rules map assessments
+  to decisions.
+status_note: Working note under active development; feedback invited.
 published: true
 published_at: 2026-07-07
 role: Lead author

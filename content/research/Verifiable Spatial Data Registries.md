@@ -3,9 +3,13 @@ area: research
 artifact_kind: paper
 created: 2026-07-14
 date: 2026-07
-fits: The second input to a location-contingent decision -- verification says where
-  something is, and the registry says what geometry and policy it is evaluated against.
-  This note maps the design space.
+purpose: A point-in-geofence decision is only as trustworthy as the geofence, and
+  today's authoritative geometries live in mutable, siloed databases with no verifiable
+  history.
+approach: Working notes toward a paper -- definitions, design properties (integrity,
+  authority, sovereign administration, auditability, topological consistency, privacy,
+  neutrality), and the open problems between them.
+status_note: Working notes published July 2026 to invite correction; paper in progress.
 published: true
 published_at: 2026-07-14
 research_note: obsidian://open?vault=research-notes&file=research/Verifiable%20Spatial%20Data%20Registries

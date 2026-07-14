@@ -3,9 +3,12 @@ area: research
 artifact_kind: paper
 created: 2026-07-14
 date: 2026-07
-fits: The roadmap from the framework to rigorous foundations -- a taxonomy of verification
-  systems, a composition theory for heterogeneous evidence, and the durability mechanisms
+purpose: The framework sets out an architecture; turning it into rigorous, measurable
+  foundations requires a defined program of work.
+approach: A research agenda in three strands -- a taxonomy of location verification
+  systems, a composition theory for heterogeneous evidence, and durability mechanisms
   that raise the cost of lying about location.
+status_note: Published as working notes, July 2026.
 published: true
 published_at: 2026-07-14
 research_note: obsidian://open?vault=research-notes&file=research/composable-location-verification-research-agenda

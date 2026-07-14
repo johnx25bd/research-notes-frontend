@@ -11,7 +11,9 @@ tags: [spatial-governance, location-verification]
 status: forthcoming
 role: Author
 summary: This research note will define the term this page is built on -- what makes a location-contingent commitment credible, and what it takes to construct one.
-fits: The definition everything else here depends on will live in this note; until it is published, the short version is in the page intro and the longer framing.
+purpose: The term this page is built on deserves a canonical definition -- what makes a location-contingent commitment credible, and what it takes to construct one.
+approach: A research note working from the framework's vocabulary toward a precise definition, with examples across compute governance and autonomous systems.
+status_note: In preparation.
 published: true
 published_at: 2026-07-13
 ---

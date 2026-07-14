@@ -12,7 +12,9 @@ status: active
 role: Author
 clause: a survey of proof-of-location systems, their privacy implications, and applications
 summary: A survey of proof-of-location systems -- technical implementations, privacy implications, and potential applications -- published as a note on this site.
-fits: The survey groundwork behind the framework -- what verification systems exist and what each can and cannot promise.
+purpose: Before designing how evidence composes, we needed a wide view of what proof-of-location systems exist and what each can and cannot promise.
+approach: A survey note covering technical implementations, privacy implications, and potential applications of proof-of-location systems.
+status_note: Published note on this site.
 links:
   - { label: "Read on this site", url: "/notes/notes-on-location-proofs" }
 published: true

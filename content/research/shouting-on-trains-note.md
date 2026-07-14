@@ -12,7 +12,9 @@ status: active
 role: Author
 clause: reflections on location-based governance in the Age of Intelligence
 summary: Reflections on location-based governance in the Age of Intelligence, published as a note on this site.
-fits: A short, human-scale look at the norms and rules that attach to places -- the intuition behind spatial governance.
+purpose: Spatial governance is an old human practice before it is a technical program. This note starts from the norms we already attach to places.
+approach: A short essay reading everyday location-contingent rules -- "we are on the train, no shouting" -- as the intuition behind machine-enforceable spatial policy.
+status_note: Published note on this site.
 links:
   - { label: "Read on this site", url: "/notes/shouting-on-trains" }
 published: true

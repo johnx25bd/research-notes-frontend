@@ -11,7 +11,9 @@ tags: [astral, eas, indexer]
 status: active
 role: Co-founder, Astral
 summary: The Astral API indexes location attestations from the Ethereum Attestation Service across chains and serves them through OGC-compliant REST and GraphQL interfaces backed by PostGIS.
-fits: The read layer for the registry. It turns scattered on-chain location attestations into a queryable spatial data source -- the shared substrate a registry needs.
+purpose: Attestations scattered across chains are invisible to geospatial tooling until something indexes them into a queryable spatial source.
+approach: A multi-chain indexer and gateway -- location attestations from the Ethereum Attestation Service, stored in PostGIS, served over OGC-compliant REST and GraphQL.
+status_note: Open source on GitHub; deployed as the Astral API.
 links:
   - { label: "github.com/DecentralizedGeo/astral-api", url: "https://github.com/DecentralizedGeo/astral-api" }
 published: true

@@ -12,7 +12,9 @@ status: active
 role: Author
 clause: what can be built with location-based smart contracts
 summary: An idea note asking what can be built with location-based smart contracts, published as a note on this site.
-fits: An application sketch -- one of the mechanisms that becomes possible once location-contingent commitments are credible.
+purpose: An application sketch asking what location-based smart contracts make possible -- in this case, value that behaves differently depending on where it is.
+approach: An idea note exploring demurrage tied to place, published on this site.
+status_note: Idea note, originally from 2022; published on this site.
 links:
   - { label: "Read on this site", url: "/notes/spatial-demurrage" }
 published: true

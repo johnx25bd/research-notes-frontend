@@ -12,12 +12,11 @@ tags: [ai-governance, spatial-governance]
 status: active
 role: Author
 summary: Where an intelligent machine is shapes what it should be allowed to do, which makes location a governance lever for AI and autonomous systems.
-fits: The plainest statement of the thesis the rest of this work serves. If location conditions permitted behavior, then verifying location becomes foundational to governing intelligent machines.
+purpose: Machines increasingly act in physical space, and what they should be allowed to do depends on where they are. This essay makes the case that location is a governance lever for intelligent machines.
+approach: A published essay tracing the argument from everyday spatial norms to technical mechanisms -- if permitted behavior is conditioned on place, governance needs credible ways to establish place.
+status_note: Published April 2026 on SOTA Letters.
 links:
   - { label: "sotaletters.substack.com", url: "https://sotaletters.substack.com/p/spatial-alignment" }
 published: true
 published_at: 2026-07-13
 ---
-The published essay that frames this whole line of work: location is not just metadata about an intelligent machine, it is a lever for governing what that machine is permitted to do.
-
-[Read it on Substack →](https://sotaletters.substack.com/p/spatial-alignment)

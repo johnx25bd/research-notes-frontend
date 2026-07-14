@@ -49,8 +49,14 @@ async function validateResearch(): Promise<ValidationIssue[]> {
       if (!entry.summary) {
         issues.push({ filepath: where, severity: 'error', message: 'Artifact missing summary' });
       }
-      if (!entry.fits) {
-        issues.push({ filepath: where, severity: 'error', message: 'Artifact missing fits (how it fits the thesis)' });
+      if (!entry.purpose) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact missing purpose (the motivating problem)' });
+      }
+      if (!entry.approach) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact missing approach (what it is / how it works)' });
+      }
+      if (!entry.statusNote) {
+        issues.push({ filepath: where, severity: 'error', message: 'Artifact missing status_note (current state, plainly)' });
       }
       if (!entry.date) {
         issues.push({ filepath: where, severity: 'error', message: 'Artifact missing date (YYYY or YYYY-MM)' });

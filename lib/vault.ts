@@ -62,13 +62,15 @@ export interface Note {
 
   // --- Research-artifact fields ---
   // `type: artifact` entries are curation metadata rather than full notes.
-  // A hosted note (like the framework paper) may also carry the track/fits
-  // fields so it appears in track sections while still rendering its body.
+  // A hosted note (like the framework paper) may also carry the track and
+  // detail fields so it appears in track sections while still rendering its body.
   type?: string;              // 'artifact' | 'research-index' | undefined (hosted note)
   artifactKind?: ArtifactKind;
   date?: string;              // YYYY or YYYY-MM, for ordering and an eventual timeline
   tracks?: string[];          // Track slugs this entry belongs to
-  fits?: string;              // How it fits the broader thesis
+  purpose?: string;           // Why this exists: the motivating problem
+  approach?: string;          // What it is / how it works
+  statusNote?: string;        // Current state, plainly ("Live spec, maintained")
   role?: string;              // John's role: author, co-author, built it, proposed it
   links?: ResearchLink[];     // Links out; links[0] is treated as primary
   startHere?: boolean;        // Featured "Start here" card at the top of its track
@@ -155,7 +157,9 @@ async function loadArea(area: Area): Promise<Note[]> {
           tracks: Array.isArray(data.tracks)
             ? data.tracks.filter((t: unknown): t is string => typeof t === 'string')
             : undefined,
-          fits: data.fits,
+          purpose: data.purpose,
+          approach: data.approach,
+          statusNote: data.status_note,
           role: data.role,
           links,
           startHere: data.start_here === true,

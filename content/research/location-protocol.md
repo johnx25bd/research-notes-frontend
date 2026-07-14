@@ -11,7 +11,9 @@ tags: [astral, location-protocol, standards]
 status: active
 role: Co-author
 summary: The Location Protocol specifies cryptographically verifiable location records -- coordinates, extents, and proofs -- that independent systems can produce and consume interoperably.
-fits: The data standard beneath the registries. It defines what a portable, signed location record looks like, so evidence can move between systems without a central authority.
+purpose: Signed location records are only useful across systems if independent implementations agree on their shape.
+approach: An open specification for cryptographically verifiable location records -- coordinates, extents, and proofs -- aligned with existing geospatial standards and consumable across web and decentralized platforms.
+status_note: Live spec, maintained by the Decentralized Geospatial Collaborative.
 links:
   - { label: "spec.decentralizedgeo.org", url: "https://spec.decentralizedgeo.org" }
 published: true
