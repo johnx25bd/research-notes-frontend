@@ -5,6 +5,8 @@ slug: astral-compute
 artifact_kind: library
 date: 2025
 tracks: [geocomputation]
+tier: card
+order: 1
 tags: [astral, verifiable-computation, tee]
 status: preview
 role: Co-founder, Astral

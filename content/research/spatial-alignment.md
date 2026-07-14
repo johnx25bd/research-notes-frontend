@@ -5,6 +5,9 @@ slug: spatial-alignment
 artifact_kind: post
 date: 2026-04
 tracks: [vision]
+tier: card
+order: 1
+start_here: true
 tags: [ai-governance, spatial-governance]
 status: active
 role: Author

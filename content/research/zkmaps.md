@@ -5,6 +5,8 @@ slug: zkmaps
 artifact_kind: prototype
 date: 2023
 tracks: [geocomputation]
+tier: note
+order: 1
 tags: [zero-knowledge, proof-of-location, privacy]
 status: historical
 role: Contributor

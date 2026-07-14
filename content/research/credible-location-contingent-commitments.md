@@ -5,6 +5,8 @@ slug: credible-location-contingent-commitments
 artifact_kind: paper
 date: 2026
 tracks: [vision]
+tier: card
+order: 2
 tags: [spatial-governance, location-verification]
 status: forthcoming
 role: Author

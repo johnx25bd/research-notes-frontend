@@ -5,6 +5,8 @@ slug: verifiable-spatial-data-registries-proposal
 artifact_kind: thread
 date: 2021-07
 tracks: [spatial-registries]
+tier: note
+order: 4
 tags: [web3, ethereum, astral]
 status: historical
 role: Author

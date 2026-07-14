@@ -5,6 +5,8 @@ slug: geolocker
 artifact_kind: prototype
 date: 2021
 tracks: [spatial-registries]
+tier: note
+order: 5
 tags: [astral, ethereum, ipfs]
 status: historical
 role: Built it (Astral)

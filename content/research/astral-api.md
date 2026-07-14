@@ -5,6 +5,8 @@ slug: astral-api
 artifact_kind: library
 date: 2025
 tracks: [spatial-registries]
+tier: card
+order: 4
 tags: [astral, eas, indexer]
 status: active
 role: Co-founder, Astral

@@ -5,6 +5,8 @@ slug: towards-harder-location-proofs
 artifact_kind: post
 date: 2025-10
 tracks: [location-verification]
+tier: note
+order: 2
 tags: [proof-of-location, adversarial, gnss]
 status: active
 superseded_by: location-verification-framework

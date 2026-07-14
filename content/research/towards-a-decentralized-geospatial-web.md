@@ -5,6 +5,8 @@ slug: towards-a-decentralized-geospatial-web
 artifact_kind: paper
 date: 2025-02
 tracks: [vision]
+tier: card
+order: 3
 tags: [geospatial, giscience, web3]
 status: active
 role: Co-author

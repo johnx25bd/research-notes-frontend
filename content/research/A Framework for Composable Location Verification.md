@@ -11,7 +11,8 @@ fits: The conceptual backbone of the current work -- it structures diverse verif
 published: true
 published_at: 2026-07-07
 role: Lead author
-start_here: true
+tier: card
+order: 1
 tracks:
 - location-verification
 research_note: obsidian://open?vault=research-notes&file=research/A%20Framework%20for%20Composable%20Location%20Verification

@@ -5,6 +5,8 @@ slug: location-protocol
 artifact_kind: spec
 date: 2025
 tracks: [spatial-registries]
+tier: card
+order: 1
 tags: [astral, location-protocol, standards]
 status: active
 role: Co-author

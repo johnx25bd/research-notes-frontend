@@ -5,9 +5,12 @@ slug: astral-sdk
 artifact_kind: library
 date: 2025
 tracks: [location-verification]
+tier: note
+order: 3
 tags: [astral, proof-of-location, location-proofs]
 status: active
 role: Co-founder, Astral
+clause: a TypeScript SDK for creating and verifying signed location attestations
 summary: The Astral SDK is a TypeScript library for creating and verifying location attestations -- signed records that bind location data to a signer and a time, off-chain or on-chain via the Ethereum Attestation Service.
 fits: The working implementation of the location-proof idea. It produces the signed location stamps that composable evidence is built from.
 links:

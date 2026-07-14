@@ -5,6 +5,8 @@ slug: ipfs-stac
 artifact_kind: library
 date: 2025
 tracks: [spatial-registries]
+tier: card
+order: 5
 tags: [ipfs, stac, easier]
 status: active
 role: DecentralizedGeo collaboration

@@ -5,6 +5,8 @@ slug: geodids
 artifact_kind: spec
 date: 2021
 tracks: [spatial-registries]
+tier: note
+order: 1
 tags: [astral, did, ipfs]
 status: historical
 superseded_by: location-protocol

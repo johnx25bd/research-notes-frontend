@@ -27,6 +27,9 @@ tracks:
   - slug: geocomputation
     title: Verifiable geocomputation
     subhead: This work looks at how verified locations can be evaluated against policy zones in trustworthy workflows. Incorporating a range of algorithms expands the policymaker's toolkit beyond naive geofencing.
+  - slug: applications
+    title: Applications
+    subhead: The pattern generalizes -- location-contingent mechanisms apply wherever machines act in governed physical space. These sketches show the breadth of what can be built, while my focus stays on the governance of AI compute.
 ---
 My research focuses on verifiable geospatial technologies and their relevance to the spatial governance of intelligent machines. 
 
