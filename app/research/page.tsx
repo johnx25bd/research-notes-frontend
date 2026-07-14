@@ -151,13 +151,17 @@ export default async function ResearchPage() {
             return (
               <section
                 key={track.slug}
-                className="py-12 lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-12"
+                className="py-12 lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-12 lg:items-start"
               >
                 {/* Context rail: fixed 300px in every section so the internal
                     vertical axis is identical down the page. Sticky within its
-                    band on desktop; offset clears the h-14 site header. */}
+                    band on desktop; offset clears the h-14 site header.
+                    items-start on the grid keeps both columns pinned to the
+                    row top; text-box trims the h2's line-box leading so the
+                    serif cap tops out exactly at the first card's border
+                    (supported browsers; others keep a few px of leading). */}
                 <div className="mb-8 lg:mb-0 lg:sticky lg:top-20 lg:self-start">
-                  <h2 className="text-2xl sm:text-3xl font-semibold text-foreground text-balance">
+                  <h2 className="text-2xl sm:text-3xl font-semibold text-foreground text-balance [text-box:trim-both_cap_alphabetic]">
                     {track.title}
                   </h2>
                   {track.subhead && (
