@@ -71,7 +71,6 @@ export interface Note {
   fits?: string;              // How it fits the broader thesis
   role?: string;              // John's role: author, co-author, built it, proposed it
   links?: ResearchLink[];     // Links out; links[0] is treated as primary
-  supersededBy?: string;      // Slug of the entry that absorbed this work
   startHere?: boolean;        // Featured "Start here" card at the top of its track
   clause?: string;            // Short clause for compact one-line entries
   tier?: ArtifactTier;        // 'card' (grid card) or 'note' (compact row)
@@ -159,7 +158,6 @@ async function loadArea(area: Area): Promise<Note[]> {
           fits: data.fits,
           role: data.role,
           links,
-          supersededBy: data.superseded_by,
           startHere: data.start_here === true,
           clause: data.clause,
           tier: data.tier,

@@ -72,10 +72,6 @@ async function validateResearch(): Promise<ValidationIssue[]> {
       if (entry.status !== 'forthcoming' && (!entry.links || entry.links.length === 0)) {
         issues.push({ filepath: where, severity: 'error', message: 'Artifact must have at least one link with a URL (external or on-site)' });
       }
-      // A lineage pointer must name a real research entry.
-      if (entry.supersededBy && !research.some(n => n.slug === entry.supersededBy)) {
-        issues.push({ filepath: where, severity: 'error', message: `superseded_by "${entry.supersededBy}" does not match any research entry slug` });
-      }
     }
 
     // Any research entry that claims tracks (artifacts and hosted notes alike)

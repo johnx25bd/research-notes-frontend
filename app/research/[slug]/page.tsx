@@ -133,9 +133,6 @@ export default async function ResearchNotePage({ params }: ResearchPageProps) {
     const year = note.date ? note.date.slice(0, 4) : null
     const meta = [kindLabel, year, note.role].filter(Boolean) as string[]
     const hasBody = note.content.trim().length > 0
-    const supersededByNote = note.supersededBy
-      ? allNotes.find(n => n.slug === note.supersededBy)
-      : undefined
 
     return (
       <LayoutShell>
@@ -154,17 +151,6 @@ export default async function ResearchNotePage({ params }: ResearchPageProps) {
               )}
               {note.summary && (
                 <p className="text-lg text-foreground/90 leading-snug text-balance">{note.summary}</p>
-              )}
-              {supersededByNote && (
-                <p className="text-sm text-muted-foreground mt-3" style={{ fontFamily: "var(--font-ui)" }}>
-                  Superseded by{" "}
-                  <Link
-                    href={`/research/${supersededByNote.slug}`}
-                    className="text-primary hover:underline"
-                  >
-                    {supersededByNote.title} {"→"}
-                  </Link>
-                </p>
               )}
             </header>
 

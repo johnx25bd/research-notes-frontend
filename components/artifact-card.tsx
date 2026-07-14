@@ -166,17 +166,14 @@ export function FeaturedArtifactCard({ artifact }: ArtifactCardProps) {
 
 interface ArtifactCompactRowProps {
   artifact: Note
-  /** The resolved entry this one was superseded by, if any. */
-  supersededByNote?: Note
 }
 
-// A compact one-line entry for historical or superseded artifacts. Two
-// explicit clusters that can never collide: the left cluster (title + clause)
-// wraps within its own space, and the right cluster (kind, year, status or
-// superseded pointer) stays on one line, separated by a minimum gap. Below sm
-// the metadata cluster drops onto its own line under the title instead of
-// squeezing.
-export function ArtifactCompactRow({ artifact, supersededByNote }: ArtifactCompactRowProps) {
+// A compact one-line entry for note-tier artifacts. Two explicit clusters
+// that can never collide: the left cluster (title + clause) wraps within its
+// own space, and the right cluster (kind, year, status) stays on one line,
+// separated by a minimum gap. Below sm the metadata cluster drops onto its
+// own line under the title instead of squeezing.
+export function ArtifactCompactRow({ artifact }: ArtifactCompactRowProps) {
   const kindLabel = artifact.artifactKind
     ? KIND_LABELS[artifact.artifactKind] ?? artifact.artifactKind
     : null
@@ -204,16 +201,7 @@ export function ArtifactCompactRow({ artifact, supersededByNote }: ArtifactCompa
       >
         {kindLabel && <span className="uppercase tracking-wide text-[0.65rem]">{kindLabel}</span>}
         {year && <span>{year}</span>}
-        {supersededByNote ? (
-          <Link
-            href={`/research/${supersededByNote.slug}`}
-            className="text-primary/80 hover:text-primary hover:underline"
-          >
-            superseded by {"→"}
-          </Link>
-        ) : (
-          <ArtifactStatusBadge status={artifact.status} />
-        )}
+        <ArtifactStatusBadge status={artifact.status} />
       </span>
     </div>
   )

@@ -69,7 +69,6 @@ export default async function ResearchPage() {
   // Entries that belong in a track (artifacts plus any hosted note carrying
   // track frontmatter, like the framework paper).
   const trackEntries = research.filter((n) => n.tracks && n.tracks.length > 0)
-  const bySlug = new Map(research.map((n) => [n.slug, n]))
 
   // Render the framing prose. Wikilinks resolve across both areas.
   const notes = await getAllNotes()
@@ -199,13 +198,7 @@ export default async function ResearchPage() {
                   {compact.length > 0 && (
                     <div className="mt-4">
                       {compact.map((artifact) => (
-                        <ArtifactCompactRow
-                          key={artifact.slug}
-                          artifact={artifact}
-                          supersededByNote={
-                            artifact.supersededBy ? bySlug.get(artifact.supersededBy) : undefined
-                          }
-                        />
+                        <ArtifactCompactRow key={artifact.slug} artifact={artifact} />
                       ))}
                     </div>
                   )}

@@ -9,9 +9,8 @@ tier: note
 order: 2
 tags: [proof-of-location, adversarial, gnss]
 status: active
-superseded_by: location-verification-framework
 role: Author
-clause: early notes on making location proofs adversary-resistant
+clause: early notes on adversary-resistant location proofs; informed the framework above
 summary: This forum post asks what it takes for location proofs to hold up when the prover is motivated to deceive, and where current techniques fall short.
 fits: The mechanism-side companion to the framework. It asks what it takes for a single location proof to survive a determined adversary -- the durability the evidence model depends on.
 links:
