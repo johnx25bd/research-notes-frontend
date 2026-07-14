@@ -42,6 +42,23 @@ async function validateResearch(): Promise<ValidationIssue[]> {
     });
   }
 
+  // Duplicate slugs in the research area silently shadow each other (routes,
+  // wikilinks, static params). This happens most easily when a vault note is
+  // published over an existing placeholder -- fail loudly instead.
+  const seen = new Map<string, string>();
+  research.forEach(entry => {
+    const existing = seen.get(entry.slug);
+    if (existing) {
+      issues.push({
+        filepath: entry.filepath,
+        severity: 'error',
+        message: `Duplicate research slug "${entry.slug}" (also used by ${existing}) -- if this replaces a placeholder, remove or merge the placeholder entry`,
+      });
+    } else {
+      seen.set(entry.slug, entry.filepath);
+    }
+  });
+
   research.forEach(entry => {
     const where = entry.filepath;
 
