@@ -82,8 +82,11 @@ export default async function ResearchPage() {
   // globals.css), sized down to sit in running text. Injected into the
   // rendered HTML because the intro is markdown; falls back to its own
   // trailing paragraph if the body ever stops ending with one.
+  // The explicit width/height attributes matter: an inline SVG without them
+  // falls back to the 300x150 replaced-element default if its CSS ever fails
+  // to apply, turning the arrow into a banner. CSS refines the size in ems.
   const arrowSvg =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
+    '<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
   const ctaHtml = index.framingHref
     ? ` <a href="${index.framingHref}" class="research-framing-cta">${index.framingLabel ?? "Read the longer framing"}${arrowSvg}</a>`
     : ""

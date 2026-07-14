@@ -487,6 +487,7 @@
 .prose a.research-framing-cta svg {
   width: 0.8em;
   height: 0.8em;
+  flex: none;
 }
 
 /* Research abstract: set apart from the body — smaller, muted, italic, with the
