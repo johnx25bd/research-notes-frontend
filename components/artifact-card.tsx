@@ -68,7 +68,7 @@ export function ArtifactCard({ artifact, className }: ArtifactCardProps) {
 
   return (
     <div
-      className={`group relative p-4 rounded-lg border bg-card transition-colors ${
+      className={`group relative flex h-full flex-col p-4 rounded-lg border bg-card transition-colors ${
         forthcoming
           ? "border-dashed border-border opacity-70"
           : "border-border hover:border-primary/30"
@@ -107,7 +107,7 @@ export function ArtifactCard({ artifact, className }: ArtifactCardProps) {
       <p className="text-sm text-muted-foreground leading-relaxed mb-3">{artifact.summary}</p>
 
       <div
-        className="flex items-center gap-2.5 text-xs text-muted-foreground/70"
+        className="mt-auto flex items-center gap-2.5 text-xs text-muted-foreground/70"
         style={{ fontFamily: "var(--font-ui)" }}
       >
         {kindLabel && <span className="uppercase tracking-wide text-[0.65rem]">{kindLabel}</span>}
