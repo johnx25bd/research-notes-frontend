@@ -10,9 +10,9 @@ order: 2
 tags: [autonomous-systems, location-verification, geofencing]
 status: forthcoming
 role: Author
-clause: constraining where lethal autonomous weapons may operate
-summary: Applying verifiable geofencing to lethal autonomous weapons systems -- constraining where such a system is permitted to operate, backed by location evidence rather than assertion.
-purpose: Where an autonomous weapon may operate is a natural constraint to enforce; a geofence is only as good as the location evidence behind it.
+clause: attenuating system capabilities as a function of verified location evidence
+summary: Verifiable geofencing for lethal autonomous weapons systems -- attenuating a system's capabilities as a function of verified location evidence.
+purpose: What an autonomous weapon may do is a natural thing to make contingent on location; a geofence is only as good as the location evidence behind it.
 approach: A sketch applying verifiable geofencing to lethal autonomous weapons systems.
 status_note: In preparation.
 published: true
