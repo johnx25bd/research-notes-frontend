@@ -3,7 +3,7 @@ title: Open Challenges in Spatial Governance of Intelligent Machines
 slug: open-challenges-spatial-governance
 area: research
 status: fragment
-summary: A draft research agenda -- setting out a proposed taxonomy of open challenges across verification, policy, accountability, institutions, and ethics for the spatial governance of intelligent machines.
+summary: A draft outline research agenda setting out a proposed taxonomy of open challenges across verification, policy, accountability, institutions, and ethics for the spatial governance of intelligent machines.
 published: true
 created: 2026-07-17
 ---
