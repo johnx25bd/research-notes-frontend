@@ -215,35 +215,49 @@
   scroll-margin-top: 5rem;
 }
 
-/* The "#" sits in the left margin, muted and hidden until the heading is
-   hovered or the anchor is keyboard-focused. Higher specificity than `.prose a`
-   so it escapes the body link color and underline. */
+/* A small "#" tucked into the gutter between the meridian rule (which sits at
+   calc(-1.25rem + 6px) from the text edge) and the heading text — clear of the
+   rule, never on it. Positioned in rem, not em, and vertically centered via
+   flex, so it lands identically for every heading level rather than drifting
+   with font-size. The box reaches the text edge (no dead strip that would drop
+   the hover), while padding-right holds a small visual gap. Higher specificity
+   than `.prose a` so it escapes the body link color and underline. */
 .prose .heading-anchor {
   position: absolute;
-  left: -1.1em;
+  left: -1.35rem;
   top: 0;
-  padding-right: 0.35em;
-  color: var(--muted-foreground);
+  bottom: 0;
+  width: 1.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.3rem;
+  font-size: 0.75rem;
   font-weight: 400;
+  line-height: 1;
+  color: var(--muted-foreground);
   text-decoration: none;
   opacity: 0;
   transition: opacity 0.15s ease, color 0.15s ease;
 }
 
-.prose .heading-anchor:hover {
+/* Faint on heading hover / keyboard focus; brighter only when pointed at
+   directly. Scoped under the heading so this rule outranks the reveal rule
+   below it and wins by source order. */
+.prose :is(h1, h2, h3, h4, h5, h6):hover .heading-anchor,
+.prose .heading-anchor:focus-visible {
+  opacity: 0.45;
+}
+
+.prose :is(h1, h2, h3, h4, h5, h6) .heading-anchor:hover {
+  opacity: 0.9;
   color: var(--primary);
 }
 
-.prose :is(h1, h2, h3, h4, h5, h6):hover .heading-anchor,
-.prose .heading-anchor:focus-visible {
-  opacity: 1;
-}
-
 @media (hover: none) {
-  /* No hover on touch devices — keep the affordance faintly visible so the
-     permalink is still discoverable. */
+  /* No hover on touch devices — keep the affordance faintly discoverable. */
   .prose .heading-anchor {
-    opacity: 0.4;
+    opacity: 0.3;
   }
 }
 
