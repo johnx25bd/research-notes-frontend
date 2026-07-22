@@ -167,6 +167,11 @@ body {
   font-size: 11pt;
   margin: 1.1em 0 0.45em 0;
 }
+/* The web-only "#" heading permalink (rehype-autolink-headings) is decorative;
+   drop it from print. Heading ids remain, harmlessly, for internal jumps. */
+.research-pdf-content .heading-anchor {
+  display: none;
+}
 
 /* ── Footnotes: lifted to the page foot, auto-numbered by Paged.js ──── */
 .research-pdf-content .footnote {

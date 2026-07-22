@@ -7,9 +7,30 @@ describe('processMarkdown', () => {
     test('processes headers correctly', async () => {
       const markdown = '# H1\n## H2\n### H3';
       const html = await processMarkdown(markdown, availableNotes);
-      expect(html).toContain('<h1>H1</h1>');
-      expect(html).toContain('<h2>H2</h2>');
-      expect(html).toContain('<h3>H3</h3>');
+      // Headings carry an id slug and a prepended "#" permalink anchor.
+      expect(html).toContain('<h1 id="h1">');
+      expect(html).toContain('>H1</h1>');
+      expect(html).toContain('<h2 id="h2">');
+      expect(html).toContain('<h3 id="h3">');
+    });
+
+    test('adds slug ids and permalink anchors to headings', async () => {
+      const markdown = '## Getting Started\n### Some Section!';
+      const html = await processMarkdown(markdown, availableNotes);
+      // GitHub-style slugs (lowercased, spaces to hyphens, punctuation dropped).
+      expect(html).toContain('id="getting-started"');
+      expect(html).toContain('id="some-section"');
+      // Each heading gets a decorative "#" permalink pointing at its own id.
+      expect(html).toContain('href="#getting-started"');
+      expect(html).toContain('class="heading-anchor"');
+      expect(html).toContain('aria-label="Link to this section"');
+    });
+
+    test('disambiguates duplicate heading slugs', async () => {
+      const markdown = '## Notes\n## Notes';
+      const html = await processMarkdown(markdown, availableNotes);
+      expect(html).toContain('id="notes"');
+      expect(html).toContain('id="notes-1"');
     });
 
     test('processes bold and italic', async () => {
@@ -371,7 +392,8 @@ describe('processMarkdown', () => {
     test('handles markdown with no wikilinks', async () => {
       const markdown = '# Regular Markdown\n\nNo wikilinks here.';
       const html = await processMarkdown(markdown, availableNotes);
-      expect(html).toContain('<h1>Regular Markdown</h1>');
+      expect(html).toContain('id="regular-markdown"');
+      expect(html).toContain('>Regular Markdown</h1>');
       expect(html).toContain('No wikilinks here');
     });
 
@@ -384,7 +406,7 @@ describe('processMarkdown', () => {
     test('processes very long markdown without errors', async () => {
       const longMarkdown = '# Title\n\n' + 'This is a paragraph. '.repeat(100);
       const html = await processMarkdown(longMarkdown, availableNotes);
-      expect(html).toContain('<h1>Title</h1>');
+      expect(html).toContain('>Title</h1>');
       expect(html.length).toBeGreaterThan(1000);
     });
 
@@ -413,7 +435,7 @@ This is **bold** and [[Atomic Habits|a wikilink]].
 - [x] Task 2`;
 
       const html = await processMarkdown(markdown, availableNotes);
-      expect(html).toContain('<h1>Title</h1>');
+      expect(html).toContain('>Title</h1>');
       expect(html).toContain('<strong>bold</strong>');
       expect(html).toContain('href="/notes/atomic-habits"');
       expect(html).toContain('<table>');

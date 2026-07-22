@@ -206,6 +206,47 @@
   margin-bottom: 0.75rem;
 }
 
+/* Anchored section headings. Every heading carries an id (rehype-slug) and a
+   prepended "#" permalink (rehype-autolink-headings). The heading is the
+   positioning context; scroll-margin-top keeps a jumped-to heading clear of the
+   sticky h-14 header instead of hiding beneath it. */
+.prose :is(h1, h2, h3, h4, h5, h6) {
+  position: relative;
+  scroll-margin-top: 5rem;
+}
+
+/* The "#" sits in the left margin, muted and hidden until the heading is
+   hovered or the anchor is keyboard-focused. Higher specificity than `.prose a`
+   so it escapes the body link color and underline. */
+.prose .heading-anchor {
+  position: absolute;
+  left: -1.1em;
+  top: 0;
+  padding-right: 0.35em;
+  color: var(--muted-foreground);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.prose .heading-anchor:hover {
+  color: var(--primary);
+}
+
+.prose :is(h1, h2, h3, h4, h5, h6):hover .heading-anchor,
+.prose .heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  /* No hover on touch devices — keep the affordance faintly visible so the
+     permalink is still discoverable. */
+  .prose .heading-anchor {
+    opacity: 0.4;
+  }
+}
+
 .prose p {
   margin-bottom: 1.25rem;
 }

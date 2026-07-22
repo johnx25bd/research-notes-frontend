@@ -7,6 +7,8 @@ import rehypeKatex from 'rehype-katex';
 import rehypeStringify from 'rehype-stringify';
 import wikiLinkPlugin from 'remark-wiki-link';
 import rehypeCallouts from 'rehype-callouts';
+import rehypeSlug from 'rehype-slug';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import type { Area } from './vault';
 
 /**
@@ -623,6 +625,21 @@ export async function processMarkdown(
   }
 
   processor
+    // Give every heading a stable, GitHub-style id slug, then prepend a quiet
+    // "#" permalink so any section is directly linkable. rehypeSlug must run
+    // first — autolink reads the ids it assigns. The "#" is decorative (kept
+    // out of the tab order, revealed on hover); globals.css positions it in the
+    // left margin and print.css hides it. Applies to notes and research alike.
+    .use(rehypeSlug)
+    .use(rehypeAutolinkHeadings, {
+      behavior: 'prepend',
+      properties: {
+        className: ['heading-anchor'],
+        ariaLabel: 'Link to this section',
+        tabIndex: -1,
+      },
+      content: { type: 'text', value: '#' },
+    })
     .use(rehypeCallouts)
     .use(rehypeImageFigures)
     .use(rehypeStringify, { allowDangerousHtml: true });
