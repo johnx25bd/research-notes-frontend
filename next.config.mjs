@@ -29,6 +29,10 @@ const nextConfig = {
         source: '/presentations/os-poc',
         destination: '/presentations/os-poc/index.html',
       },
+      {
+        source: '/presentations/verifying-compute-location',
+        destination: '/presentations/verifying-compute-location/index.html',
+      },
     ]
   },
   async headers() {
