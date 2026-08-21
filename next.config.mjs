@@ -35,6 +35,12 @@ const nextConfig = {
         source: '/demos/location-evidence-evals',
         destination: '/demos/location-evidence-evals/index.html',
       },
+      {
+        // The demo's mobile scroll story (small screens are redirected to
+        // it by the page itself), same clean-URL treatment.
+        source: '/demos/location-evidence-evals/story',
+        destination: '/demos/location-evidence-evals/story.html',
+      },
     ]
   },
   async headers() {
@@ -62,8 +68,9 @@ const nextConfig = {
         ],
       },
       {
-        // Same policy for the underlying static file path.
-        source: '/demos/location-evidence-evals/index.html',
+        // Same policy for the underlying static file paths and the story's
+        // clean URL.
+        source: '/demos/location-evidence-evals/:file(index\\.html|story|story\\.html)',
         headers: [
           {
             key: 'X-Robots-Tag',
