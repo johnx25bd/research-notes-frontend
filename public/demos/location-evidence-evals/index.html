@@ -221,6 +221,31 @@ body {
   border-top: 1px solid var(--line);
 }
 
+/* context line: where this page sits in the pipeline -- the demo's one
+   pointer back out to the framework and the research hub */
+
+.context-line {
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.context-line b {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.context-line a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.context-line a:hover {
+  text-decoration: underline;
+}
+
 /* parameters column: floating right side, collapsible, scrolls within
    itself -- capped short of the bottom-right corner so it never covers the
    legend card */
@@ -4814,6 +4839,7 @@ function buildApp(root) {
           <label class="switch"><input type="checkbox" id="reveal-truth"><span>reveal truth</span></label>
           <button class="btn small" id="reset-btn" title="return to this preset's initial state">reset</button>
         </div>
+        <div class="context-line">the middle stage of the <a href="/research/location-verification-framework">location verification</a> pipeline: collect evidence → <b>evaluate evidence</b> → evaluate policy · <a href="/research">more research</a></div>
       </section>
 
       <!-- parameters column: floating right side, collapsible, scrolls within itself -->
