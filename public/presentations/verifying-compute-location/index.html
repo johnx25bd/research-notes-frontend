@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="lib/reveal/theme-highlight/zenburn.css" />
         <link rel="stylesheet" href="lib/katex/katex.min.css" />
         <!-- Bump ?v=N every time you edit johnx.css so a normal refresh picks it up. -->
-        <link rel="stylesheet" href="theme/johnx.css?v=1" />
+        <link rel="stylesheet" href="theme/johnx.css?v=2" />
 
         <style>
             /* ---------- full-screen pipeline layer ----------
@@ -150,7 +150,7 @@
                 content: "";
                 position: absolute;
                 left: 56px;
-                top: var(--mer-y, 196px);
+                top: calc(var(--mer-y, 196px) + 5.5px);
                 width: 1px;
                 height: 560px;
                 background: linear-gradient(to bottom, var(--meridian) 0%, var(--meridian) 62%, transparent 100%);
@@ -170,15 +170,14 @@
            ============================================================ -->
                 <section class="cover">
                     <h1>Verifying compute location</h1>
-                    <p class="lede" style="margin-top: 0.3em; font-size: 0.7em; max-width: none; white-space: nowrap">
+                    <p class="lede" style="margin-top: 0.3em; font-size: 0.95em; max-width: 40ch; text-wrap: balance; color: var(--accent)">
                         Underwriting credible location&#8209;contingent commitments with evidence
                     </p>
                     <p
                         class="muted"
-                        style="margin-top: 2.2em; font-family: var(--font-display); font-style: italic; font-size: 0.72em"
+                        style="margin-top: 2.2em; font-family: var(--font-display); font-style: italic; font-size: 0.6em"
                     >
                         John Hoopes<br />
-                        Sophia Research&nbsp;&nbsp;•&nbsp;&nbsp;University of Maryland<br />
                         22 August 2026
                     </p>
                     <aside class="notes">
@@ -194,12 +193,12 @@
                 <!-- ============================================================
            THE QUESTION
            ============================================================ -->
-                <section class="no-meridian meridian-pinned" style="--mer-y: 184px">
+                <section class="no-meridian meridian-pinned" style="--mer-y: 136px">
                     <h2 class="muted fragment strike" data-fragment-index="1" style="margin-top: 4em">
                         Where is this device?
                     </h2>
                     <h2 class="fragment fade-in" data-fragment-index="1" style="margin-top: 0.35em">
-                        Is this device where it <em>should</em> be?
+                        Is this device where it should be?
                     </h2>
                     <aside class="notes">
                         <ul>
@@ -217,7 +216,7 @@
            the output box (with data-zoom-out reframing).
            ============================================================ -->
                 <section class="top no-meridian pipeline-slide" data-zoom="1 470 71">
-                    <h2>Pipeline.</h2>
+                    <h2>Pipeline</h2>
                     <aside class="notes">
                         <ul>
                             <li>"Location verification" usually blends three different jobs</li>
@@ -231,8 +230,8 @@
                 <section
                     class="pipeline-slide"
                     data-stage="1"
-                    data-zoom="1.9 160 155"
-                    data-zoom-out="1.4 160 194"
+                    data-zoom="1.55 160 155"
+                    data-zoom-out="1.15 160 194"
                 >
                     <span class="fragment" aria-hidden="true"></span>
                     <span class="fragment" aria-hidden="true"></span>
@@ -255,8 +254,8 @@
                 <section
                     class="pipeline-slide"
                     data-stage="2"
-                    data-zoom="1.9 470 155"
-                    data-zoom-out="1.4 470 194"
+                    data-zoom="1.55 470 155"
+                    data-zoom-out="1.15 470 194"
                 >
                     <span class="fragment" aria-hidden="true"></span>
                     <span class="fragment" aria-hidden="true"></span>
@@ -282,8 +281,8 @@
                 <section
                     class="pipeline-slide"
                     data-stage="3"
-                    data-zoom="1.9 780 155"
-                    data-zoom-out="1.4 780 194"
+                    data-zoom="1.55 780 155"
+                    data-zoom-out="1.15 780 194"
                 >
                     <span class="fragment" aria-hidden="true"></span>
                     <span class="fragment" aria-hidden="true"></span>
@@ -307,7 +306,7 @@
 
                 <!-- zoom out -->
                 <section class="top no-meridian pipeline-slide" data-zoom="1 470 71">
-                    <h2>Pipeline.</h2>
+                    <h2>Pipeline</h2>
                     <aside class="notes">
                         <ul>
                             <li>What we learned: separating the stages is the contribution — neutral, auditable middle</li>
@@ -321,7 +320,7 @@
            NEXT STEPS
            ============================================================ -->
                 <section class="dark">
-                    <h2>Future work.</h2>
+                    <h2>Future work</h2>
                     <div class="compact" style="margin-top: 0.7em">
                         <div class="principle fragment fade-in">
                             <span class="num">01</span>
@@ -357,12 +356,12 @@
            ============================================================ -->
                 <section class="dark">
                     <h1>Thank you</h1>
-                    <p style="margin-top: 1.1em; font-size: 0.82em; line-height: 2; color: var(--foreground)">
+                    <p style="margin-top: 2.4em; font-size: 0.82em; line-height: 2; color: var(--foreground)">
                         Anna Katariina Wisakanto&nbsp;&nbsp;·&nbsp;&nbsp;anna@wisakanto.com<br />
                         Ryan Bevin&nbsp;&nbsp;·&nbsp;&nbsp;rbevin01@qub.ac.uk<br />
                         John Hoopes&nbsp;&nbsp;·&nbsp;&nbsp;john@johnx.co
                     </p>
-                    <p class="muted" style="margin-top: 1.6em">Demo + slides on johnx.co/research</p>
+                    <p class="muted" style="margin-top: 1.8em; font-size: 0.66em">Demo + slides on johnx.co/research</p>
                     <aside class="notes">
                         <ul>
                             <li>Framework, paper, and the viz all live at johnx.co/research</li>
