@@ -194,7 +194,7 @@ export default async function ResearchNotePage({ params }: ResearchPageProps) {
                 </div>
               )}
               {note.summary && (
-                <p className="text-lg text-foreground/90 leading-relaxed text-balance">{note.summary}</p>
+                <p className="text-lg text-foreground/90 leading-relaxed text-balance whitespace-pre-line">{note.summary}</p>
               )}
               {primary && (
                 <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">

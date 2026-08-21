@@ -29,6 +29,7 @@ export type ArtifactKind =
   | 'paper'
   | 'spec'
   | 'talk'
+  | 'demo'
   | 'prototype'
   | 'post'
   | 'report'
