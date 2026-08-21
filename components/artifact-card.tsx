@@ -6,6 +6,7 @@ export const KIND_LABELS: Record<string, string> = {
   paper: "Paper",
   spec: "Spec",
   talk: "Talk",
+  demo: "Demo",
   prototype: "Prototype",
   post: "Post",
   report: "Report",

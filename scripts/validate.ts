@@ -8,7 +8,7 @@ interface ValidationIssue {
 }
 
 const ARTIFACT_KINDS: ArtifactKind[] = [
-  'paper', 'spec', 'talk', 'prototype', 'post', 'report', 'thread', 'library',
+  'paper', 'spec', 'talk', 'demo', 'prototype', 'post', 'report', 'thread', 'library',
 ];
 
 const ARTIFACT_STATUSES: ArtifactStatus[] = ['active', 'preview', 'historical', 'forthcoming'];

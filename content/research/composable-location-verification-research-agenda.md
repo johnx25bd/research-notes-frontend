@@ -22,7 +22,7 @@ tags: []
 tier: card
 tracks:
 - location-verification
-order: 3
+order: 4
 title: A Research Agenda for Composable Location Verification
 url: https://johnx.co/research/location-verification-research-agenda
 ---

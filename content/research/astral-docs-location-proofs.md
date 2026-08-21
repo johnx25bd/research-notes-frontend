@@ -6,7 +6,7 @@ artifact_kind: spec
 date: 2025
 tracks: [location-verification]
 tier: card
-order: 2
+order: 3
 tags: [astral, location-proofs, documentation]
 status: active
 role: Co-founder, Astral
