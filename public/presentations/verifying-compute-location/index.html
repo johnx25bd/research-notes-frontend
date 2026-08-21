@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Is this device where it should be?</title>
+
+        <link rel="stylesheet" href="lib/reveal/reset.css" />
+        <link rel="stylesheet" href="lib/reveal/reveal.css" />
+        <link rel="stylesheet" href="lib/reveal/theme-highlight/zenburn.css" />
+        <!-- Bump ?v=N every time you edit johnx.css so a normal refresh picks it up. -->
+        <link rel="stylesheet" href="theme/johnx.css?v=1" />
+
+        <style>
+            /* ---------- full-screen pipeline layer ----------
+               One persistent overlay under the slides; pipeline slides go
+               transparent so the diagram shows through full-bleed. Zoom
+               states animate on slide change; wheel zooms, drag pans. */
+            .pipeline-overlay {
+                position: absolute;
+                inset: 0;
+                background: var(--background);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 400ms ease;
+                overflow: hidden;
+                cursor: grab;
+            }
+            .pipeline-overlay.on {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            .pipeline-overlay:active {
+                cursor: grabbing;
+            }
+            .pipeline-art {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                transform-origin: 0 0;
+                will-change: transform;
+            }
+            .pipeline-art svg {
+                display: block;
+                width: 100%;
+                height: auto;
+            }
+            .reveal .slides section.pipeline-slide {
+                background: transparent;
+                pointer-events: none;
+            }
+            /* reveal's (transparent) background layer sits above the overlay
+               and would otherwise swallow pan/zoom pointer events */
+            .reveal > .backgrounds {
+                pointer-events: none;
+            }
+
+            /* ---------- svg type ---------- */
+            .pl-eyebrow {
+                font-family: var(--font-sans);
+                font-size: 8.5px;
+                font-weight: 600;
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+            }
+            .pl-title {
+                font-family: var(--font-display);
+                font-size: 17px;
+                font-weight: 600;
+                fill: var(--ink-400);
+                letter-spacing: -0.015em;
+            }
+            .pl-formula {
+                font-family: var(--font-mono);
+                font-size: 10px;
+                fill: var(--ink-300);
+            }
+            .pl-glyph-label {
+                font-family: var(--font-sans);
+                font-size: 8.5px;
+                fill: var(--ink-100);
+            }
+            .pl-out-title {
+                font-family: var(--font-sans);
+                font-size: 12px;
+                font-weight: 600;
+                fill: var(--ink-400);
+            }
+            .pl-out-sub {
+                font-family: var(--font-sans);
+                font-size: 9.5px;
+                fill: var(--ink-200);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="deck-footer">location verification · johnx.co/research</div>
+            <div class="slides">
+                <!-- ============================================================
+           COVER
+           ============================================================ -->
+                <section class="cover no-meridian">
+                    <h1>Verifying compute location</h1>
+                    <div class="pill-row" style="margin-top: 1.1em">
+                        <span class="pill fragment fade-in">detect cheating</span>
+                        <span class="pill fragment fade-in">deter covert training</span>
+                        <span class="pill fragment fade-in"
+                            >underwrite location-contingent commitments</span
+                        >
+                    </div>
+                    <p
+                        class="muted"
+                        style="margin-top: 2em; font-family: var(--font-display); font-style: italic"
+                    >
+                        John Hoopes&nbsp;&nbsp;·&nbsp;&nbsp;Sophia Systems<br />
+                        August 2026
+                    </p>
+                    <aside class="notes">
+                        <ul>
+                            <li>5 minutes: one idea + a pipeline + a demo</li>
+                            <li>Why location: detect cheating → reduce misaligned behavior</li>
+                            <li>Lower likelihood of covert training runs</li>
+                            <li>Endgame: credible location-contingent commitments between parties that don't trust each other</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- ============================================================
+           THE QUESTION
+           ============================================================ -->
+                <section>
+                    <h2 class="muted" style="text-decoration: line-through; text-decoration-thickness: 2px">
+                        Where is this device?
+                    </h2>
+                    <h2 class="fragment fade-in" style="margin-top: 0.35em">
+                        Is this device where it <em>should</em> be?
+                    </h2>
+                    <aside class="notes">
+                        <ul>
+                            <li>Not surveillance — not a tracking problem</li>
+                            <li>A verification problem: claim under test, answer is yes/no (or a probability)</li>
+                            <li>Reframing shrinks what we must reveal and compute</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- ============================================================
+           PIPELINE — one full-screen SVG behind these slides; each slide
+           is a zoom state (data-zoom="scale centerX centerY" in SVG units).
+           Wheel zooms, drag pans, arrow keys step the tour.
+           ============================================================ -->
+                <section class="top no-meridian pipeline-slide" data-zoom="1 470 130">
+                    <h2>The pipeline.</h2>
+                    <aside class="notes">
+                        <ul>
+                            <li>"Location verification" usually blends three different jobs</li>
+                            <li>Collect evidence → evaluate evidence → evaluate policy</li>
+                            <li>Middle stage neutral + auditable: it neither measures nor decides</li>
+                            <li>Each stage has a clean output: logs → assessment → conformance</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- zoom: collection -->
+                <section class="pipeline-slide" data-zoom="2 160 144">
+                    <aside class="notes">
+                        <ul>
+                            <li>Anchors at known coordinates probe the attester; nonce challenge</li>
+                            <li>Receipt: signed, timestamped response — evidence log = time series of signed pings</li>
+                            <li>Physics: round trip can't beat the speed of light — hard outer bound</li>
+                            <li>Corroborative: authenticated GNSS, camera feeds, satellite imagery, UWB, NFC</li>
+                            <li>Anna + Ryan went deep here — the SovCert measurement program</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- zoom: evaluation -->
+                <section class="pipeline-slide" data-zoom="2 470 144">
+                    <aside class="notes">
+                        <ul>
+                            <li>A receipt doesn't point at a location — it erases everything outside a circle</li>
+                            <li>Assessment = intersection of many circles: posterior ∝ prior × ∏ L(bundle | x)</li>
+                            <li>Per-anchor bundling = redundancy discounting — same path never counted twice</li>
+                            <li>Q travels with the map: prior, interval, anchor honesty ε, attester posture, forgery cost</li>
+                            <li>Bar: pairwise verification — sufficient to convince a skeptical verifier</li>
+                            <li>→ FLIP TO THE VIZ TAB HERE — watch belief update receipt by receipt, ~60s</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- zoom: policy -->
+                <section class="pipeline-slide" data-zoom="2 780 144">
+                    <aside class="notes">
+                        <ul>
+                            <li>Sample sets of pings from the evidence logs; now ask policy questions</li>
+                            <li>Containment: P(inside authorized zone) = posterior mass in the polygon</li>
+                            <li>Change detection: has it moved? (time series) · Co-location: same data center?</li>
+                            <li>Absence of evidence → flag; cryptographic authorization certificates lapse</li>
+                            <li>Threshold is a policy judgment — deliberately outside evidence evaluation</li>
+                            <li>ZK "extremely feasible" (Pascal) · MPC likely feasible (Pascal, Jack Cheng) — open problems</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- zoom out -->
+                <section class="top no-meridian pipeline-slide" data-zoom="1 470 130">
+                    <h2>The pipeline.</h2>
+                    <aside class="notes">
+                        <ul>
+                            <li>What we learned: separating the stages is the contribution — neutral, auditable middle</li>
+                            <li>Verified location is a posterior over spacetime, not a point</li>
+                            <li>Every claim carries its assumptions (Q) — nothing taken on faith</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- ============================================================
+           NEXT STEPS
+           ============================================================ -->
+                <section class="dark">
+                    <h2>Next steps.</h2>
+                    <div class="compact" style="margin-top: 0.7em">
+                        <div class="principle fragment fade-in">
+                            <span class="num">01</span>
+                            <h3 style="white-space: nowrap">Red-team</h3>
+                            <p>SovCert and the evaluation formalism — attack it before others do.</p>
+                        </div>
+                        <div class="principle fragment fade-in">
+                            <span class="num">02</span>
+                            <h3>Benchmark</h3>
+                            <p>GPUs with hardware-rooted keys; rigorous calibration-suite analysis.</p>
+                        </div>
+                        <div class="principle fragment fade-in">
+                            <span class="num">03</span>
+                            <h3>Engineer</h3>
+                            <p>Anchor network design · ping protocol · verifiable evidence storage.</p>
+                        </div>
+                        <div class="principle fragment fade-in">
+                            <span class="num">04</span>
+                            <h3>Engage</h3>
+                            <p>Policymakers, labs, chip manufacturers — prototype in the open.</p>
+                        </div>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>Spatial stats deep dive: Hamiltonian Monte Carlo for the posterior</li>
+                            <li>Evidence storage: hash chains, signed merkle roots, privacy-preserving</li>
+                            <li>Draft system overview → prototype deployment → red team it</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- ============================================================
+           CONTACT / CLOSE
+           ============================================================ -->
+                <section class="dark">
+                    <h1>Thank you.</h1>
+                    <p class="lede" style="margin-top: 0.6em">
+                        johnx.co/research&nbsp;&nbsp;·&nbsp;&nbsp;docs.astral.global
+                    </p>
+                    <p class="muted" style="margin-top: 1.4em">john@johnx.co</p>
+                    <aside class="notes">
+                        <ul>
+                            <li>Framework, paper, and the viz all live at johnx.co/research</li>
+                            <li>Ask: who should we be talking to? Who wants to red-team this?</li>
+                        </ul>
+                    </aside>
+                </section>
+            </div>
+        </div>
+
+        <!-- ============================================================
+           PIPELINE SVG — single instance, mounted on the overlay layer
+           viewBox 940×368 · columns x 20/330/640, w 280 · cards y 42 h 204
+           ============================================================ -->
+        <template id="pipeline-svg">
+            <svg viewBox="0 0 940 368" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Location verification pipeline: evidence collection, evidence evaluation, geospatial policy evaluation">
+                <defs>
+                    <radialGradient id="pl-post-sage">
+                        <stop offset="0%" stop-color="#6e8a72" stop-opacity="0.55" />
+                        <stop offset="55%" stop-color="#6e8a72" stop-opacity="0.2" />
+                        <stop offset="100%" stop-color="#6e8a72" stop-opacity="0" />
+                    </radialGradient>
+                    <radialGradient id="pl-post-slate">
+                        <stop offset="0%" stop-color="#6d7782" stop-opacity="0.55" />
+                        <stop offset="55%" stop-color="#6d7782" stop-opacity="0.2" />
+                        <stop offset="100%" stop-color="#6d7782" stop-opacity="0" />
+                    </radialGradient>
+                </defs>
+
+                <!-- ······ stage 1 · evidence collection ······ -->
+                <g transform="translate(20,42)">
+                    <rect x="0" y="0" width="280" height="204" rx="8" fill="#f5efe3" stroke="#b58a4d" stroke-opacity="0.5" stroke-width="1.2" />
+                    <text class="pl-eyebrow" x="16" y="22" fill="#b58a4d">stage 1 · collect</text>
+                    <text class="pl-title" x="16" y="48">Evidence collection</text>
+                    <!-- glyph: anchors probing the attester -->
+                    <g>
+                        <rect x="126" y="92" width="28" height="22" rx="3" fill="none" stroke="#2a2a2a" stroke-width="1.2" />
+                        <text class="pl-glyph-label" x="140" y="128" text-anchor="middle">attester</text>
+                        <circle cx="52" cy="78" r="4" fill="#b58a4d" />
+                        <circle cx="224" cy="72" r="4" fill="#b58a4d" />
+                        <circle cx="60" cy="132" r="4" fill="#b58a4d" />
+                        <line x1="56" y1="80" x2="126" y2="99" stroke="#b58a4d" stroke-width="1" stroke-dasharray="3 3" />
+                        <line x1="220" y1="74" x2="154" y2="96" stroke="#b58a4d" stroke-width="1" stroke-dasharray="3 3" />
+                        <line x1="64" y1="130" x2="126" y2="108" stroke="#b58a4d" stroke-width="1" stroke-dasharray="3 3" />
+                        <text class="pl-glyph-label" x="60" y="147" text-anchor="middle">anchors</text>
+                        <text class="pl-glyph-label" x="212" y="119" text-anchor="middle">probe ⇄ signed receipt</text>
+                    </g>
+                    <line x1="16" y1="164" x2="264" y2="164" stroke="#dcdcd8" stroke-width="1" />
+                    <text class="pl-formula" x="16" y="182">E = s₁, s₂, …, sₘ</text>
+                    <text class="pl-formula" x="16" y="198">C = claim: declared location + interval</text>
+                </g>
+
+                <!-- ······ stage 2 · evidence evaluation ······ -->
+                <g transform="translate(330,42)">
+                    <rect x="0" y="0" width="280" height="204" rx="8" fill="#edf1ec" stroke="#6e8a72" stroke-opacity="0.5" stroke-width="1.2" />
+                    <text class="pl-eyebrow" x="16" y="22" fill="#6e8a72">stage 2 · evaluate</text>
+                    <text class="pl-title" x="16" y="48">Evidence evaluation</text>
+                    <!-- glyph: receipts as intersecting circles → posterior mass -->
+                    <g>
+                        <circle cx="96" cy="104" r="30" fill="#6e8a72" fill-opacity="0.05" stroke="#6e8a72" stroke-opacity="0.6" stroke-width="1" />
+                        <circle cx="140" cy="92" r="36" fill="#6e8a72" fill-opacity="0.05" stroke="#6e8a72" stroke-opacity="0.6" stroke-width="1" />
+                        <circle cx="132" cy="124" r="32" fill="#6e8a72" fill-opacity="0.05" stroke="#6e8a72" stroke-opacity="0.6" stroke-width="1" />
+                        <circle cx="120" cy="107" r="22" fill="url(#pl-post-sage)" />
+                        <text class="pl-glyph-label" x="142" y="98" font-style="italic">π</text>
+                        <text class="pl-glyph-label" x="220" y="108" text-anchor="middle">receipts intersect</text>
+                    </g>
+                    <line x1="16" y1="164" x2="264" y2="164" stroke="#dcdcd8" stroke-width="1" />
+                    <text class="pl-formula" x="16" y="182">ℰ : (C, E) ↦ A = (π, Q)</text>
+                    <text class="pl-formula" x="16" y="198">π(x) ∝ prior(x) · ∏ₐ L(bundleₐ | x)</text>
+                </g>
+
+                <!-- ······ stage 3 · geospatial policy evaluation ······ -->
+                <g transform="translate(640,42)">
+                    <rect x="0" y="0" width="280" height="204" rx="8" fill="#eef0f1" stroke="#6d7782" stroke-opacity="0.5" stroke-width="1.2" />
+                    <text class="pl-eyebrow" x="16" y="22" fill="#6d7782">stage 3 · ask</text>
+                    <text class="pl-title" x="16" y="48" font-size="16">Geospatial policy evaluation</text>
+                    <!-- glyph: the posterior distribution against a geofence — mass
+                         mostly inside the zone, a tail crossing the boundary -->
+                    <g>
+                        <polygon points="36,76 150,66 196,96 170,132 62,128" fill="#6d7782" fill-opacity="0.04" stroke="#6d7782" stroke-opacity="0.7" stroke-width="1" stroke-dasharray="4 3" />
+                        <ellipse cx="158" cy="98" rx="34" ry="24" fill="url(#pl-post-slate)" />
+                        <text class="pl-glyph-label" x="158" y="101" font-style="italic" text-anchor="middle">π</text>
+                        <text class="pl-glyph-label" x="96" y="147" text-anchor="middle">authorized zone</text>
+                        <text class="pl-formula" x="264" y="68" text-anchor="end" font-size="9">P(inside) = 0.97</text>
+                    </g>
+                    <line x1="16" y1="164" x2="264" y2="164" stroke="#dcdcd8" stroke-width="1" />
+                    <text class="pl-formula" x="16" y="182">P(conform) = Σ π(x), x ∈ zone</text>
+                    <text class="pl-formula" x="16" y="198">threshold — policy judgment, not evidence</text>
+                </g>
+
+                <!-- ······ arrows between stages ······ -->
+                <g stroke="#8a8680" stroke-width="1.4" fill="#8a8680">
+                    <line x1="304" y1="144" x2="321" y2="144" />
+                    <polygon points="321,139 321,149 329,144" stroke="none" />
+                    <line x1="614" y1="144" x2="631" y2="144" />
+                    <polygon points="631,139 631,149 639,144" stroke="none" />
+                </g>
+
+                <!-- ······ stage → output arrows ······ -->
+                <g stroke="#c9c6bd" stroke-width="1.2" fill="#c9c6bd">
+                    <line x1="160" y1="250" x2="160" y2="265" />
+                    <polygon points="155,265 165,265 160,272" stroke="none" />
+                    <line x1="470" y1="250" x2="470" y2="265" />
+                    <polygon points="465,265 475,265 470,272" stroke="none" />
+                    <line x1="780" y1="250" x2="780" y2="265" />
+                    <polygon points="775,265 785,265 780,272" stroke="none" />
+                </g>
+
+                <!-- ······ outputs ······ -->
+                <g>
+                    <rect x="20" y="272" width="280" height="58" rx="6" fill="#ffffff" stroke="#dcdcd8" stroke-width="1" />
+                    <text class="pl-out-title" x="160" y="298" text-anchor="middle">Evidence logs</text>
+                    <text class="pl-out-sub" x="160" y="315" text-anchor="middle">append-only, signed</text>
+
+                    <rect x="330" y="272" width="280" height="58" rx="6" fill="#ffffff" stroke="#dcdcd8" stroke-width="1" />
+                    <text class="pl-out-title" x="470" y="298" text-anchor="middle">Location credibility assessment</text>
+                    <text class="pl-out-sub" x="470" y="315" text-anchor="middle">posterior over spacetime, with Q</text>
+
+                    <rect x="640" y="272" width="280" height="58" rx="6" fill="#ffffff" stroke="#dcdcd8" stroke-width="1" />
+                    <text class="pl-out-title" x="780" y="298" text-anchor="middle">Policy conformance</text>
+                    <text class="pl-out-sub" x="780" y="315" text-anchor="middle">boolean or probability — no more</text>
+                </g>
+            </svg>
+        </template>
+
+        <script src="lib/reveal/reveal.js"></script>
+        <script src="lib/reveal/plugin/notes.js"></script>
+        <script src="lib/reveal/plugin/highlight.js"></script>
+        <script src="lib/reveal/plugin/markdown.js"></script>
+        <script>
+            Reveal.initialize({
+                hash: true,
+                slideNumber: "c/t",
+                transition: "fade",
+                controls: true,
+                progress: true,
+                plugins: [RevealNotes, RevealHighlight, RevealMarkdown],
+            });
+
+            /* ---------- full-screen pipeline layer ----------
+               data-zoom="s cx cy": scale (1 = fit width) and the SVG point to
+               center in the viewport. Slide changes tween between states;
+               wheel zooms toward the cursor, drag pans. */
+            (function () {
+                const VB_W = 940;
+                const revealEl = document.querySelector(".reveal");
+                const slidesEl = document.querySelector(".reveal .slides");
+
+                const overlay = document.createElement("div");
+                overlay.className = "pipeline-overlay";
+                const art = document.createElement("div");
+                art.className = "pipeline-art";
+                art.appendChild(document.getElementById("pipeline-svg").content.cloneNode(true));
+                overlay.appendChild(art);
+                revealEl.insertBefore(overlay, slidesEl);
+
+                let cur = null; // {k, tx, ty} in overlay pixels
+
+                function stateToPx(zoom) {
+                    const [s, cx, cy] = zoom.split(/\s+/).map(Number);
+                    const ow = overlay.clientWidth,
+                        oh = overlay.clientHeight;
+                    const u = ow / VB_W; // css px per svg unit at scale 1
+                    const vbH = art.clientHeight / u || 368;
+                    let tx = ow / 2 - s * u * cx;
+                    let ty = oh / 2 - s * u * cy;
+                    // clamp to edges when the scaled art overflows the viewport
+                    const aw = s * u * VB_W,
+                        ah = s * u * vbH;
+                    if (aw > ow) tx = Math.min(0, Math.max(ow - aw, tx));
+                    if (ah > oh) ty = Math.min(0, Math.max(oh - ah, ty));
+                    return { k: s, tx, ty };
+                }
+
+                function render(t, animate) {
+                    art.style.transition = animate
+                        ? "transform 900ms cubic-bezier(0.4, 0, 0.2, 1)"
+                        : "none";
+                    art.style.transform = `translate(${t.tx}px, ${t.ty}px) scale(${t.k})`;
+                    cur = t;
+                }
+
+                function onSlide(slide, prev) {
+                    const isPipe = slide.classList.contains("pipeline-slide");
+                    overlay.classList.toggle("on", isPipe);
+                    slidesEl.style.pointerEvents = isPipe ? "none" : "";
+                    if (isPipe) {
+                        const fromPipe = prev && prev.classList.contains("pipeline-slide");
+                        render(stateToPx(slide.dataset.zoom), !!fromPipe && !!cur);
+                    }
+                }
+
+                Reveal.on("ready", (e) => onSlide(e.currentSlide, null));
+                Reveal.on("slidechanged", (e) => onSlide(e.currentSlide, e.previousSlide));
+                window.addEventListener("resize", () => {
+                    const s = Reveal.getCurrentSlide();
+                    if (s && s.classList.contains("pipeline-slide")) render(stateToPx(s.dataset.zoom), false);
+                });
+
+                // wheel / pinch: zoom toward the cursor
+                overlay.addEventListener(
+                    "wheel",
+                    (ev) => {
+                        if (!cur) return;
+                        ev.preventDefault();
+                        const f = Math.exp(-ev.deltaY * (ev.ctrlKey ? 0.01 : 0.0022));
+                        const k2 = Math.min(9, Math.max(0.4, cur.k * f));
+                        const g = k2 / cur.k;
+                        const r = overlay.getBoundingClientRect();
+                        const x = ev.clientX - r.left,
+                            y = ev.clientY - r.top;
+                        render({ k: k2, tx: x - (x - cur.tx) * g, ty: y - (y - cur.ty) * g }, false);
+                    },
+                    { passive: false }
+                );
+
+                // drag: pan
+                let drag = null;
+                overlay.addEventListener("pointerdown", (ev) => {
+                    drag = { x: ev.clientX, y: ev.clientY };
+                    overlay.setPointerCapture(ev.pointerId);
+                });
+                overlay.addEventListener("pointermove", (ev) => {
+                    if (!drag || !cur) return;
+                    render(
+                        { k: cur.k, tx: cur.tx + ev.clientX - drag.x, ty: cur.ty + ev.clientY - drag.y },
+                        false
+                    );
+                    drag = { x: ev.clientX, y: ev.clientY };
+                });
+                overlay.addEventListener("pointerup", () => (drag = null));
+                overlay.addEventListener("pointercancel", () => (drag = null));
+            })();
+        </script>
+    </body>
+</html>
