@@ -29,6 +29,12 @@ const nextConfig = {
         source: '/presentations/os-poc',
         destination: '/presentations/os-poc/index.html',
       },
+      {
+        // Standalone full-viewport interactive visualization; served as a
+        // static asset so the research [slug] route never touches it.
+        source: '/research/location-evidence-evals',
+        destination: '/research/location-evidence-evals/index.html',
+      },
     ]
   },
   async headers() {
