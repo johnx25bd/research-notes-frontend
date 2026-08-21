@@ -15,11 +15,13 @@
   --ink-400:#1b1b1b; --ink-500:#111111; --ink-600:#1a1a1a; --ink-700:#1f1f1f;
   --slate-300:#c4cad0; --slate-500:#6d7782; --slate-600:#525a64; --sage-500:#6b7a72;
 
-  --background:#faf9f5; --foreground:var(--ink-400);   /* warm paper, per system README */
-  --card:var(--paper-50); --muted-foreground:var(--ink-200);
-  --primary:var(--slate-500); --border:var(--paper-500);
-  --meridian:#c9c6bd; --meridian-accent:var(--slate-500);   /* a shade darker so it survives projection */
-  --entry-divider:#ececea; --hair:color-mix(in oklab, var(--paper-600) 60%, transparent);
+  /* ink dark by default — coheres with the co-speakers' decks; orange accent */
+  --accent:#ee9540;
+  --background:#1e1e1e; --foreground:var(--ink-50);
+  --card:#1a1a1a; --muted-foreground:var(--ink-100);
+  --primary:var(--accent); --border:#2f2d2a;
+  --meridian:#3a3833; --meridian-accent:var(--accent);
+  --entry-divider:#2a2a2a; --hair:#2a2a2a;
 
   /* priority / status hues (near-monochrome, used sparingly) */
   --p0:#b54d4d; --p1:#b58a4d; --p2:#8a8a82; --p3:#c4c4be;
@@ -34,12 +36,9 @@
   --tracking-tight:-0.015em; --tracking-eyebrow:0.2em;
 }
 
-/* dark section override — ink, pale slate */
+/* dark section override — now identical to the base ink surface */
 .reveal section.dark {
-  --background:var(--ink-500); --foreground:var(--ink-50);
-  --muted-foreground:var(--ink-100); --primary:var(--slate-300);
-  --border:#2a2a2a; --meridian:#343230; --meridian-accent:var(--slate-300);
-  --hair:#2a2a2a; --paper-50:#1a1a1a; --paper-200:#1f1f1f;
+  --paper-50:#1a1a1a; --paper-200:#1f1f1f;
 }
 
 /* ============================================================
@@ -78,13 +77,14 @@
 
 .reveal .slides section:not(.no-meridian) > h1::before,
 .reveal .slides section:not(.no-meridian) > h2::before {
-  content:""; position:absolute; left:-53px; top:50%; transform:translateY(-50%);
+  content:""; position:absolute; left:-53px; top:0.56em; transform:translateY(-50%);
   width:9px; height:9px; border-radius:50%; border:1px solid var(--meridian-accent);
   background:radial-gradient(circle, var(--meridian-accent) 0%, var(--meridian-accent) 30%, transparent 32%, transparent 100%);
 }
+/* the rule starts exactly at the ring's lower edge (4.5px radius + 1px border) */
 .reveal .slides section:not(.no-meridian) > h1::after,
 .reveal .slides section:not(.no-meridian) > h2::after {
-  content:""; position:absolute; left:-48px; top:50%; width:1px; height:560px;
+  content:""; position:absolute; left:-48px; top:calc(0.56em + 5.5px); width:1px; height:560px;
   background:linear-gradient(to bottom, var(--meridian) 0%, var(--meridian) 62%, transparent 100%);
 }
 
@@ -200,7 +200,7 @@
 /* Numbered principle row (kit.html idiom) */
 .reveal .principle { display:flex; gap:20px; padding:18px 0; border-bottom:1px solid var(--border); align-items:baseline; }
 .reveal .principle .num { font-family:var(--font-display); font-size:1.25em;
-  color:var(--muted-foreground); width:38px; flex-shrink:0; font-variant:tabular-nums; }
+  color:var(--accent); width:38px; flex-shrink:0; font-variant:tabular-nums; }
 .reveal .principle h3 { font-size:0.92em; font-weight:500; margin:0 0 2px; font-family:var(--font-sans); line-height:1.35; max-width:46ch; }
 .reveal .principle p { font-size:0.78em; color:var(--muted-foreground); line-height:1.5; margin:0; }
 
@@ -262,7 +262,7 @@
    Running footer + slide number
    ============================================================ */
 .reveal .deck-footer {
-  position:fixed; bottom:20px; left:104px; z-index:30;   /* align with slide text gutter */
+  position:fixed; bottom:20px; right:110px; z-index:30;   /* tucked beside the slide number, clear of slide content */
   font-family:var(--font-sans); font-variant:small-caps; text-transform:lowercase;
   letter-spacing:0.12em; font-size:14px; color:var(--muted-foreground);
 }

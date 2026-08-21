@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="lib/reveal/theme-highlight/zenburn.css" />
         <link rel="stylesheet" href="lib/katex/katex.min.css" />
         <!-- Bump ?v=N every time you edit johnx.css so a normal refresh picks it up. -->
-        <link rel="stylesheet" href="theme/johnx.css?v=1" />
+        <link rel="stylesheet" href="theme/johnx.css?v=2" />
 
         <style>
             /* ---------- full-screen pipeline layer ----------
@@ -123,6 +123,42 @@
                 font-size: 11.5px;
                 color: var(--ink-300);
             }
+
+            /* ---------- pinned meridian (question slide) ----------
+               Same geometry as the title-anchored motif, but fixed to the
+               slide at the cover title's position so the line doesn't move
+               between slides while the questions sit lower. */
+            .reveal .slides section.meridian-pinned::before {
+                content: "";
+                position: absolute;
+                left: 51px;
+                top: var(--mer-y, 196px);
+                transform: translateY(-50%);
+                width: 9px;
+                height: 9px;
+                border-radius: 50%;
+                border: 1px solid var(--meridian-accent);
+                background: radial-gradient(
+                    circle,
+                    var(--meridian-accent) 0%,
+                    var(--meridian-accent) 30%,
+                    transparent 32%,
+                    transparent 100%
+                );
+            }
+            .reveal .slides section.meridian-pinned::after {
+                content: "";
+                position: absolute;
+                left: 56px;
+                top: calc(var(--mer-y, 196px) + 5.5px);
+                width: 1px;
+                height: 560px;
+                background: linear-gradient(to bottom, var(--meridian) 0%, var(--meridian) 62%, transparent 100%);
+            }
+
+            .reveal .fragment.strike.visible {
+                text-decoration-thickness: 2px;
+            }
         </style>
     </head>
     <body>
@@ -132,17 +168,17 @@
                 <!-- ============================================================
            COVER
            ============================================================ -->
-                <section class="cover no-meridian">
+                <section class="cover">
                     <h1>Verifying compute location</h1>
-                    <p class="lede" style="margin-top: 0.3em">
+                    <p class="lede" style="margin-top: 0.3em; font-size: 0.95em; max-width: 40ch; text-wrap: balance; color: var(--accent)">
                         Underwriting credible location&#8209;contingent commitments with evidence
                     </p>
                     <p
                         class="muted"
-                        style="margin-top: 2.2em; font-family: var(--font-display); font-style: italic; font-size: 0.72em"
+                        style="margin-top: 2.2em; font-family: var(--font-display); font-style: italic; font-size: 0.6em"
                     >
                         John Hoopes<br />
-                        Sophia Research&nbsp;&nbsp;•&nbsp;&nbsp;University of Maryland<br />
+                        CAISH Hardware Assurance Programme<br />
                         22 August 2026
                     </p>
                     <aside class="notes">
@@ -158,12 +194,12 @@
                 <!-- ============================================================
            THE QUESTION
            ============================================================ -->
-                <section>
-                    <h2 class="muted" style="text-decoration: line-through; text-decoration-thickness: 2px">
+                <section class="no-meridian meridian-pinned" style="--mer-y: 136px">
+                    <h2 class="muted fragment strike" data-fragment-index="1" style="margin-top: 4em">
                         Where is this device?
                     </h2>
-                    <h2 class="fragment fade-in" style="margin-top: 0.35em">
-                        Is this device where it <em>should</em> be?
+                    <h2 class="fragment fade-in" data-fragment-index="1" style="margin-top: 0.35em">
+                        Is this device where it should be?
                     </h2>
                     <aside class="notes">
                         <ul>
@@ -181,7 +217,7 @@
            the output box (with data-zoom-out reframing).
            ============================================================ -->
                 <section class="top no-meridian pipeline-slide" data-zoom="1 470 71">
-                    <h2>The pipeline.</h2>
+                    <h2>Pipeline</h2>
                     <aside class="notes">
                         <ul>
                             <li>"Location verification" usually blends three different jobs</li>
@@ -195,8 +231,8 @@
                 <section
                     class="pipeline-slide"
                     data-stage="1"
-                    data-zoom="1.9 160 155"
-                    data-zoom-out="1.4 160 194"
+                    data-zoom="1.55 160 155"
+                    data-zoom-out="1.15 160 194"
                 >
                     <span class="fragment" aria-hidden="true"></span>
                     <span class="fragment" aria-hidden="true"></span>
@@ -219,8 +255,8 @@
                 <section
                     class="pipeline-slide"
                     data-stage="2"
-                    data-zoom="1.9 470 155"
-                    data-zoom-out="1.4 470 194"
+                    data-zoom="1.55 470 155"
+                    data-zoom-out="1.15 470 194"
                 >
                     <span class="fragment" aria-hidden="true"></span>
                     <span class="fragment" aria-hidden="true"></span>
@@ -246,8 +282,8 @@
                 <section
                     class="pipeline-slide"
                     data-stage="3"
-                    data-zoom="1.9 780 155"
-                    data-zoom-out="1.4 780 194"
+                    data-zoom="1.55 780 155"
+                    data-zoom-out="1.15 780 194"
                 >
                     <span class="fragment" aria-hidden="true"></span>
                     <span class="fragment" aria-hidden="true"></span>
@@ -271,7 +307,7 @@
 
                 <!-- zoom out -->
                 <section class="top no-meridian pipeline-slide" data-zoom="1 470 71">
-                    <h2>The pipeline.</h2>
+                    <h2>Pipeline</h2>
                     <aside class="notes">
                         <ul>
                             <li>What we learned: separating the stages is the contribution — neutral, auditable middle</li>
@@ -285,27 +321,26 @@
            NEXT STEPS
            ============================================================ -->
                 <section class="dark">
-                    <h2>Next steps.</h2>
+                    <h2>Future work</h2>
                     <div class="compact" style="margin-top: 0.7em">
                         <div class="principle fragment fade-in">
                             <span class="num">01</span>
-                            <h3 style="white-space: nowrap">Red-team</h3>
-                            <p>SovCert and the evaluation formalism — attack it before others do.</p>
+                            <h3>Red team the SovCert spec and evidence evaluation formalism</h3>
                         </div>
                         <div class="principle fragment fade-in">
                             <span class="num">02</span>
-                            <h3>Benchmark</h3>
-                            <p>GPUs with hardware-rooted keys; rigorous calibration-suite analysis.</p>
+                            <h3>Benchmark GPUs with hardware-rooted keys and the calibration suite</h3>
                         </div>
                         <div class="principle fragment fade-in">
                             <span class="num">03</span>
-                            <h3>Engineer</h3>
-                            <p>Anchor network design · ping protocol · verifiable evidence storage.</p>
+                            <h3>
+                                Research optimal anchor network architecture, ping protocols, verifiable evidence
+                                storage, privacy-preserving implementations
+                            </h3>
                         </div>
                         <div class="principle fragment fade-in">
                             <span class="num">04</span>
-                            <h3>Engage</h3>
-                            <p>Policymakers, labs, chip manufacturers — prototype in the open.</p>
+                            <h3>Engage with policymakers, labs, chip manufacturers</h3>
                         </div>
                     </div>
                     <aside class="notes">
@@ -321,11 +356,22 @@
            CONTACT / CLOSE
            ============================================================ -->
                 <section class="dark">
-                    <h1>Thank you.</h1>
-                    <p class="lede" style="margin-top: 0.6em">
-                        johnx.co/research&nbsp;&nbsp;·&nbsp;&nbsp;docs.astral.global
+                    <h1>Thank you</h1>
+                    <p style="margin-top: 2.4em; font-size: 0.82em; line-height: 2; color: var(--foreground)">
+                        <span style="color: var(--accent)">Anna Katariina Wisakanto</span>&nbsp;&nbsp;·&nbsp;&nbsp;anna@wisakanto.com<br />
+                        <span style="color: var(--accent)">Ryan Bevin</span>&nbsp;&nbsp;·&nbsp;&nbsp;rbevin01@qub.ac.uk<br />
+                        <span style="color: var(--accent)">John Hoopes</span>&nbsp;&nbsp;·&nbsp;&nbsp;john@johnx.co
                     </p>
-                    <p class="muted" style="margin-top: 1.4em">john@johnx.co</p>
+                    <p class="muted" style="margin-top: 1.8em; font-size: 0.66em">
+                        Demo + slides on
+                        <a
+                            href="https://johnx.co/research"
+                            target="_blank"
+                            rel="noopener"
+                            style="color: var(--accent); text-decoration: underline; text-underline-offset: 3px"
+                            >johnx.co/research</a
+                        >
+                    </p>
                     <aside class="notes">
                         <ul>
                             <li>Framework, paper, and the viz all live at johnx.co/research</li>
@@ -344,7 +390,7 @@
            lines (.f1/.f2) and the output box (.f3).
            ============================================================ -->
         <template id="pipeline-svg">
-            <svg viewBox="0 0 940 368" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Location verification pipeline: evidence collection, evidence evaluation, geospatial policy evaluation">
+            <svg viewBox="0 0 940 368" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Location verification pipeline: evidence collection, evidence evaluation, policy evaluation">
                 <defs>
                     <radialGradient id="pl-post-sage">
                         <stop offset="0%" stop-color="#6e8a72" stop-opacity="0.55" />
@@ -372,7 +418,7 @@
                         <line x1="220" y1="74" x2="154" y2="96" stroke="#b58a4d" stroke-width="1" stroke-dasharray="3 3" />
                         <line x1="64" y1="130" x2="126" y2="108" stroke="#b58a4d" stroke-width="1" stroke-dasharray="3 3" />
                         <text class="pl-glyph-label" x="60" y="147" text-anchor="middle">anchors</text>
-                        <text class="pl-glyph-label" x="212" y="119" text-anchor="middle">probe ⇄ signed receipt</text>
+                        <text class="pl-glyph-label" x="190" y="79" text-anchor="middle" style="font-size: 7.5px" transform="rotate(-18.4 190 79)">ping</text>
                     </g>
                     <line class="pl-rule" x1="16" y1="154" x2="264" y2="154" stroke="#dcdcd8" stroke-width="1" />
                     <foreignObject class="pl-math pl-m1" x="16" y="162" width="248" height="28">
@@ -393,12 +439,11 @@
                     <rect class="pl-card" x="0" y="0" width="280" rx="8" fill="#edf1ec" stroke="#6e8a72" stroke-opacity="0.5" stroke-width="1.2" />
                     <text class="pl-title" x="140" y="36" text-anchor="middle">Evidence evaluation</text>
                     <g class="pl-glyph">
-                        <circle cx="96" cy="104" r="30" fill="#6e8a72" fill-opacity="0.05" stroke="#6e8a72" stroke-opacity="0.6" stroke-width="1" />
-                        <circle cx="140" cy="92" r="36" fill="#6e8a72" fill-opacity="0.05" stroke="#6e8a72" stroke-opacity="0.6" stroke-width="1" />
-                        <circle cx="132" cy="124" r="32" fill="#6e8a72" fill-opacity="0.05" stroke="#6e8a72" stroke-opacity="0.6" stroke-width="1" />
-                        <circle cx="120" cy="107" r="22" fill="url(#pl-post-sage)" />
-                        <text class="pl-glyph-label" x="142" y="98" font-style="italic">π</text>
-                        <text class="pl-glyph-label" x="220" y="108" text-anchor="middle">receipts intersect</text>
+                        <circle cx="96" cy="98" r="27" fill="#6e8a72" fill-opacity="0.05" stroke="#6e8a72" stroke-opacity="0.6" stroke-width="1" />
+                        <circle cx="140" cy="88" r="32" fill="#6e8a72" fill-opacity="0.05" stroke="#6e8a72" stroke-opacity="0.6" stroke-width="1" />
+                        <circle cx="132" cy="116" r="28" fill="#6e8a72" fill-opacity="0.05" stroke="#6e8a72" stroke-opacity="0.6" stroke-width="1" />
+                        <circle cx="120" cy="100" r="20" fill="url(#pl-post-sage)" />
+                        <text class="pl-glyph-label" x="142" y="94" font-style="italic">π</text>
                     </g>
                     <line class="pl-rule" x1="16" y1="154" x2="264" y2="154" stroke="#dcdcd8" stroke-width="1" />
                     <foreignObject class="pl-math pl-m1" x="16" y="162" width="248" height="28">
@@ -410,24 +455,24 @@
                     <g class="pl-output">
                         <rect x="0" y="246" width="280" height="58" rx="6" fill="#ffffff" stroke="#dcdcd8" stroke-width="1" />
                         <text class="pl-out-title" x="140" y="272" text-anchor="middle">Location credibility assessment</text>
-                        <text class="pl-out-sub" x="140" y="289" text-anchor="middle">posterior over spacetime, with Q</text>
+                        <text class="pl-out-sub" x="140" y="289" text-anchor="middle">posterior over spacetime, plus qualifiers</text>
                     </g>
                 </g>
 
-                <!-- ······ stage 3 · geospatial policy evaluation ······ -->
+                <!-- ······ stage 3 · policy evaluation ······ -->
                 <g class="pl-stage" id="pl-s3" transform="translate(640,42)">
                     <rect class="pl-card" x="0" y="0" width="280" rx="8" fill="#eef0f1" stroke="#6d7782" stroke-opacity="0.5" stroke-width="1.2" />
-                    <text class="pl-title" x="140" y="36" text-anchor="middle" font-size="16">Geospatial policy evaluation</text>
+                    <text class="pl-title" x="140" y="36" text-anchor="middle">Policy evaluation</text>
                     <g class="pl-glyph">
                         <polygon points="36,76 150,66 196,96 170,132 62,128" fill="#6d7782" fill-opacity="0.04" stroke="#6d7782" stroke-opacity="0.7" stroke-width="1" stroke-dasharray="4 3" />
                         <ellipse cx="158" cy="98" rx="34" ry="24" fill="url(#pl-post-slate)" />
                         <text class="pl-glyph-label" x="158" y="101" font-style="italic" text-anchor="middle">π</text>
-                        <text class="pl-glyph-label" x="96" y="147" text-anchor="middle">authorized zone</text>
+                        <text class="pl-glyph-label" x="96" y="147" text-anchor="middle">authorized zone <tspan font-style="italic">Z</tspan></text>
                         <text class="pl-glyph-label" x="252" y="70" text-anchor="end">P(inside) = 0.97</text>
                     </g>
                     <line class="pl-rule" x1="16" y1="154" x2="264" y2="154" stroke="#dcdcd8" stroke-width="1" />
                     <foreignObject class="pl-math pl-m1" x="16" y="162" width="248" height="30">
-                        <div xmlns="http://www.w3.org/1999/xhtml" data-tex="P(\mathrm{conform}) = \textstyle\sum_{x \in \mathrm{zone}} \pi(x)"></div>
+                        <div xmlns="http://www.w3.org/1999/xhtml" data-tex="P(\mathrm{conform}) = \textstyle\sum_{x \in Z} \pi(x)"></div>
                     </foreignObject>
                     <foreignObject class="pl-math pl-m2" x="16" y="194" width="248" height="30">
                         <div xmlns="http://www.w3.org/1999/xhtml" data-tex="\text{verdict} = \mathbf{1}[\, P(\mathrm{conform}) \ge \tau \,]"></div>
