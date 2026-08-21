@@ -808,14 +808,14 @@ button {
   font-weight: 600;
 }
 
-.anchor-card .pi-row {
+.anchor-card .eps-row {
   display: flex;
   align-items: center;
   gap: 7px;
   margin-top: 7px;
 }
 
-.anchor-card .pi-row .pi-lbl {
+.anchor-card .eps-row .eps-lbl {
   font-size: 11px;
   font-weight: 600;
   color: var(--ink-soft);
@@ -824,7 +824,7 @@ button {
   gap: 4px;
 }
 
-.anchor-card .pi-row input[type="range"] {
+.anchor-card .eps-row input[type="range"] {
   flex: 1;
   min-width: 0;
   appearance: none;
@@ -834,7 +834,7 @@ button {
   margin: 0;
 }
 
-.anchor-card .pi-row input[type="range"]::-webkit-slider-thumb {
+.anchor-card .eps-row input[type="range"]::-webkit-slider-thumb {
   appearance: none;
   width: 12px;
   height: 12px;
@@ -844,7 +844,7 @@ button {
   cursor: grab;
 }
 
-.anchor-card .pi-row input[type="range"]::-moz-range-thumb {
+.anchor-card .eps-row input[type="range"]::-moz-range-thumb {
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -852,7 +852,7 @@ button {
   border: 2px solid var(--card);
 }
 
-.anchor-card .pi-row .pi-val {
+.anchor-card .eps-row .eps-val {
   font: 600 11px var(--font-mono);
   min-width: 32px;
   text-align: right;
@@ -3236,7 +3236,7 @@ function rampGradientCSS(name, steps = 12) {
 const V_C = 300; // km/ms -- lightspeed; conversion for exclusion radii (security bound)
 const V_FIBER = 204; // km/ms -- c/n, n = 1.47; honest generation + soft interior
 
-const PI_PRESETS = { neutral: 0.1, ally: 0.3, adversary: 0.03 };
+const EPS_PRESETS = { neutral: 0.1, ally: 0.3, adversary: 0.03 };
 
 const FACILITIES = [
   { id: "hetzner-helsinki", name: "Hetzner Helsinki", lat: 60.404, lon: 25.106 },
@@ -3255,7 +3255,7 @@ const CAMBRIDGE = { lat: 52.205, lon: 0.119 };
 const TALLINN = { lat: 59.437, lon: 24.754 };
 const ST_PETERSBURG = { lat: 59.934, lon: 30.335 };
 
-const HIGH_TRUST_PI = 0.02;
+const HIGH_TRUST_EPS = 0.02;
 const PRESETS = [
   {
     id: "baseline",
@@ -3268,10 +3268,10 @@ const PRESETS = [
     attack: "none",
     allowance: 0,
     anchors: [
-      { facility: "hetzner-helsinki", pi: HIGH_TRUST_PI },
-      { facility: "hetzner-falkenstein", pi: HIGH_TRUST_PI },
-      { facility: "equinix-paris", pi: HIGH_TRUST_PI },
-      { facility: "equinix-london", pi: HIGH_TRUST_PI },
+      { facility: "hetzner-helsinki", eps: HIGH_TRUST_EPS },
+      { facility: "hetzner-falkenstein", eps: HIGH_TRUST_EPS },
+      { facility: "equinix-paris", eps: HIGH_TRUST_EPS },
+      { facility: "equinix-london", eps: HIGH_TRUST_EPS },
     ],
   },
   {
@@ -3285,17 +3285,17 @@ const PRESETS = [
     attack: "none",
     allowance: 0,
     anchors: [
-      { facility: "hetzner-helsinki", pi: HIGH_TRUST_PI },
-      { facility: "hetzner-falkenstein", pi: HIGH_TRUST_PI },
-      { facility: "equinix-paris", pi: HIGH_TRUST_PI },
-      { facility: "equinix-london", pi: HIGH_TRUST_PI },
+      { facility: "hetzner-helsinki", eps: HIGH_TRUST_EPS },
+      { facility: "hetzner-falkenstein", eps: HIGH_TRUST_EPS },
+      { facility: "equinix-paris", eps: HIGH_TRUST_EPS },
+      { facility: "equinix-london", eps: HIGH_TRUST_EPS },
     ],
   },
   {
     id: "trust",
     name: "Trust",
     caption:
-      "Lower an anchor's trust and the same receipts move the map less; no amount of probing beats the log2(1/pi) ceiling.",
+      "Lower an anchor's trust and the same receipts move the map less; no amount of probing beats the log2(1/ε_a) ceiling.",
     declared: CAMBRIDGE,
     windowCenter: CENTER,
     trueLocation: CAMBRIDGE,
@@ -3319,26 +3319,26 @@ const PRESETS = [
     attack: "none",
     allowance: 0,
     anchors: [
-      { facility: "hetzner-helsinki", pi: HIGH_TRUST_PI },
-      { facility: "hetzner-falkenstein", pi: HIGH_TRUST_PI },
-      { facility: "equinix-paris", pi: HIGH_TRUST_PI },
-      { facility: "equinix-london", pi: HIGH_TRUST_PI },
+      { facility: "hetzner-helsinki", eps: HIGH_TRUST_EPS },
+      { facility: "hetzner-falkenstein", eps: HIGH_TRUST_EPS },
+      { facility: "equinix-paris", eps: HIGH_TRUST_EPS },
+      { facility: "equinix-london", eps: HIGH_TRUST_EPS },
     ],
   },
   {
     id: "evasive",
     name: "Evasive attester",
     caption:
-      "Declared Tallinn, actually St Petersburg: padding cannot fake Tallinn. Flip the trusted Tallinn anchor to fabricate and probe all a few times -- the map is fooled. (Raising its pi is the defense.)",
+      "Declared Tallinn, actually St Petersburg: padding cannot fake Tallinn. Flip the trusted Tallinn anchor to fabricate and probe all a few times -- the map is fooled. (Raising its ε_a is the defense.)",
     declared: TALLINN,
     trueLocation: ST_PETERSBURG,
     attack: "inflation",
     allowance: 0,
     anchors: [
-      { facility: "telia-tallinn", pi: 0.03 },
-      { facility: "hetzner-helsinki", pi: 0.3 },
-      { facility: "gcp-hamina", pi: 0.3 },
-      { facility: "aws-stockholm", pi: 0.3 },
+      { facility: "telia-tallinn", eps: 0.03 },
+      { facility: "hetzner-helsinki", eps: 0.3 },
+      { facility: "gcp-hamina", eps: 0.3 },
+      { facility: "aws-stockholm", eps: 0.3 },
     ],
   },
 ];
@@ -3361,7 +3361,7 @@ function logaddexp(a, b) {
   return a > b ? a + Math.log1p(Math.exp(b - a)) : b + Math.log1p(Math.exp(a - b));
 }
 
-const clampPi = (p) => Math.min(1 - 1e-9, Math.max(1e-9, p));
+const clampEps = (p) => Math.min(1 - 1e-9, Math.max(1e-9, p));
 
 
 function createEngine(options = {}) {
@@ -3453,7 +3453,7 @@ function createEngine(options = {}) {
   const anchors = new Map();
   let anchorSeq = 0;
 
-  let defaultAnchorPi = PI_PRESETS.neutral;
+  let defaultAnchorEps = EPS_PRESETS.neutral;
   const HIGH_TRUST_PRESET_IDS = new Set(["baseline", "geometry", "allowance"]);
 
   function computeDistField(a) {
@@ -3470,7 +3470,7 @@ function createEngine(options = {}) {
   }
 
   function addAnchor(spec) {
-    let { id, name, lat, lon, pi, facility } = spec;
+    let { id, name, lat, lon, eps, facility } = spec;
     if (facility) {
       const f = FACILITIES.find((x) => x.id === facility);
       if (!f) throw new Error(`unknown facility: ${facility}`);
@@ -3486,7 +3486,7 @@ function createEngine(options = {}) {
       name: name ?? id,
       lat,
       lon,
-      pi: clampPi(pi ?? defaultAnchorPi),
+      eps: clampEps(eps ?? defaultAnchorEps),
       dist: null,
       receipts: [],
       S: null,
@@ -3518,9 +3518,9 @@ function createEngine(options = {}) {
     a.mixDirty = true;
   }
 
-  function setAnchorPi(id, pi) {
+  function setAnchorEps(id, eps) {
     const a = mustGet(id);
-    a.pi = clampPi(pi);
+    a.eps = clampEps(eps);
     a.mixDirty = true; // honest field S is unaffected
   }
 
@@ -3530,7 +3530,7 @@ function createEngine(options = {}) {
     return a;
   }
 
-  const publicAnchor = (a) => ({ id: a.id, name: a.name, lat: a.lat, lon: a.lon, pi: a.pi });
+  const publicAnchor = (a) => ({ id: a.id, name: a.name, lat: a.lat, lon: a.lon, eps: a.eps });
 
 
   const sim = {
@@ -3731,8 +3731,8 @@ function createEngine(options = {}) {
     ensureAnchorS(a);
     if (!a.mixDirty) return;
     const n = grid.cellCount;
-    const log1mPi = Math.log(1 - a.pi);
-    const logPiFlat = Math.log(a.pi) + a.maxS;
+    const log1mPi = Math.log(1 - a.eps);
+    const logPiFlat = Math.log(a.eps) + a.maxS;
     const S = a.S;
     const mixed = a.mixed;
     for (let i = 0; i < n; i++) {
@@ -3825,12 +3825,12 @@ function createEngine(options = {}) {
       perAnchor.push({
         id: a.id,
         name: a.name,
-        pi: a.pi,
+        eps: a.eps,
         latestRtt: latest,
         rttMin,
         exclusionRadiusKm:
           rttMin == null ? null : Math.max(0, (V_C * (rttMin - ev.allowance)) / 2),
-        bitsCeiling: Math.log2(1 / a.pi),
+        bitsCeiling: Math.log2(1 / a.eps),
         receiptsInInterval: count,
       });
     }
@@ -3846,9 +3846,9 @@ function createEngine(options = {}) {
     sim.dishonestAnchors.clear();
     const wc = preset.windowCenter ?? preset.declared;
     setWindowCenter(wc.lat, wc.lon);
-    defaultAnchorPi = HIGH_TRUST_PRESET_IDS.has(preset.id) ? HIGH_TRUST_PI : PI_PRESETS.neutral;
+    defaultAnchorEps = HIGH_TRUST_PRESET_IDS.has(preset.id) ? HIGH_TRUST_EPS : EPS_PRESETS.neutral;
     for (const spec of preset.anchors) {
-      addAnchor({ facility: spec.facility, pi: spec.pi });
+      addAnchor({ facility: spec.facility, eps: spec.eps });
     }
     setSimulator({
       trueLocation: preset.trueLocation,
@@ -3913,8 +3913,8 @@ function createEngine(options = {}) {
     addAnchor,
     removeAnchor,
     moveAnchor,
-    setAnchorPi,
-    getDefaultAnchorPi: () => defaultAnchorPi,
+    setAnchorEps,
+    getDefaultAnchorPi: () => defaultAnchorEps,
     getAnchors: () => [...anchors.values()].map(publicAnchor),
     getAnchorDistField: (id) => mustGet(id).dist,
     getAnchorField: (id) => {
@@ -4762,8 +4762,8 @@ const INFO = {
     "The slice of each measured round trip the verifier writes off as not-travel-time before converting to distance: r = v_c × (RTT − allowance) / 2. Too small merely loosens the circles; too large shrinks them below what physics justifies and the TRUE location can fall outside -- the assessment becomes wrong, not vague. Every 1 ms written off shrinks each radius by 150 km. The rule: write off only time no attester could avoid spending.",
   interior:
     "How quickly the evaluator's belief fades moving inward from a circle's edge. Kept deliberately slow (conservative): a receipt mostly says “not outside this circle” and almost nothing about where inside it, because a nearby machine can always answer slowly -- never faster than light. Mean of the assumed one-sided excess, μ_int (ms).",
-  pi:
-    "The verifier's prior probability that this anchor is compromised -- signing intervals it never measured. Evidence moves the map in proportion to trust: a distrusted anchor's receipts are partly explained away as possibly fabricated, and its total contribution caps at log2(1/π) bits no matter how many receipts arrive. (The paper writes ε_a; this page uses π per the build spec.)",
+  eps:
+    "The verifier's prior probability that this anchor is compromised -- signing intervals it never measured. Evidence moves the map in proportion to trust: a distrusted anchor's receipts are partly explained away as possibly fabricated, and its total contribution caps at log2(1/ε_a) bits no matter how many receipts arrive.",
   bundle:
     "How one anchor's receipts combine. rtt-min (default): receipts from one anchor share a path, so their distance information is nearly exhausted by the smallest of them -- redundancy discounting. product: multiply per-receipt likelihoods instead.",
   grid:
@@ -4773,9 +4773,9 @@ const INFO = {
   attack:
     "World truth: how the attester behaves. Inflation pads answers toward consistency with the declared location where physics permits -- padding only ever adds time, which pushes apparent location AWAY from honest anchors, so it cannot fake presence. Deflation answers faster than the verifier's allowance assumes (δ_att drops to 0.005 ms) -- the class that produces false presence.",
   fabricate:
-    "SIMULATION control, not a verifier input. A dishonest anchor never measures the attester: it signs an invented receipt consistent with the DECLARED location. Its fabricated story may violate the true-distance floor -- physics binds honest measurement, not invention. The verifier's only defense is this anchor's π.",
+    "SIMULATION control, not a verifier input. A dishonest anchor never measures the attester: it signs an invented receipt consistent with the DECLARED location. Its fabricated story may violate the true-distance floor -- physics binds honest measurement, not invention. The verifier's only defense is this anchor's ε_a.",
   floor:
-    "Color is on a log scale relative to the brightest cell, and overall brightness tracks how much the evidence discriminates: a shallow or spread-out posterior renders as a dim haze, while deep, concentrated belief earns the ramp's full intensity. Beyond a lightspeed radius the likelihood falls off a cliff -- but lands on a tiny floor (10⁻⁶ of peak), not zero: a cloned key, a broken signature scheme, a dishonest anchor, or an equipment fault could each produce a physically impossible-looking receipt, so the evaluation keeps that residual explicit. The residual brightness OUTSIDE a circle is set by anchor trust (the π mixture), not physics: a distrusted anchor's exclusion can be partly explained away as possibly fabricated, so only trusted anchors erase deeply.",
+    "Color is on a log scale relative to the brightest cell, and overall brightness tracks how much the evidence discriminates: a shallow or spread-out posterior renders as a dim haze, while deep, concentrated belief earns the ramp's full intensity. Beyond a lightspeed radius the likelihood falls off a cliff -- but lands on a tiny floor (10⁻⁶ of peak), not zero: a cloned key, a broken signature scheme, a dishonest anchor, or an equipment fault could each produce a physically impossible-looking receipt, so the evaluation keeps that residual explicit. The residual brightness OUTSIDE a circle is set by anchor trust (the ε_a mixture), not physics: a distrusted anchor's exclusion can be partly explained away as possibly fabricated, so only trusted anchors erase deeply.",
   posture:
     "The assumptions the current map is computed under -- the qualifiers Q that travel with any location credibility assessment. This evaluator always assumes a COMPLIANT attester (answers as fast as it can); the evasive presets deliberately violate that assumption so you can watch what it costs. Standing dependencies (hardware binding, signature soundness) are in “About this model”.",
   receipts:
@@ -5106,13 +5106,13 @@ function buildApp(root) {
     $("#receipt-count").textContent = ro.receiptsInInterval;
     $("#sim-clock").textContent = fmtClock(state.clockMs);
     const ev = engine.getEvaluatorParams();
-    const pis = ro.perAnchor.map((a) => a.pi);
-    const piSummary = pis.length
-      ? `π ${Math.min(...pis).toFixed(2)}–${Math.max(...pis).toFixed(2)}`
+    const epsList = ro.perAnchor.map((a) => a.eps);
+    const epsSummary = epsList.length
+      ? `ε_a ${Math.min(...epsList).toFixed(2)}–${Math.max(...epsList).toFixed(2)}`
       : "no anchors";
     $("#assumptions-text").textContent =
       `assumes compliant attester · allowance ${ev.allowance.toFixed(3)} ms` +
-      ` · trust as shown (${piSummary}) · receipts ${fmtHM(ev.interval.startMs)}–${fmtHM(
+      ` · trust as shown (${epsSummary}) · receipts ${fmtHM(ev.interval.startMs)}–${fmtHM(
         ev.interval.endMs
       )} UTC (${ro.receiptsInInterval} contribute) · uniform prior`;
   }
@@ -5136,7 +5136,7 @@ function buildApp(root) {
   });
 
 
-  const cardRefs = new Map(); // id -> {el, stats, piSlider, piVal, bits, presetBtns, warnNote, simRow, fabToggle}
+  const cardRefs = new Map(); // id -> {el, stats, epsSlider, epsVal, bits, presetBtns, warnNote, simRow, fabToggle}
 
   function rebuildAnchorCards() {
     const list = $("#anchor-list");
@@ -5160,17 +5160,17 @@ function buildApp(root) {
           <span>exclusion r <b class="s-radius">—</b></span>
           <span>receipts in T <b class="s-count">0</b></span>
         </div>
-        <div class="pi-row">
-          <span class="pi-lbl">π ${info("pi")}</span>
-          <input type="range" min="0.01" max="0.5" step="0.01" value="${a.pi}">
-          <span class="pi-val">${a.pi.toFixed(2)}</span>
+        <div class="eps-row">
+          <span class="eps-lbl">ε_a ${info("eps")}</span>
+          <input type="range" min="0.01" max="0.5" step="0.01" value="${a.eps}">
+          <span class="eps-val">${a.eps.toFixed(2)}</span>
         </div>
         <div class="id-presets">
-          <button data-pi="0.10" type="button">neutral 0.10</button>
-          <button data-pi="0.30" type="button">ally 0.30</button>
-          <button data-pi="0.03" type="button">adversary 0.03</button>
+          <button data-eps="0.10" type="button">neutral 0.10</button>
+          <button data-eps="0.30" type="button">ally 0.30</button>
+          <button data-eps="0.03" type="button">adversary 0.03</button>
         </div>
-        <div class="bits">this anchor's contribution caps at log2(1/π) = <b class="s-bits"></b> bits</div>
+        <div class="bits">this anchor's contribution caps at log2(1/ε_a) = <b class="s-bits"></b> bits</div>
         <div class="warn-note" hidden></div>
         <div class="sim-row" hidden>
           <span class="sim-tag">simulation</span>
@@ -5185,8 +5185,8 @@ function buildApp(root) {
         min: el.querySelector(".s-min"),
         radius: el.querySelector(".s-radius"),
         count: el.querySelector(".s-count"),
-        piSlider: el.querySelector('input[type="range"]'),
-        piVal: el.querySelector(".pi-val"),
+        epsSlider: el.querySelector('input[type="range"]'),
+        epsVal: el.querySelector(".eps-val"),
         bits: el.querySelector(".s-bits"),
         presetBtns: [...el.querySelectorAll(".id-presets button")],
         warnNote: el.querySelector(".warn-note"),
@@ -5204,15 +5204,15 @@ function buildApp(root) {
         refresh({ animate: true });
         refreshAddMenu();
       });
-      refs.piSlider.addEventListener("input", () => {
-        engine.setAnchorPi(a.id, Number(refs.piSlider.value));
+      refs.epsSlider.addEventListener("input", () => {
+        engine.setAnchorEps(a.id, Number(refs.epsSlider.value));
         refresh({ animate: false });
       });
       for (const b of refs.presetBtns) {
         b.addEventListener("click", () => {
-          const v = Number(b.dataset.pi);
-          engine.setAnchorPi(a.id, v);
-          refs.piSlider.value = v;
+          const v = Number(b.dataset.eps);
+          engine.setAnchorEps(a.id, v);
+          refs.epsSlider.value = v;
           refresh({ animate: true });
         });
       }
@@ -5239,10 +5239,10 @@ function buildApp(root) {
       r.radius.textContent = fmtKm(ra.exclusionRadiusKm);
       r.count.textContent = ra.receiptsInInterval;
       r.bits.textContent = ra.bitsCeiling.toFixed(1);
-      if (Math.abs(Number(r.piSlider.value) - ra.pi) > 1e-9) r.piSlider.value = ra.pi;
-      r.piVal.textContent = ra.pi.toFixed(2);
+      if (Math.abs(Number(r.epsSlider.value) - ra.eps) > 1e-9) r.epsSlider.value = ra.eps;
+      r.epsVal.textContent = ra.eps.toFixed(2);
       for (const b of r.presetBtns) {
-        b.classList.toggle("active", Math.abs(Number(b.dataset.pi) - ra.pi) < 1e-9);
+        b.classList.toggle("active", Math.abs(Number(b.dataset.eps) - ra.eps) < 1e-9);
       }
       const dishonest = engine.isAnchorDishonest(ra.id);
       r.el.classList.toggle("dishonest", dishonest);
@@ -5399,7 +5399,7 @@ function buildApp(root) {
       <div class="tip-stats">latest RTT  ${fmtMsVal(ra.latestRtt)}
 rtt_min     ${fmtMsVal(ra.rttMin)}
 exclusion r ${fmtKm(ra.exclusionRadiusKm)}
-π ${ra.pi.toFixed(2)}  ·  cap ${ra.bitsCeiling.toFixed(1)} bits</div>
+ε_a ${ra.eps.toFixed(2)}  ·  cap ${ra.bitsCeiling.toFixed(1)} bits</div>
       <div class="tip-hint">click to probe · drag to move</div>`;
     const pane = canvas.parentElement.getBoundingClientRect();
     tip.style.left = `${clientX - pane.left + 14}px`;
