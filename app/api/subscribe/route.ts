@@ -107,5 +107,19 @@ export async function POST(req: NextRequest) {
     console.error("[subscribe] welcome send error", welcome.error)
   }
 
+  // Heads-up to John on each new subscriber. Best-effort, same as the
+  // welcome note -- duplicates return earlier, so this only fires for
+  // genuinely new contacts.
+  const notify = await resend.emails.send({
+    from: welcomeFrom,
+    to: "john@johnx.co",
+    subject: `New subscriber: ${email}`,
+    text: `${email} just subscribed at johnx.co.`,
+  })
+
+  if (notify.error) {
+    console.error("[subscribe] notify send error", notify.error)
+  }
+
   return NextResponse.json({ ok: true })
 }
