@@ -560,7 +560,11 @@
                 let drag = null;
                 overlay.addEventListener("pointerdown", (ev) => {
                     drag = { x: ev.clientX, y: ev.clientY };
-                    overlay.setPointerCapture(ev.pointerId);
+                    try {
+                        overlay.setPointerCapture(ev.pointerId);
+                    } catch (_) {
+                        /* synthetic events may carry no active pointer */
+                    }
                 });
                 overlay.addEventListener("pointermove", (ev) => {
                     if (!drag || !cur) return;
