@@ -30,8 +30,10 @@ const nextConfig = {
         destination: '/presentations/os-poc/index.html',
       },
       {
-        source: '/presentations/verifying-compute-location',
-        destination: '/presentations/verifying-compute-location/index.html',
+        // Standalone full-viewport interactive visualization, served as a
+        // static asset with a clean URL.
+        source: '/demos/location-evidence-evals',
+        destination: '/demos/location-evidence-evals/index.html',
       },
     ]
   },
@@ -45,6 +47,27 @@ const nextConfig = {
           {
             key: 'Content-Disposition',
             value: 'inline; filename="John Hoopes -- AI Governance.pdf"',
+          },
+        ],
+      },
+      {
+        // Demos are unlisted: reachable by URL, kept out of search indexes,
+        // matching the robots policy on the app-router demo pages.
+        source: '/demos/location-evidence-evals',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+      {
+        // Same policy for the underlying static file path.
+        source: '/demos/location-evidence-evals/index.html',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
           },
         ],
       },
