@@ -105,7 +105,7 @@ export function ArtifactCard({ artifact, className }: ArtifactCardProps) {
         )}
       </div>
 
-      <p className="text-sm text-muted-foreground leading-relaxed mb-3">{artifact.summary}</p>
+      <p className="text-sm text-muted-foreground leading-relaxed mb-3 whitespace-pre-line">{artifact.summary}</p>
 
       <div
         className="mt-auto flex items-center gap-2.5 text-xs text-muted-foreground/70"
