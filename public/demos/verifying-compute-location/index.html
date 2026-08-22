@@ -316,12 +316,55 @@ details.fold.tutorial {
   color: var(--ink-soft);
 }
 
-/* the reveal switch sits inline at the end of the "True location" row */
-.att-reveal {
+/* the reveal eye sits inline right after the "True location" value */
+#att-true {
+  flex: none;
+  min-width: 0;
+}
+
+.eye-btn {
   flex: none;
   align-self: center;
-  margin-left: auto;
-  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-left: -3px; /* visually hugs the value despite the row gap */
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: color 140ms var(--ease-out), background 140ms var(--ease-out);
+}
+
+.eye-btn:hover {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.eye-btn svg {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
+
+.eye-btn .eye-open {
+  display: none;
+}
+
+.eye-btn[aria-pressed="true"] {
+  color: var(--accent);
+}
+
+.eye-btn[aria-pressed="true"] .eye-closed {
+  display: none;
+}
+
+.eye-btn[aria-pressed="true"] .eye-open {
+  display: block;
 }
 
 /* evidence log: the accumulating set of signed receipts */
@@ -5005,7 +5048,10 @@ function buildApp(root) {
           <div class="att-row"><span class="att-lbl">Declared</span><span class="att-val" id="att-declared"></span></div>
           <div class="att-row"><span class="att-lbl">Behavior</span><span class="att-val" id="att-behavior"></span></div>
           <div class="att-row"><span class="att-lbl">True location</span><span class="att-val" id="att-true"></span>
-            <label class="switch att-reveal" title="Reveal the attester's true location on the map"><input type="checkbox" id="reveal-truth"><span>Reveal</span></label></div>
+            <button class="eye-btn" id="reveal-truth" type="button" aria-pressed="false" title="Reveal true location">
+              <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button></div>
         </div>
       </section>
 
@@ -5900,8 +5946,15 @@ risk ${ra.pi.toFixed(2)} · cap ${ra.bitsCeiling.toFixed(1)} bits</div>
   }
 
 
-  $("#reveal-truth").addEventListener("change", (e) => {
-    state.revealTruth = e.target.checked;
+  function syncRevealBtn() {
+    const b = $("#reveal-truth");
+    b.setAttribute("aria-pressed", String(state.revealTruth));
+    b.title = state.revealTruth ? "Hide true location" : "Reveal true location";
+  }
+
+  $("#reveal-truth").addEventListener("click", () => {
+    state.revealTruth = !state.revealTruth;
+    syncRevealBtn();
     if (state.preset) updateAttesterCard(state.preset);
     drawScene();
   });
@@ -6022,7 +6075,7 @@ risk ${ra.pi.toFixed(2)} · cap ${ra.bitsCeiling.toFixed(1)} bits</div>
     setPlacing(false);
 
     state.revealTruth = id === "evasive";
-    $("#reveal-truth").checked = state.revealTruth;
+    syncRevealBtn();
 
     renderer.setWindow(engine.getWindowCenter());
     renderer.frameWindow(framePoints(), frameObstruction(), frameObstructionLeft());
