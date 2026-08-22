@@ -30,6 +30,13 @@ const nextConfig = {
         destination: '/demos/verifying-compute-location/:path*',
         permanent: true,
       },
+      {
+        // Short, speakable alias for the demo — easy to type or say aloud.
+        // Temporary so the quicklink can be repointed later.
+        source: '/vcl',
+        destination: '/demos/verifying-compute-location',
+        permanent: false,
+      },
     ]
   },
   async rewrites() {
