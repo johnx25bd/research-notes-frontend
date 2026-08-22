@@ -223,6 +223,7 @@
                             <li>"Location verification" usually blends three different jobs</li>
                             <li>Collect evidence → evaluate evidence → evaluate policy</li>
                             <li>Middle stage neutral + auditable: it neither measures nor decides</li>
+                            <li>Crib: ∝ "is proportional to" · | "given" · π "pie" · ℓ "ell" · τ "tau" (rhymes with now) · ε "epsilon" · Σ "sum over" · 𝟙 "indicator"</li>
                         </ul>
                     </aside>
                 </section>
@@ -244,8 +245,8 @@
                             <li>Physics: round trip can't beat the speed of light — hard outer bound</li>
                             <li>Corroborative: authenticated GNSS, camera feeds, satellite imagery, UWB, NFC</li>
                             <li>Anna + Ryan went deep here — the SovCert measurement program</li>
-                            <li>[frag 1] E — the evidence: signed location stamps</li>
-                            <li>[frag 2] C — the claim under test: declared location + interval</li>
+                            <li>[frag 1] E — say: "E is the evidence — a sequence of signed stamps: s-one, s-two, up to s-m"</li>
+                            <li>[frag 2] C — say: "C is the claim under test — a pair: a declared location, ell, and a time interval, T"</li>
                             <li>[frag 3] concrete output: append-only signed evidence logs</li>
                         </ul>
                     </aside>
@@ -266,13 +267,16 @@
                             <li>A receipt doesn't point at a location — it erases everything outside a circle</li>
                             <li>Assessment = intersection of many circles</li>
                             <li>Per-anchor bundling = redundancy discounting — same path never counted twice</li>
-                            <li>Q travels with the map: prior, interval, anchor honesty ε, attester posture, forgery cost</li>
+                            <li>Q travels with the map: prior, interval, anchor honesty ε ("epsilon"), attester posture, forgery cost</li>
                             <li>Bar: pairwise verification — sufficient to convince a skeptical verifier</li>
-                            <li>[frag 1] the evidence function: claim + evidence → assessment</li>
-                            <li>[frag 2] classic Bayes: posterior ∝ likelihood × prior</li>
-                            <li>P(E|x): how plausible this evidence would be, had the machine been at x</li>
+                            <li>[frag 1] say: "The evaluation function takes the claim and the evidence, and returns an assessment — a posterior, pi, with its qualifiers, Q"</li>
+                            <li>pi = the posterior — the belief map you'll see in the demo</li>
+                            <li>[frag 2] Bayes ("bays") — say: "Pi of x — the probability the machine was at x, given the evidence — is proportional to the likelihood of the evidence given x, times the prior"</li>
+                            <li>shorthand (safe with any mathematician): "posterior is proportional to likelihood times prior"</li>
+                            <li>x = a candidate location — one grid cell of the demo's map</li>
+                            <li>P(E|x) — say: "P of E given x — how plausible this evidence would be, had the machine been at x"</li>
                             <li>(pocket: P(E|x) factorizes across anchors — per-anchor bundling, redundancy discounting)</li>
-                            <li>[frag 3] concrete output: the location credibility assessment (π, Q)</li>
+                            <li>[frag 3] output — say: "the location credibility assessment — the pair pi and Q: the belief map, plus the assumptions it rests on"</li>
                             <li>→ FLIP TO THE VIZ TAB HERE — watch belief update receipt by receipt, ~60s</li>
                         </ul>
                     </aside>
@@ -295,9 +299,11 @@
                             <li>Change detection: has it moved? (time series) · Co-location: same data center?</li>
                             <li>Absence of evidence → flag; cryptographic authorization certificates lapse</li>
                             <li>[frag 1] containment: π is mass per grid cell over interval T, sums to 1</li>
+                            <li>say: "The probability of conformance is the sum of pi of x over every cell x inside the authorized zone Z"</li>
                             <li>zone = union of disjoint cells → P(inside) is exactly the sum of their masses</li>
                             <li>continuous intuition: area under the posterior within the geofence — same object</li>
-                            <li>[frag 2] verdict = indicator; τ is a policy judgment (false accusation vs missed evasion) — deliberately outside evidence evaluation</li>
+                            <li>[frag 2] say: "The verdict is an indicator: one if the probability of conformance clears the threshold tau, zero otherwise"</li>
+                            <li>τ ("tau") is a policy judgment (false accusation vs missed evasion) — deliberately outside evidence evaluation</li>
                             <li>[frag 3] concrete output: boolean or probability — no more</li>
                             <li>(pocket: boundary cells = implementation choice; result conditional on Q)</li>
                             <li>ZK "extremely feasible" (Pascal) · MPC likely feasible (Pascal, Jack Cheng) — open problems</li>
