@@ -171,18 +171,32 @@ body {
   margin: 8px 0 0;
 }
 
-/* scenario chips + reset, one row */
+/* scenario header, chips, and Run share one row */
 
-.chips-row {
+.sec-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
   margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
 }
 
-.chips-row .preset-chips {
+.sec-row .sec-head {
+  flex: none;
   margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.sec-row .preset-chips {
+  flex: 1;
+  margin-top: 0;
+}
+
+.sec-row .btn {
+  flex: none;
+  margin-left: auto;
 }
 
 .blurb b {
@@ -302,11 +316,55 @@ details.fold.tutorial {
   color: var(--ink-soft);
 }
 
-.att-reveal {
-  margin-top: 7px;
-  padding-top: 8px;
-  border-top: 1px solid var(--line);
-  display: flex;
+/* the reveal eye sits inline right after the "True location" value */
+#att-true {
+  flex: none;
+  min-width: 0;
+}
+
+.eye-btn {
+  flex: none;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-left: -3px; /* visually hugs the value despite the row gap */
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: color 140ms var(--ease-out), background 140ms var(--ease-out);
+}
+
+.eye-btn:hover {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.eye-btn svg {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
+
+.eye-btn .eye-open {
+  display: none;
+}
+
+.eye-btn[aria-pressed="true"] {
+  color: var(--accent);
+}
+
+.eye-btn[aria-pressed="true"] .eye-closed {
+  display: none;
+}
+
+.eye-btn[aria-pressed="true"] .eye-open {
+  display: block;
 }
 
 /* evidence log: the accumulating set of signed receipts */
@@ -987,6 +1045,19 @@ button {
 .anchor-card.hovered {
   border-color: var(--accent);
   box-shadow: 0 0 0 1px var(--accent-soft);
+}
+
+/* auto-run stepper: the card being probed gets a strong ring, and its Probe
+   button is depressed programmatically so the click is visible */
+
+.anchor-card.run-focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.anchor-card .probe-one.auto-press {
+  transform: scale(0.9);
+  filter: brightness(0.82);
 }
 
 .anchor-card header {
@@ -3430,6 +3501,7 @@ const PRESETS = [
   {
     id: "baseline",
     name: "Baseline",
+    chip: "Baseline",
     caption:
       "Declared = true at Cambridge. Each receipt erases the outside of a circle; belief concentrates by exclusion. Try dragging an anchor, or lowering one's trust.",
     declared: CAMBRIDGE,
@@ -3449,6 +3521,7 @@ const PRESETS = [
   {
     id: "evasive",
     name: "Evasive attester",
+    chip: "Evasive",
     caption:
       "Declared Tallinn -- but the machine is actually in St Petersburg, padding its answers to look like Tallinn. Padding only ever adds time, so probability mass settles on the truth, not the claim.",
     declared: TALLINN,
@@ -4952,7 +5025,7 @@ function buildApp(root) {
           It is part of <a href="https://johnx.co/research" target="_blank" rel="noopener">ongoing research</a>
           to advance location verification technology so we can make
           better-informed policy decisions to govern AI advancement.</p>
-        <details class="fold tutorial" id="tutorial-fold" open>
+        <details class="fold tutorial" id="tutorial-fold">
           <summary>Instructions</summary>
           <div class="fold-body">
             <ol>
@@ -4964,18 +5037,21 @@ function buildApp(root) {
             </ol>
           </div>
         </details>
-        <div class="sec-head">Scenario</div>
-        <div class="chips-row">
+        <div class="sec-row">
+          <div class="sec-head">Scenario</div>
           <div class="preset-chips" id="preset-chips"></div>
-          <button class="btn small" id="reset-btn" title="Return to this scenario's initial state" type="button">Reset</button>
+          <button class="btn small primary" id="run-btn" title="Reset this scenario, then probe each anchor in turn" type="button">▶ Run</button>
         </div>
         <div class="att-sub">Attester</div>
         <div class="att-block">
           <header class="att-head"><span class="att-glyph"></span><span class="att-name" id="att-name"></span></header>
           <div class="att-row"><span class="att-lbl">Declared</span><span class="att-val" id="att-declared"></span></div>
           <div class="att-row"><span class="att-lbl">Behavior</span><span class="att-val" id="att-behavior"></span></div>
-          <div class="att-row"><span class="att-lbl">True location</span><span class="att-val" id="att-true"></span></div>
-          <label class="switch att-reveal"><input type="checkbox" id="reveal-truth"><span>Reveal true location</span></label>
+          <div class="att-row"><span class="att-lbl">True location</span><span class="att-val" id="att-true"></span>
+            <button class="eye-btn" id="reveal-truth" type="button" aria-pressed="false" title="Reveal true location">
+              <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button></div>
         </div>
       </section>
 
@@ -5870,13 +5946,77 @@ risk ${ra.pi.toFixed(2)} · cap ${ra.bitsCeiling.toFixed(1)} bits</div>
   }
 
 
-  $("#reveal-truth").addEventListener("change", (e) => {
-    state.revealTruth = e.target.checked;
+  function syncRevealBtn() {
+    const b = $("#reveal-truth");
+    b.setAttribute("aria-pressed", String(state.revealTruth));
+    b.title = state.revealTruth ? "Hide true location" : "Reveal true location";
+  }
+
+  $("#reveal-truth").addEventListener("click", () => {
+    state.revealTruth = !state.revealTruth;
+    syncRevealBtn();
     if (state.preset) updateAttesterCard(state.preset);
     drawScene();
   });
 
-  $("#reset-btn").addEventListener("click", () => loadPreset(state.presetId));
+  // auto-run: reset the scenario, then step through each anchor's Probe so a
+  // first-time visitor sees the receipt → posterior loop without hunting for it
+  let runSeq = 0; // bumped to cancel an in-flight run
+  let runActive = false;
+  const runSleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  function cancelAutoRun() {
+    runSeq++;
+    runActive = false;
+    const b = $("#run-btn");
+    b.textContent = "▶ Run";
+    b.title = "Reset this scenario, then probe each anchor in turn";
+    for (const el of root.querySelectorAll(".run-focus")) el.classList.remove("run-focus");
+    for (const el of root.querySelectorAll(".auto-press")) el.classList.remove("auto-press");
+  }
+
+  async function autoRun() {
+    loadPreset(state.presetId); // begin from the scenario's initial state
+    const seq = ++runSeq;
+    runActive = true;
+    const runBtn = $("#run-btn");
+    runBtn.textContent = "◼ Stop";
+    runBtn.title = "Stop the automatic run";
+    // the anchor cards must be visible for the step-through to read
+    if ($("#params-card").classList.contains("collapsed")) $("#params-collapse").click();
+    await runSleep(500);
+    for (const a of engine.getAnchors()) {
+      if (seq !== runSeq) return;
+      const refs = cardRefs.get(a.id);
+      if (!refs) continue;
+      refs.el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      refs.el.classList.add("run-focus");
+      setHover(a.id);
+      await runSleep(700);
+      if (seq !== runSeq) return;
+      const probeBtn = refs.el.querySelector(".probe-one");
+      probeBtn.classList.add("auto-press");
+      await runSleep(170);
+      if (seq !== runSeq) return;
+      probeBtn.classList.remove("auto-press");
+      doProbe(a.id);
+      await runSleep(1200);
+      if (seq !== runSeq) return;
+      refs.el.classList.remove("run-focus");
+    }
+    if (seq !== runSeq) return;
+    setHover(null);
+    cancelAutoRun();
+  }
+
+  $("#run-btn").addEventListener("click", () => {
+    if (runActive) {
+      cancelAutoRun();
+      setHover(null);
+      return;
+    }
+    autoRun();
+  });
 
 
   {
@@ -5915,7 +6055,7 @@ risk ${ra.pi.toFixed(2)} · cap ${ra.bitsCeiling.toFixed(1)} bits</div>
   {
     const chips = $("#preset-chips");
     chips.innerHTML = PRESETS.map(
-      (p, i) => `<button class="chip" data-preset="${p.id}" type="button">${i + 1} · ${esc(p.name)}</button>`
+      (p) => `<button class="chip" data-preset="${p.id}" title="${esc(p.name)}" type="button">${esc(p.chip ?? p.name)}</button>`
     ).join("");
     chips.addEventListener("click", (e) => {
       const b = e.target.closest("button");
@@ -5924,6 +6064,7 @@ risk ${ra.pi.toFixed(2)} · cap ${ra.bitsCeiling.toFixed(1)} bits</div>
   }
 
   function loadPreset(id) {
+    cancelAutoRun(); // switching (or re-picking) a scenario stops any auto-run
     const preset = engine.loadPreset(id);
     state.presetId = id;
     state.preset = preset;
@@ -5934,7 +6075,7 @@ risk ${ra.pi.toFixed(2)} · cap ${ra.bitsCeiling.toFixed(1)} bits</div>
     setPlacing(false);
 
     state.revealTruth = id === "evasive";
-    $("#reveal-truth").checked = state.revealTruth;
+    syncRevealBtn();
 
     renderer.setWindow(engine.getWindowCenter());
     renderer.frameWindow(framePoints(), frameObstruction(), frameObstructionLeft());
