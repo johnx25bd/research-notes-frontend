@@ -159,6 +159,39 @@
             .reveal .fragment.strike.visible {
                 text-decoration-thickness: 2px;
             }
+
+            /* ---------- theory-of-change diagram ----------
+               One SVG flow chart: inputs converge on a spine; unchecked, the
+               path runs to dangerous models → risk (red). Fragments unfold the
+               intervention chain left to right (neutral), landing on reduced
+               risk (green); the red path dims once the chain completes. */
+            .toc-diagram {
+                width: 100%;
+                margin-top: 1.1em;
+            }
+            .toc-in {
+                font-family: var(--font-display);
+                font-size: 15px;
+                font-weight: 600;
+                fill: var(--ink-400);
+                letter-spacing: -0.01em;
+            }
+            .toc-step {
+                font-family: var(--font-sans);
+                font-size: 11.5px;
+                fill: var(--ink-300);
+            }
+            .toc-sub {
+                font-family: var(--font-sans);
+                font-size: 9px;
+                fill: var(--ink-200);
+            }
+            .toc-risk {
+                transition: opacity 600ms ease;
+            }
+            .toc-f4.visible ~ .toc-risk {
+                opacity: 0.3;
+            }
         </style>
     </head>
     <body>
@@ -187,6 +220,101 @@
                             <li>Why location: detect cheating → reduce misaligned behavior</li>
                             <li>Lower likelihood of covert training runs</li>
                             <li>Endgame: credible location-contingent commitments between parties that don't trust each other</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- ============================================================
+           THEORY OF CHANGE
+           ============================================================ -->
+                <section class="top no-meridian">
+                    <h2>Theory of change</h2>
+                    <svg
+                        class="toc-diagram"
+                        viewBox="0 0 960 400"
+                        xmlns="http://www.w3.org/2000/svg"
+                        role="img"
+                        aria-label="Theory of change: talent, frontier chips, and energy feed dangerous models and risk to society; verifying chip locations detects cheating, reduces covert training and proliferation, and reduces risk"
+                    >
+                        <!-- ······ inputs ······ -->
+                        <g>
+                            <rect x="20" y="40" width="140" height="52" rx="6" fill="#ffffff" stroke="#dcdcd8" stroke-width="1" />
+                            <text class="toc-in" x="90" y="71" text-anchor="middle">Talent</text>
+                            <rect x="20" y="130" width="140" height="52" rx="6" fill="#f5efe3" stroke="#b58a4d" stroke-opacity="0.7" stroke-width="1.4" />
+                            <text class="toc-in" x="90" y="161" text-anchor="middle">Frontier chips</text>
+                            <rect x="20" y="220" width="140" height="52" rx="6" fill="#ffffff" stroke="#dcdcd8" stroke-width="1" />
+                            <text class="toc-in" x="90" y="251" text-anchor="middle">Energy</text>
+                            <!-- convergence spine -->
+                            <g stroke="#8a8680" stroke-width="1.4" fill="none">
+                                <line x1="160" y1="66" x2="182" y2="66" />
+                                <line x1="160" y1="156" x2="182" y2="156" />
+                                <line x1="160" y1="246" x2="182" y2="246" />
+                                <line x1="182" y1="66" x2="182" y2="246" />
+                            </g>
+                        </g>
+
+                        <!-- ······ intervention chain (fragments, l→r) ······ -->
+                        <g class="fragment fade-in" data-fragment-index="1">
+                            <line x1="182" y1="156" x2="197" y2="156" stroke="#8a8680" stroke-width="1.4" />
+                            <polygon points="197,151 197,161 205,156" fill="#8a8680" />
+                            <rect x="205" y="130" width="130" height="52" rx="6" fill="#ffffff" stroke="#dcdcd8" stroke-width="1" />
+                            <text class="toc-step" x="270" y="151" text-anchor="middle">Verify chip</text>
+                            <text class="toc-step" x="270" y="166" text-anchor="middle">locations</text>
+                        </g>
+                        <g class="fragment fade-in" data-fragment-index="2">
+                            <line x1="335" y1="156" x2="350" y2="156" stroke="#8a8680" stroke-width="1.4" />
+                            <polygon points="350,151 350,161 358,156" fill="#8a8680" />
+                            <rect x="358" y="130" width="130" height="52" rx="6" fill="#ffffff" stroke="#dcdcd8" stroke-width="1" />
+                            <text class="toc-step" x="423" y="153" text-anchor="middle">Detect cheating</text>
+                            <text class="toc-sub" x="423" y="168" text-anchor="middle">diversion from intended use</text>
+                        </g>
+                        <g class="fragment fade-in" data-fragment-index="3">
+                            <line x1="488" y1="156" x2="503" y2="156" stroke="#8a8680" stroke-width="1.4" />
+                            <polygon points="503,151 503,161 511,156" fill="#8a8680" />
+                            <rect x="511" y="130" width="130" height="52" rx="6" fill="#ffffff" stroke="#dcdcd8" stroke-width="1" />
+                            <text class="toc-step" x="576" y="151" text-anchor="middle">Reduce chance of</text>
+                            <text class="toc-step" x="576" y="166" text-anchor="middle">covert training</text>
+                        </g>
+                        <g class="toc-f4 fragment fade-in" data-fragment-index="4">
+                            <line x1="641" y1="156" x2="656" y2="156" stroke="#8a8680" stroke-width="1.4" />
+                            <polygon points="656,151 656,161 664,156" fill="#8a8680" />
+                            <rect x="664" y="130" width="130" height="52" rx="6" fill="#ffffff" stroke="#dcdcd8" stroke-width="1" />
+                            <text class="toc-step" x="729" y="151" text-anchor="middle">Reduce proliferation</text>
+                            <text class="toc-step" x="729" y="166" text-anchor="middle">of dangerous models</text>
+                            <line x1="794" y1="156" x2="809" y2="156" stroke="#8a8680" stroke-width="1.4" />
+                            <polygon points="809,151 809,161 817,156" fill="#8a8680" />
+                            <rect x="817" y="130" width="130" height="52" rx="6" fill="#e3ece4" stroke="#6e8a72" stroke-width="1.4" />
+                            <text class="toc-in" x="882" y="151" text-anchor="middle">Reduced risk</text>
+                            <text class="toc-in" x="882" y="171" text-anchor="middle">to society</text>
+                        </g>
+
+                        <!-- ······ unchecked path (dims when the chain completes) ······ -->
+                        <g class="toc-risk">
+                            <g stroke="#8a8680" stroke-width="1.4" fill="none">
+                                <line x1="182" y1="246" x2="182" y2="326" />
+                                <line x1="182" y1="326" x2="656" y2="326" />
+                            </g>
+                            <polygon points="656,321 656,331 664,326" fill="#8a8680" />
+                            <rect x="664" y="300" width="130" height="52" rx="6" fill="#f0dcd8" stroke="#b54d4d" stroke-width="1.4" />
+                            <text class="toc-in" x="729" y="321" text-anchor="middle">Dangerous</text>
+                            <text class="toc-in" x="729" y="341" text-anchor="middle">models</text>
+                            <line x1="794" y1="326" x2="809" y2="326" stroke="#8a8680" stroke-width="1.4" />
+                            <polygon points="809,321 809,331 817,326" fill="#8a8680" />
+                            <rect x="817" y="300" width="130" height="52" rx="6" fill="#f0dcd8" stroke="#b54d4d" stroke-width="1.4" />
+                            <text class="toc-in" x="882" y="321" text-anchor="middle">Risk to</text>
+                            <text class="toc-in" x="882" y="341" text-anchor="middle">society</text>
+                        </g>
+                    </svg>
+                    <aside class="notes">
+                        <ul>
+                            <li>Training models with dangerous capabilities takes three inputs: talent, energy, advanced chips</li>
+                            <li>Frontier chips are the best leverage point to govern</li>
+                            <li>Unchecked: chips diverted → dangerous models → risk to society</li>
+                            <li>[frag 1] verify chip locations</li>
+                            <li>[frag 2] detect cheating — diversion from intended end use</li>
+                            <li>[frag 3] reduce the chance of covert training runs</li>
+                            <li>[frag 4] reduce proliferation of dangerous models → reduced risk</li>
+                            <li>Location verification is a tractable way to reduce risk</li>
                         </ul>
                     </aside>
                 </section>
