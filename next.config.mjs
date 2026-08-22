@@ -17,6 +17,19 @@ const nextConfig = {
         destination: '/cv/ai-governance.pdf',
         permanent: false,
       },
+      {
+        // The demo launched under this slug and the URL has been shared, so
+        // it forwards to the canonical name below.
+        source: '/demos/location-evidence-evals',
+        destination: '/demos/verifying-compute-location',
+        permanent: true,
+      },
+      {
+        // Same forwarding for the story view and the raw .html file paths.
+        source: '/demos/location-evidence-evals/:path*',
+        destination: '/demos/verifying-compute-location/:path*',
+        permanent: true,
+      },
     ]
   },
   async rewrites() {
@@ -32,14 +45,14 @@ const nextConfig = {
       {
         // Standalone full-viewport interactive visualization, served as a
         // static asset with a clean URL.
-        source: '/demos/location-evidence-evals',
-        destination: '/demos/location-evidence-evals/index.html',
+        source: '/demos/verifying-compute-location',
+        destination: '/demos/verifying-compute-location/index.html',
       },
       {
         // The demo's mobile scroll story (small screens are redirected to
         // it by the page itself), same clean-URL treatment.
-        source: '/demos/location-evidence-evals/story',
-        destination: '/demos/location-evidence-evals/story.html',
+        source: '/demos/verifying-compute-location/story',
+        destination: '/demos/verifying-compute-location/story.html',
       },
     ]
   },
@@ -59,7 +72,7 @@ const nextConfig = {
       {
         // Demos are unlisted: reachable by URL, kept out of search indexes,
         // matching the robots policy on the app-router demo pages.
-        source: '/demos/location-evidence-evals',
+        source: '/demos/verifying-compute-location',
         headers: [
           {
             key: 'X-Robots-Tag',
@@ -70,7 +83,7 @@ const nextConfig = {
       {
         // Same policy for the underlying static file paths and the story's
         // clean URL.
-        source: '/demos/location-evidence-evals/:file(index\\.html|story|story\\.html)',
+        source: '/demos/verifying-compute-location/:file(index\\.html|story|story\\.html)',
         headers: [
           {
             key: 'X-Robots-Tag',

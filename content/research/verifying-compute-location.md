@@ -18,7 +18,7 @@ purpose: The framework treats location verification as evidence evaluation; the 
 approach: An interactive map-based sandbox for the evidence evaluation stage, with guided presets covering baseline convergence, anchor geometry, anchor trust, the delay allowance, and an evasive attester.
 status_note: Built August 2026 at the CAISH Hardware Assurance Programme.
 links:
-  - { label: "Open the demo", url: "https://johnx.co/demos/location-evidence-evals" }
+  - { label: "Open the demo", url: "https://johnx.co/demos/verifying-compute-location" }
   - { label: "Talk: Verifying compute location", url: "/presentations/verifying-compute-location" }
 published: true
 published_at: 2026-08-21
