@@ -201,11 +201,6 @@
                 fill: #f2b25c;
                 letter-spacing: 0.02em;
             }
-            .toc-pill {
-                font-size: 10.5px;
-                fill: #9a968f;
-                letter-spacing: 0.08em;
-            }
             /* the chain step that just appeared glows amber… */
             .toc-chain.visible .toc-cell {
                 stroke: #f2b25c;
@@ -269,7 +264,6 @@
            THEORY OF CHANGE
            ============================================================ -->
                 <section class="top no-meridian">
-                    <p class="eyebrow">motivation</p>
                     <h2>Theory of change</h2>
                     <svg
                         class="toc-diagram"
@@ -293,24 +287,30 @@
                                 <line x1="170" y1="239" x2="195" y2="239" />
                                 <line x1="195" y1="59" x2="195" y2="239" />
                             </g>
-                            <line x1="195" y1="149" x2="214" y2="149" stroke="#9a968f" stroke-width="1.4" stroke-linecap="round" />
-                            <path d="M215 144.5 L222 149 L215 153.5" stroke="#9a968f" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-                            <!-- decision diamond -->
-                            <polygon points="225,149 310,97 395,149 310,201" fill="#b58a4d" fill-opacity="0.13" stroke="#b58a4d" stroke-width="1.5" stroke-linejoin="round" />
-                            <text class="toc-decide" x="310" y="145" text-anchor="middle">Verify chip</text>
-                            <text class="toc-decide" x="310" y="162" text-anchor="middle">location?</text>
                         </g>
 
-                        <!-- ······ no branch (fragment 1, dims at the end) ······ -->
+                        <!-- ······ the decision (fragment 1) ······ -->
                         <g class="fragment fade-in" data-fragment-index="1">
+                            <line x1="195" y1="149" x2="220" y2="149" stroke="#9a968f" stroke-width="1.4" stroke-linecap="round" />
+                            <path d="M221 144.5 L228 149 L221 153.5" stroke="#9a968f" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+                            <polygon points="230,149 300,107 370,149 300,191" fill="#b58a4d" fill-opacity="0.13" stroke="#b58a4d" stroke-width="1.5" stroke-linejoin="round" />
+                            <text class="toc-decide" x="300" y="145" text-anchor="middle">Verify</text>
+                            <text class="toc-decide" x="300" y="162" text-anchor="middle">location?</text>
+                        </g>
+
+                        <!-- ······ no branch (fragment 2, dims at the end) ······ -->
+                        <g class="fragment fade-in" data-fragment-index="2">
                             <g class="toc-riskbody">
                                 <g stroke="#9a968f" stroke-width="1.4" fill="none" stroke-linecap="round">
-                                    <line x1="310" y1="201" x2="310" y2="360" />
-                                    <line x1="310" y1="360" x2="742" y2="360" />
+                                    <line x1="300" y1="191" x2="300" y2="360" />
+                                    <line x1="300" y1="360" x2="742" y2="360" />
                                 </g>
                                 <path d="M743 355.5 L750 360 L743 364.5" stroke="#9a968f" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-                                <rect x="292" y="251" width="36" height="22" rx="11" fill="#1e1e1e" stroke="#8a8680" stroke-width="1" />
-                                <text class="toc-pill" x="310" y="266" text-anchor="middle">no</text>
+                                <circle cx="300" cy="243" r="11" fill="#1e1e1e" stroke="#b5544d" stroke-width="1.4" />
+                                <g stroke="#d9938b" stroke-width="1.6" stroke-linecap="round">
+                                    <line x1="295.5" y1="238.5" x2="304.5" y2="247.5" />
+                                    <line x1="304.5" y1="238.5" x2="295.5" y2="247.5" />
+                                </g>
                                 <rect x="752" y="331" width="136" height="58" rx="10" fill="#b5544d" fill-opacity="0.13" stroke="#b5544d" stroke-width="1.4" />
                                 <text class="toc-node" x="820" y="356" text-anchor="middle" fill="#d9938b">DANGEROUS</text>
                                 <text class="toc-node" x="820" y="373" text-anchor="middle" fill="#d9938b">MODELS</text>
@@ -322,30 +322,28 @@
                             </g>
                         </g>
 
-                        <!-- ······ yes branch (fragments 2–5, l→r) ······ -->
-                        <g class="toc-chain fragment fade-in" data-fragment-index="2">
-                            <line x1="395" y1="149" x2="430" y2="149" stroke="#9a968f" stroke-width="1.4" stroke-linecap="round" />
+                        <!-- ······ yes branch (fragments 3–6, l→r) ······ -->
+                        <g class="toc-chain fragment fade-in" data-fragment-index="3">
+                            <line x1="370" y1="149" x2="429" y2="149" stroke="#9a968f" stroke-width="1.4" stroke-linecap="round" />
                             <path d="M431 144.5 L438 149 L431 153.5" stroke="#9a968f" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-                            <rect x="397" y="138" width="36" height="22" rx="11" fill="#1e1e1e" stroke="#8a8680" stroke-width="1" />
-                            <text class="toc-pill" x="415" y="153" text-anchor="middle">yes</text>
+                            <circle cx="400" cy="149" r="11" fill="#1e1e1e" stroke="#7fa084" stroke-width="1.4" />
+                            <path d="M395 149.5 L399 153.5 L405.5 144.5" stroke="#a9c6ae" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round" />
                             <rect class="toc-cell" x="440" y="120" width="136" height="58" rx="10" fill="#8a8680" fill-opacity="0.1" stroke="#8a8680" stroke-width="1.3" />
                             <text class="toc-step" x="508" y="153" text-anchor="middle">Detect cheating</text>
                         </g>
-                        <g class="toc-chain fragment fade-in" data-fragment-index="3">
+                        <g class="toc-chain fragment fade-in" data-fragment-index="4">
                             <line x1="576" y1="149" x2="588" y2="149" stroke="#9a968f" stroke-width="1.4" stroke-linecap="round" />
                             <path d="M587 144.5 L594 149 L587 153.5" stroke="#9a968f" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
                             <rect class="toc-cell" x="596" y="120" width="136" height="58" rx="10" fill="#8a8680" fill-opacity="0.1" stroke="#8a8680" stroke-width="1.3" />
-                            <text class="toc-step" x="664" y="145" text-anchor="middle">Reduce chance of</text>
-                            <text class="toc-step" x="664" y="161" text-anchor="middle">covert training</text>
+                            <text class="toc-step" x="664" y="153" text-anchor="middle">Reduce covert training</text>
                         </g>
-                        <g class="toc-chain fragment fade-in" data-fragment-index="4">
+                        <g class="toc-chain fragment fade-in" data-fragment-index="5">
                             <line x1="732" y1="149" x2="744" y2="149" stroke="#9a968f" stroke-width="1.4" stroke-linecap="round" />
                             <path d="M743 144.5 L750 149 L743 153.5" stroke="#9a968f" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
                             <rect class="toc-cell" x="752" y="120" width="136" height="58" rx="10" fill="#8a8680" fill-opacity="0.1" stroke="#8a8680" stroke-width="1.3" />
-                            <text class="toc-step" x="820" y="145" text-anchor="middle">Reduce proliferation</text>
-                            <text class="toc-step" x="820" y="161" text-anchor="middle">of dangerous models</text>
+                            <text class="toc-step" x="820" y="153" text-anchor="middle">Reduce proliferation</text>
                         </g>
-                        <g class="toc-glast fragment fade-in" data-fragment-index="5">
+                        <g class="toc-glast fragment fade-in" data-fragment-index="6">
                             <line x1="888" y1="149" x2="900" y2="149" stroke="#9a968f" stroke-width="1.4" stroke-linecap="round" />
                             <path d="M899 144.5 L906 149 L899 153.5" stroke="#9a968f" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
                             <rect x="908" y="120" width="136" height="58" rx="10" fill="#6e8a72" fill-opacity="0.18" stroke="#7fa084" stroke-width="2" />
@@ -357,13 +355,12 @@
                         <ul>
                             <li>Training models with dangerous capabilities takes three inputs: talent, energy, advanced chips</li>
                             <li>Frontier chips are the best leverage point to govern</li>
-                            <li>The decision: verify chip location, or don't</li>
-                            <li>[frag 1] no verification: chips diverted → dangerous models → risk to society</li>
-                            <li>[frag 2] yes: detect cheating — diversion from intended end use</li>
-                            <li>[frag 3] reduce the chance of covert training runs</li>
-                            <li>[frag 4] reduce proliferation of dangerous models</li>
-                            <li>[frag 5] reduced risk to society</li>
-                            <li>Part of a defense-in-depth strategy — location verification is one layer</li>
+                            <li>[frag 1] the decision: verify chip location, or don't — an element of a defense-in-depth strategy, one layer among several</li>
+                            <li>[frag 2] no verification: chips diverted → dangerous models → risk to society</li>
+                            <li>[frag 3] yes: detect cheating — diversion from intended end use</li>
+                            <li>[frag 4] reduce covert training runs</li>
+                            <li>[frag 5] reduce proliferation of dangerous models</li>
+                            <li>[frag 6] reduced risk to society</li>
                             <li>Location verification is a tractable way to reduce risk</li>
                         </ul>
                     </aside>
