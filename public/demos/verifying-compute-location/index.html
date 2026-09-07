@@ -1424,7 +1424,10 @@ details.fold .fold-body b {
 
 const R_EARTH = 6371; // km, mean Earth radius
 const CENTER = { lat: 54, lon: 13 };
-const HALF_EXTENT = 1800; // km
+const DEFAULT_HALF_EXTENT = 1800; // km
+// half the side of the square window under evaluation. Presets may shrink it
+// (a co-located anchor is a country-scale question, not a continent-scale one)
+let HALF_EXTENT = DEFAULT_HALF_EXTENT;
 
 const RAD = Math.PI / 180;
 const DEG = 180 / Math.PI;
@@ -1472,6 +1475,11 @@ function destination(lat, lon, bearingDeg, distKm) {
       Math.cos(d) - Math.sin(phi1) * sinPhi2
     );
   return { lat: phi2 * DEG, lon: ((lam2 * DEG + 540) % 360) - 180 };
+}
+
+// the four compass points at distKm from (lat, lon): a circle's extent, for framing
+function circleExtent(lat, lon, distKm) {
+  return [0, 90, 180, 270].map((b) => destination(lat, lon, b, distKm));
 }
 
 function unprojectAt(center, x, y) {
@@ -3489,12 +3497,15 @@ const FACILITIES = [
   { id: "gcp-st-ghislain", name: "GCP St. Ghislain", lat: 50.454, lon: 3.819 },
   { id: "equinix-london", name: "Equinix London", lat: 51.512, lon: -0.003 },
   { id: "equinix-paris", name: "Equinix Paris", lat: 48.928, lon: 2.353 },
+  { id: "equinix-frankfurt", name: "Equinix Frankfurt", lat: 50.098, lon: 8.634 },
   { id: "telia-tallinn", name: "Telia Tallinn", lat: 59.423, lon: 24.799 },
 ];
 
 const CAMBRIDGE = { lat: 52.205, lon: 0.119 };
 const TALLINN = { lat: 59.437, lon: 24.754 };
 const ST_PETERSBURG = { lat: 59.934, lon: 30.335 };
+// a colocation campus in Frankfurt's east end, ~8 km of fibre from Equinix FR5
+const FRANKFURT_COLO = { lat: 50.115, lon: 8.74 };
 
 const HIGH_TRUST_PI = 0.02;
 const PRESETS = [
@@ -3536,6 +3547,36 @@ const PRESETS = [
       { facility: "gcp-hamina", pi: 0.3 },
       { facility: "aws-stockholm", pi: 0.3 },
     ],
+  },
+  {
+    id: "colocated",
+    name: "Co-located anchor",
+    chip: "Co-located",
+    caption:
+      "One anchor in the same metro as the attester. Every ping is a fresh draw of path noise and the fastest one seen so far sets the bound, so repeated pings tighten belief around the declared site -- to tens of km, not metres.",
+    declared: FRANKFURT_COLO,
+    declaredName: "Frankfurt, Germany",
+    trueName: "Frankfurt, Germany",
+    trueLocation: FRANKFURT_COLO,
+    attack: "none",
+    allowance: 0,
+    // realistic metro path: ~0.3 ms of attester processing plus ~0.4 ms mean
+    // of switching/queueing noise on top of ~0.08 ms of fibre. Typical RTTs
+    // land near 0.8 ms (a ~120 km light-speed bound); the running minimum
+    // settles near 0.4 ms (~60 km). Co-location does not mean metres.
+    delta_att: 0.3,
+    path_noise_mean: 0.4,
+    // fixed noise stream: the eight auto-run pings read 1.14, 0.65, 0.64,
+    // 0.48, 1.25, 0.42, 0.70, 0.49 ms, so the bound steps 171 → 97 → 96 →
+    // 72 → 63 km. Every ping after the run is still a fresh draw.
+    seed: 914,
+    // a country-scale window (1,200 km square) so the lattice resolves the
+    // metro-scale posterior; open framed on the region, then zoom in per ping
+    halfExtentKm: 600,
+    frameRadiusKm: 420,
+    zoomOnProbe: true,
+    runProbes: 8,
+    anchors: [{ facility: "equinix-frankfurt", pi: HIGH_TRUST_PI }],
   },
 ];
 
@@ -4040,6 +4081,15 @@ function createEngine(options = {}) {
     if (!preset) throw new Error(`unknown preset: ${presetOrId}`);
     anchors.clear();
     sim.dishonestAnchors.clear();
+    // a preset may fix its noise stream so its auto-run tells the same story
+    // every time (the bound only moves on a new fastest ping, so an unlucky
+    // first draw would otherwise flatten the whole run)
+    if (preset.seed != null) rng = mulberry32(preset.seed);
+    const halfExtent = preset.halfExtentKm ?? DEFAULT_HALF_EXTENT;
+    if (halfExtent !== HALF_EXTENT) {
+      HALF_EXTENT = halfExtent; // the lattice keeps its cell count; the cells resize
+      rebuildGrid();
+    }
     const wc = preset.windowCenter ?? preset.declared;
     setWindowCenter(wc.lat, wc.lon);
     defaultAnchorPi = HIGH_TRUST_PRESET_IDS.has(preset.id) ? HIGH_TRUST_PI : PI_PRESETS.neutral;
@@ -4362,8 +4412,9 @@ function createRenderer(canvas) {
     rebuildHeatLayer();
   }
 
-  function setWindow(center) {
+  function setWindow(center, g = grid) {
     windowCenter = { lat: center.lat, lon: center.lon };
+    grid = g; // a preset may have rebuilt the lattice along with the window
     buildBoundary();
     rebuildHeatLayer();
   }
@@ -4871,9 +4922,11 @@ function createRenderer(canvas) {
     ctx.restore();
   }
 
-  function frameWindow(points, obstructRight = 0, obstructLeft = 0) {
+  // the view that frames `points` in the unobstructed part of the canvas;
+  // null when the canvas has no size yet
+  function computeFrame(points, obstructRight = 0, obstructLeft = 0) {
     resize();
-    if (!boundaryPts || !(wCss > 0)) return;
+    if (!boundaryPts || !(wCss > 0)) return null;
     let framed = null;
     if (points && points.length) {
       framed = points.filter((p) => {
@@ -4886,10 +4939,14 @@ function createRenderer(canvas) {
     const cutL = Math.max(0, obstructLeft);
     const effW = framed ? Math.max(wCss - cutR - cutL, wCss * 0.45) : wCss;
     const fit = computeViewFit(effW, hCss, windowCenter, framed, boundaryPts);
-    zoom = Math.max(minZoom(), Math.min(MAX_ZOOM, Math.log2(fit.scale)));
-    const s = Math.pow(2, zoom);
-    viewCenter = { wx: fit.cx + (wCss / 2 - cutL - effW / 2) / s, wy: fit.cy };
-    clampView();
+    const z = Math.max(minZoom(), Math.min(MAX_ZOOM, Math.log2(fit.scale)));
+    const s = Math.pow(2, z);
+    return { zoom: z, wx: fit.cx + (wCss / 2 - cutL - effW / 2) / s, wy: fit.cy };
+  }
+
+  function frameWindow(points, obstructRight = 0, obstructLeft = 0) {
+    const v = computeFrame(points, obstructRight, obstructLeft);
+    if (v) setView(v);
   }
 
   function anchorAt(px, py, anchors) {
@@ -4935,6 +4992,7 @@ function createRenderer(canvas) {
     setView,
     resetView: frameWindow,
     frameWindow,
+    computeFrame,
     setRedrawCallback,
     isOffline,
   };
@@ -5304,16 +5362,81 @@ function buildApp(root) {
     state.clockMs += 7000 + Math.floor(Math.random() * 6000);
   }
 
+  // view tween: zoom is log2(scale), so interpolating it linearly gives a
+  // constant-rate zoom; the centre moves in world units alongside it
+  const VIEW_ANIM_MS = 700;
+  const easeInOutCubic = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+  let viewAnimSeq = 0; // bumped to cancel an in-flight tween (user pan/zoom, preset switch)
+
+  function cancelViewAnim() {
+    viewAnimSeq++;
+  }
+
+  function animateView(target, ms = VIEW_ANIM_MS) {
+    cancelViewAnim();
+    if (reducedMotion.matches) {
+      renderer.setView(target);
+      drawScene();
+      return;
+    }
+    const seq = viewAnimSeq;
+    const from = renderer.getView();
+    const t0 = performance.now();
+    const step = (now) => {
+      if (seq !== viewAnimSeq) return;
+      const u = Math.min(1, (now - t0) / ms);
+      const e = easeInOutCubic(u);
+      renderer.setView({
+        wx: from.wx + (target.wx - from.wx) * e,
+        wy: from.wy + (target.wy - from.wy) * e,
+        zoom: from.zoom + (target.zoom - from.zoom) * e,
+      });
+      drawScene();
+      if (u < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  // scenarios flagged zoomOnProbe: each receipt nudges the view toward the
+  // frame that fits the current exclusion circles, closing a fixed fraction
+  // of the remaining gap. The view only ever tightens; it never chases a
+  // wider bound back out. The user's own pan/zoom cancels the tween.
+  const ZOOM_STEP = 0.45;
+
+  function zoomTowardEvidence() {
+    if (!state.preset?.zoomOnProbe) return;
+    const ro = state.lastReadouts ?? engine.getReadouts();
+    const pos = new Map(engine.getAnchors().map((a) => [a.id, a]));
+    const pts = [];
+    for (const ra of ro.perAnchor) {
+      if (ra.exclusionRadiusKm == null || ra.exclusionRadiusKm <= 0) continue;
+      const p = pos.get(ra.id);
+      pts.push(...circleExtent(p.lat, p.lon, ra.exclusionRadiusKm));
+    }
+    if (!pts.length) return;
+    const target = renderer.computeFrame(pts, frameObstruction(), frameObstructionLeft());
+    if (!target) return;
+    const cur = renderer.getView();
+    if (target.zoom <= cur.zoom + 0.01) return;
+    animateView({
+      wx: cur.wx + (target.wx - cur.wx) * ZOOM_STEP,
+      wy: cur.wy + (target.wy - cur.wy) * ZOOM_STEP,
+      zoom: cur.zoom + (target.zoom - cur.zoom) * ZOOM_STEP,
+    });
+  }
+
   function doProbe(anchorId) {
     engine.probe(anchorId, state.clockMs);
     advanceClock();
     refresh({ animate: true });
+    zoomTowardEvidence();
   }
 
   $("#probe-all").addEventListener("click", () => {
     engine.probeAll(state.clockMs);
     advanceClock();
     refresh({ animate: true });
+    zoomTowardEvidence();
   });
 
 
@@ -5681,6 +5804,7 @@ risk ${ra.pi.toFixed(2)} · cap ${ra.bitsCeiling.toFixed(1)} bits</div>
 
   canvas.addEventListener("pointerdown", (e) => {
     if (state.placing) return;
+    cancelViewAnim(); // the user takes the wheel
     const [px, py] = canvasPos(e);
     const id = renderer.anchorAt(px, py, sceneData().anchors);
     if (id) {
@@ -5815,6 +5939,7 @@ risk ${ra.pi.toFixed(2)} · cap ${ra.bitsCeiling.toFixed(1)} bits</div>
     "wheel",
     (e) => {
       e.preventDefault();
+      cancelViewAnim();
       const [px, py] = canvasPos(e);
       const norm = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY;
       renderer.zoomBy(px, py, Math.exp(-norm * 0.0015));
@@ -5985,24 +6110,31 @@ risk ${ra.pi.toFixed(2)} · cap ${ra.bitsCeiling.toFixed(1)} bits</div>
     // the anchor cards must be visible for the step-through to read
     if ($("#params-card").classList.contains("collapsed")) $("#params-collapse").click();
     await runSleep(500);
-    for (const a of engine.getAnchors()) {
-      if (seq !== runSeq) return;
-      const refs = cardRefs.get(a.id);
-      if (!refs) continue;
-      refs.el.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      refs.el.classList.add("run-focus");
-      setHover(a.id);
-      await runSleep(700);
-      if (seq !== runSeq) return;
-      const probeBtn = refs.el.querySelector(".probe-one");
-      probeBtn.classList.add("auto-press");
-      await runSleep(170);
-      if (seq !== runSeq) return;
-      probeBtn.classList.remove("auto-press");
-      doProbe(a.id);
-      await runSleep(1200);
-      if (seq !== runSeq) return;
-      refs.el.classList.remove("run-focus");
+    // a scenario may ask for several passes (repeated pings from the same
+    // anchor); the card is introduced once, then each later ping just presses
+    const passes = Math.max(1, state.preset?.runProbes ?? 1);
+    for (let pass = 0; pass < passes; pass++) {
+      for (const a of engine.getAnchors()) {
+        if (seq !== runSeq) return;
+        const refs = cardRefs.get(a.id);
+        if (!refs) continue;
+        if (pass === 0) {
+          refs.el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          refs.el.classList.add("run-focus");
+          setHover(a.id);
+          await runSleep(700);
+          if (seq !== runSeq) return;
+        }
+        const probeBtn = refs.el.querySelector(".probe-one");
+        probeBtn.classList.add("auto-press");
+        await runSleep(170);
+        if (seq !== runSeq) return;
+        probeBtn.classList.remove("auto-press");
+        doProbe(a.id);
+        await runSleep(passes > 1 ? 950 : 1200);
+        if (seq !== runSeq) return;
+        if (pass === passes - 1) refs.el.classList.remove("run-focus");
+      }
     }
     if (seq !== runSeq) return;
     setHover(null);
@@ -6032,7 +6164,10 @@ risk ${ra.pi.toFixed(2)} · cap ${ra.bitsCeiling.toFixed(1)} bits</div>
 
   const framePoints = () => {
     const sim = engine.getSimulator();
-    const pts = [sim.declared, ...engine.getAnchors()];
+    // a scenario may ask to open on a region around the declared site rather
+    // than on its (possibly near-coincident) anchors
+    const r = state.preset?.frameRadiusKm;
+    const pts = r ? circleExtent(sim.declared.lat, sim.declared.lon, r) : [sim.declared, ...engine.getAnchors()];
     if (state.revealTruth) pts.push(sim.trueLocation);
     return pts;
   };
@@ -6048,6 +6183,7 @@ risk ${ra.pi.toFixed(2)} · cap ${ra.bitsCeiling.toFixed(1)} bits</div>
   };
 
   $("#reset-view-btn").addEventListener("click", () => {
+    cancelViewAnim();
     renderer.frameWindow(framePoints(), frameObstruction(), frameObstructionLeft());
     drawScene();
   });
@@ -6077,7 +6213,8 @@ risk ${ra.pi.toFixed(2)} · cap ${ra.bitsCeiling.toFixed(1)} bits</div>
     state.revealTruth = id === "evasive";
     syncRevealBtn();
 
-    renderer.setWindow(engine.getWindowCenter());
+    cancelViewAnim();
+    renderer.setWindow(engine.getWindowCenter(), engine.getGrid());
     renderer.frameWindow(framePoints(), frameObstruction(), frameObstructionLeft());
 
     const ev = engine.getEvaluatorParams();
