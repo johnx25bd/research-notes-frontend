@@ -1,0 +1,523 @@
+/* ============================================================
+   Lucid Computing — reveal.js theme  ("Technical Swiss", slides surface)
+
+   Built only from the Lucid Computing design system
+   (claude.ai/design project "Design system for Lucidcomputing"):
+     tokens/*.css        — values reproduced verbatim below
+     css/base.css        — reset, type, eyebrow, grids, ink section
+     css/components.css  — buttons, panels, cards, stats, badges, chips,
+                           tables, skyline illustration
+     css/patterns.css    — AI Passport auditor rows
+     slides/*.html       — the seven 16:9 templates; their sizes are the
+                           slide scale used here (1280×720)
+
+   The three rules: no border-radius anywhere; hairlines divide, never
+   decorate; amber is used surgically — one accent moment per slide.
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+/* The Phosphor Icons webfont used to be @imported from unpkg here. The site's
+   Content-Security-Policy allows no such origin, so the five glyphs this deck
+   actually uses are inlined as SVG in index.html instead -- see .icon below. */
+
+/* ---------- Tokens (tokens/colors, typography, spacing, borders, motion) ---------- */
+:root {
+  /* Paper — page and surface backgrounds, tinted toward the amber accent */
+  --paper-1: #F6F1E7;   /* page background */
+  --paper-2: #EEE7D6;   /* alternate section / header strips */
+  --paper-3: #E3D9C2;   /* inset panel */
+
+  /* Ink — foreground */
+  --ink-1: #1E1F22;     /* primary text, borders, inverted fills */
+  --ink-2: #5F6165;     /* body copy, secondary */
+  --ink-3: #93959A;     /* labels, metadata, muted */
+
+  /* Amber — brand accent. One accent moment per view; never a large fill. */
+  --amber: #C9A227;     /* rules, underlines, 1px marks */
+  --amber-ink: #8A6E12; /* accent text on paper (contrast-safe) */
+
+  /* Rules — hairlines divide, they never decorate */
+  --rule: rgba(30, 31, 34, 0.10);
+  --rule-strong: rgba(30, 31, 34, 0.22);
+
+  /* Feedback */
+  --destructive: #B4321C;
+
+  /* Semantic aliases */
+  --background: var(--paper-1);
+  --foreground: var(--ink-1);
+  --muted: var(--paper-2);
+  --muted-foreground: var(--ink-2);
+  --primary: var(--ink-1);
+  --primary-foreground: var(--paper-1);
+  --accent: var(--amber);
+  --accent-foreground: var(--ink-1);
+  --border: var(--rule);
+  --ring: var(--amber);
+
+  /* Type — IBM Plex Sans for body, JetBrains Mono for everything structural */
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-display: var(--font-mono);
+
+  --leading-tight: 1.02;
+  --leading-snug: 1.2;
+  --leading-normal: 1.55;
+  --leading-relaxed: 1.7;
+
+  --tracking-display: -0.03em;
+  --tracking-heading: -0.02em;
+  --tracking-label: 0.02em;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  /* Spacing — 4px base */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+
+  /* Borders, radius, shadow — radius is zero everywhere; the only shadow is a hard offset */
+  --radius-none: 0px;
+  --border-hairline: 1px solid var(--rule);
+  --border-strong: 1px solid var(--rule-strong);
+  --border-ink: 1px solid var(--ink-1);
+  --shadow-flat: 0 0 0 1px var(--rule);
+  --shadow-offset: 4px 4px 0 0 var(--ink-1);
+
+  /* Motion — short and mechanical. Nothing bounces. */
+  --duration-fast: 120ms;
+  --duration-base: 180ms;
+  --duration-reveal: 480ms;
+  --ease-mechanical: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Slide-scale type (from slides/*.html) */
+  --slide-h1: 76px;
+  --slide-h2: 44px;
+  --slide-h2-band: 52px;
+  --slide-h3: 30px;
+  --slide-body: 20px;
+  --slide-lead: 22px;
+  --slide-label: 14px;
+
+  /* Ink-band foreground alphas (from base.css .section--ink and slides) */
+  --ink-band-text: rgba(249, 249, 250, 0.72);
+  --ink-band-label: rgba(246, 241, 231, 0.55);
+  --ink-band-rule: rgba(246, 241, 231, 0.22);
+}
+
+/* ============================================================
+   Reveal frame
+   ============================================================ */
+.reveal-viewport { background: var(--paper-1); }
+
+.reveal {
+  font-family: var(--font-sans);
+  font-size: var(--slide-body);
+  font-weight: 400;
+  line-height: var(--leading-normal);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* The reset: the system refuses rounded corners */
+.reveal *, .reveal *::before, .reveal *::after { box-sizing: border-box; border-radius: 0 !important; }
+
+.reveal ::selection { background: var(--ink-1); color: var(--paper-1); }
+.reveal :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.reveal a { color: inherit; }
+.reveal img, .reveal svg, .reveal canvas { max-width: 100%; }
+
+/* Slides are 1280×720 (Reveal.initialize width/height), left-aligned, flex column.
+   Initialize with display:"flex" and center:false so these rules own the layout. */
+.reveal .slides { text-align: left; }
+.reveal .slides > section,
+.reveal .slides > section > section {
+  top: 0 !important;
+  height: 100%;
+  width: 100%;
+  padding: 72px 88px 100px;        /* bottom clears the slide foot */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: var(--paper-1);
+  overflow: hidden;
+}
+.reveal .slides > section.stack { padding: 0; background: transparent; display: block; }
+.reveal .slides section.top { justify-content: flex-start; }
+
+/* Ink band — one per two or three chapters, not every divider.
+   Carries the paper-glyph binary field; texture belongs to ink bands only. */
+.reveal .slides section.ink {
+  background-color: var(--ink-1);
+  color: var(--paper-1);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='320'%3E%3Cg font-family='JetBrains Mono,Menlo,Consolas,monospace' font-size='10' fill='%23F6F1E7'%3E%3Ctext x='0' y='14' textLength='48' lengthAdjust='spacing' opacity='0.033'%3E0001%3C/text%3E%3Ctext x='120' y='14' textLength='48' lengthAdjust='spacing' opacity='0.056'%3E0001%3C/text%3E%3Ctext x='168' y='14' textLength='72' lengthAdjust='spacing' opacity='0.118'%3E111000%3C/text%3E%3Ctext x='288' y='14' textLength='60' lengthAdjust='spacing' opacity='0.084'%3E10101%3C/text%3E%3Ctext x='348' y='14' textLength='48' lengthAdjust='spacing' opacity='0.050'%3E0110%3C/text%3E%3Ctext x='396' y='14' textLength='24' lengthAdjust='spacing' opacity='0.080'%3E10%3C/text%3E%3Ctext x='420' y='14' textLength='48' lengthAdjust='spacing' opacity='0.088'%3E1111%3C/text%3E%3Ctext x='0' y='30' textLength='48' lengthAdjust='spacing' opacity='0.051'%3E1010%3C/text%3E%3Ctext x='48' y='30' textLength='72' lengthAdjust='spacing' opacity='0.073'%3E111101%3C/text%3E%3Ctext x='120' y='30' textLength='60' lengthAdjust='spacing' opacity='0.054'%3E10001%3C/text%3E%3Ctext x='204' y='30' textLength='36' lengthAdjust='spacing' opacity='0.133'%3E110%3C/text%3E%3Ctext x='240' y='30' textLength='48' lengthAdjust='spacing' opacity='0.065'%3E0100%3C/text%3E%3Ctext x='288' y='30' textLength='24' lengthAdjust='spacing' opacity='0.076'%3E11%3C/text%3E%3Ctext x='348' y='30' textLength='36' lengthAdjust='spacing' opacity='0.049'%3E001%3C/text%3E%3Ctext x='384' y='30' textLength='36' lengthAdjust='spacing' opacity='0.062'%3E001%3C/text%3E%3Ctext x='420' y='30' textLength='48' lengthAdjust='spacing' opacity='0.048'%3E1001%3C/text%3E%3Ctext x='0' y='46' textLength='24' lengthAdjust='spacing' opacity='0.040'%3E11%3C/text%3E%3Ctext x='72' y='46' textLength='36' lengthAdjust='spacing' opacity='0.033'%3E100%3C/text%3E%3Ctext x='168' y='46' textLength='36' lengthAdjust='spacing' opacity='0.089'%3E010%3C/text%3E%3Ctext x='204' y='46' textLength='60' lengthAdjust='spacing' opacity='0.052'%3E00110%3C/text%3E%3Ctext x='264' y='46' textLength='36' lengthAdjust='spacing' opacity='0.075'%3E011%3C/text%3E%3Ctext x='300' y='46' textLength='48' lengthAdjust='spacing' opacity='0.053'%3E0100%3C/text%3E%3Ctext x='348' y='46' textLength='72' lengthAdjust='spacing' opacity='0.053'%3E110110%3C/text%3E%3Ctext x='420' y='46' textLength='60' lengthAdjust='spacing' opacity='0.049'%3E11000%3C/text%3E%3Ctext x='0' y='62' textLength='24' lengthAdjust='spacing' opacity='0.049'%3E10%3C/text%3E%3Ctext x='24' y='62' textLength='24' lengthAdjust='spacing' opacity='0.031'%3E10%3C/text%3E%3Ctext x='48' y='62' textLength='60' lengthAdjust='spacing' opacity='0.037'%3E01111%3C/text%3E%3Ctext x='264' y='62' textLength='36' lengthAdjust='spacing' opacity='0.049'%3E111%3C/text%3E%3Ctext x='300' y='62' textLength='72' lengthAdjust='spacing' opacity='0.034'%3E101010%3C/text%3E%3Ctext x='372' y='62' textLength='72' lengthAdjust='spacing' opacity='0.031'%3E111111%3C/text%3E%3Ctext x='444' y='62' textLength='36' lengthAdjust='spacing' opacity='0.044'%3E001%3C/text%3E%3Ctext x='0' y='78' textLength='24' lengthAdjust='spacing' opacity='0.041'%3E01%3C/text%3E%3Ctext x='24' y='78' textLength='36' lengthAdjust='spacing' opacity='0.071'%3E110%3C/text%3E%3Ctext x='60' y='78' textLength='24' lengthAdjust='spacing' opacity='0.038'%3E00%3C/text%3E%3Ctext x='84' y='78' textLength='72' lengthAdjust='spacing' opacity='0.055'%3E100010%3C/text%3E%3Ctext x='204' y='78' textLength='48' lengthAdjust='spacing' opacity='0.068'%3E1010%3C/text%3E%3Ctext x='252' y='78' textLength='72' lengthAdjust='spacing' opacity='0.083'%3E001111%3C/text%3E%3Ctext x='384' y='78' textLength='24' lengthAdjust='spacing' opacity='0.076'%3E00%3C/text%3E%3Ctext x='408' y='78' textLength='60' lengthAdjust='spacing' opacity='0.038'%3E00000%3C/text%3E%3Ctext x='468' y='78' textLength='12' lengthAdjust='spacing' opacity='0.050'%3E1%3C/text%3E%3Ctext x='0' y='94' textLength='72' lengthAdjust='spacing' opacity='0.046'%3E011100%3C/text%3E%3Ctext x='72' y='94' textLength='24' lengthAdjust='spacing' opacity='0.055'%3E00%3C/text%3E%3Ctext x='96' y='94' textLength='60' lengthAdjust='spacing' opacity='0.079'%3E11010%3C/text%3E%3Ctext x='156' y='94' textLength='60' lengthAdjust='spacing' opacity='0.074'%3E10000%3C/text%3E%3Ctext x='216' y='94' textLength='48' lengthAdjust='spacing' opacity='0.070'%3E1001%3C/text%3E%3Ctext x='264' y='94' textLength='48' lengthAdjust='spacing' opacity='0.038'%3E0111%3C/text%3E%3Ctext x='312' y='94' textLength='48' lengthAdjust='spacing' opacity='0.055'%3E0101%3C/text%3E%3Ctext x='384' y='94' textLength='48' lengthAdjust='spacing' opacity='0.038'%3E1101%3C/text%3E%3Ctext x='0' y='110' textLength='48' lengthAdjust='spacing' opacity='0.078'%3E1101%3C/text%3E%3Ctext x='48' y='110' textLength='72' lengthAdjust='spacing' opacity='0.037'%3E000011%3C/text%3E%3Ctext x='120' y='110' textLength='24' lengthAdjust='spacing' opacity='0.056'%3E10%3C/text%3E%3Ctext x='144' y='110' textLength='48' lengthAdjust='spacing' opacity='0.051'%3E0101%3C/text%3E%3Ctext x='192' y='110' textLength='36' lengthAdjust='spacing' opacity='0.061'%3E010%3C/text%3E%3Ctext x='228' y='110' textLength='24' lengthAdjust='spacing' opacity='0.032'%3E00%3C/text%3E%3Ctext x='252' y='110' textLength='60' lengthAdjust='spacing' opacity='0.054'%3E00010%3C/text%3E%3Ctext x='336' y='110' textLength='48' lengthAdjust='spacing' opacity='0.042'%3E1000%3C/text%3E%3Ctext x='384' y='110' textLength='72' lengthAdjust='spacing' opacity='0.046'%3E000011%3C/text%3E%3Ctext x='456' y='110' textLength='24' lengthAdjust='spacing' opacity='0.051'%3E01%3C/text%3E%3Ctext x='60' y='126' textLength='48' lengthAdjust='spacing' opacity='0.048'%3E1011%3C/text%3E%3Ctext x='108' y='126' textLength='60' lengthAdjust='spacing' opacity='0.045'%3E11010%3C/text%3E%3Ctext x='168' y='126' textLength='60' lengthAdjust='spacing' opacity='0.045'%3E10101%3C/text%3E%3Ctext x='228' y='126' textLength='48' lengthAdjust='spacing' opacity='0.084'%3E0101%3C/text%3E%3Ctext x='300' y='126' textLength='60' lengthAdjust='spacing' opacity='0.038'%3E10110%3C/text%3E%3Ctext x='360' y='126' textLength='72' lengthAdjust='spacing' opacity='0.076'%3E010100%3C/text%3E%3Ctext x='432' y='126' textLength='48' lengthAdjust='spacing' opacity='0.045'%3E1100%3C/text%3E%3Ctext x='0' y='142' textLength='36' lengthAdjust='spacing' opacity='0.087'%3E101%3C/text%3E%3Ctext x='36' y='142' textLength='48' lengthAdjust='spacing' opacity='0.045'%3E0101%3C/text%3E%3Ctext x='84' y='142' textLength='48' lengthAdjust='spacing' opacity='0.077'%3E1101%3C/text%3E%3Ctext x='180' y='142' textLength='60' lengthAdjust='spacing' opacity='0.077'%3E10010%3C/text%3E%3Ctext x='240' y='142' textLength='36' lengthAdjust='spacing' opacity='0.056'%3E000%3C/text%3E%3Ctext x='276' y='142' textLength='60' lengthAdjust='spacing' opacity='0.075'%3E10000%3C/text%3E%3Ctext x='336' y='142' textLength='24' lengthAdjust='spacing' opacity='0.055'%3E01%3C/text%3E%3Ctext x='360' y='142' textLength='48' lengthAdjust='spacing' opacity='0.058'%3E1011%3C/text%3E%3Ctext x='408' y='142' textLength='24' lengthAdjust='spacing' opacity='0.042'%3E10%3C/text%3E%3Ctext x='432' y='142' textLength='48' lengthAdjust='spacing' opacity='0.115'%3E0110%3C/text%3E%3Ctext x='0' y='158' textLength='72' lengthAdjust='spacing' opacity='0.139'%3E110000%3C/text%3E%3Ctext x='144' y='158' textLength='60' lengthAdjust='spacing' opacity='0.050'%3E10000%3C/text%3E%3Ctext x='204' y='158' textLength='72' lengthAdjust='spacing' opacity='0.081'%3E110010%3C/text%3E%3Ctext x='276' y='158' textLength='72' lengthAdjust='spacing' opacity='0.045'%3E110101%3C/text%3E%3Ctext x='348' y='158' textLength='60' lengthAdjust='spacing' opacity='0.072'%3E11001%3C/text%3E%3Ctext x='444' y='158' textLength='36' lengthAdjust='spacing' opacity='0.034'%3E100%3C/text%3E%3Ctext x='0' y='174' textLength='72' lengthAdjust='spacing' opacity='0.031'%3E111010%3C/text%3E%3Ctext x='144' y='174' textLength='48' lengthAdjust='spacing' opacity='0.111'%3E1000%3C/text%3E%3Ctext x='228' y='174' textLength='60' lengthAdjust='spacing' opacity='0.047'%3E11110%3C/text%3E%3Ctext x='288' y='174' textLength='72' lengthAdjust='spacing' opacity='0.046'%3E100100%3C/text%3E%3Ctext x='360' y='174' textLength='72' lengthAdjust='spacing' opacity='0.129'%3E111111%3C/text%3E%3Ctext x='0' y='190' textLength='36' lengthAdjust='spacing' opacity='0.034'%3E010%3C/text%3E%3Ctext x='36' y='190' textLength='60' lengthAdjust='spacing' opacity='0.084'%3E10110%3C/text%3E%3Ctext x='96' y='190' textLength='72' lengthAdjust='spacing' opacity='0.054'%3E100111%3C/text%3E%3Ctext x='204' y='190' textLength='60' lengthAdjust='spacing' opacity='0.029'%3E01111%3C/text%3E%3Ctext x='264' y='190' textLength='36' lengthAdjust='spacing' opacity='0.049'%3E010%3C/text%3E%3Ctext x='300' y='190' textLength='48' lengthAdjust='spacing' opacity='0.088'%3E0010%3C/text%3E%3Ctext x='372' y='190' textLength='60' lengthAdjust='spacing' opacity='0.083'%3E01001%3C/text%3E%3Ctext x='0' y='206' textLength='72' lengthAdjust='spacing' opacity='0.107'%3E100001%3C/text%3E%3Ctext x='72' y='206' textLength='60' lengthAdjust='spacing' opacity='0.086'%3E10110%3C/text%3E%3Ctext x='132' y='206' textLength='48' lengthAdjust='spacing' opacity='0.043'%3E1000%3C/text%3E%3Ctext x='180' y='206' textLength='72' lengthAdjust='spacing' opacity='0.055'%3E101101%3C/text%3E%3Ctext x='252' y='206' textLength='72' lengthAdjust='spacing' opacity='0.034'%3E011111%3C/text%3E%3Ctext x='348' y='206' textLength='60' lengthAdjust='spacing' opacity='0.061'%3E01100%3C/text%3E%3Ctext x='408' y='206' textLength='48' lengthAdjust='spacing' opacity='0.028'%3E0001%3C/text%3E%3Ctext x='456' y='206' textLength='24' lengthAdjust='spacing' opacity='0.039'%3E01%3C/text%3E%3Ctext x='24' y='222' textLength='48' lengthAdjust='spacing' opacity='0.035'%3E1011%3C/text%3E%3Ctext x='72' y='222' textLength='48' lengthAdjust='spacing' opacity='0.085'%3E0101%3C/text%3E%3Ctext x='120' y='222' textLength='36' lengthAdjust='spacing' opacity='0.054'%3E100%3C/text%3E%3Ctext x='156' y='222' textLength='72' lengthAdjust='spacing' opacity='0.051'%3E100011%3C/text%3E%3Ctext x='336' y='222' textLength='48' lengthAdjust='spacing' opacity='0.052'%3E1100%3C/text%3E%3Ctext x='384' y='222' textLength='72' lengthAdjust='spacing' opacity='0.103'%3E000100%3C/text%3E%3Ctext x='456' y='222' textLength='24' lengthAdjust='spacing' opacity='0.085'%3E11%3C/text%3E%3Ctext x='0' y='238' textLength='72' lengthAdjust='spacing' opacity='0.046'%3E111011%3C/text%3E%3Ctext x='72' y='238' textLength='24' lengthAdjust='spacing' opacity='0.055'%3E10%3C/text%3E%3Ctext x='96' y='238' textLength='24' lengthAdjust='spacing' opacity='0.060'%3E00%3C/text%3E%3Ctext x='120' y='238' textLength='36' lengthAdjust='spacing' opacity='0.079'%3E111%3C/text%3E%3Ctext x='156' y='238' textLength='24' lengthAdjust='spacing' opacity='0.050'%3E11%3C/text%3E%3Ctext x='180' y='238' textLength='36' lengthAdjust='spacing' opacity='0.061'%3E011%3C/text%3E%3Ctext x='240' y='238' textLength='36' lengthAdjust='spacing' opacity='0.058'%3E111%3C/text%3E%3Ctext x='276' y='238' textLength='60' lengthAdjust='spacing' opacity='0.051'%3E10111%3C/text%3E%3Ctext x='336' y='238' textLength='72' lengthAdjust='spacing' opacity='0.044'%3E101010%3C/text%3E%3Ctext x='432' y='238' textLength='48' lengthAdjust='spacing' opacity='0.111'%3E1010%3C/text%3E%3Ctext x='0' y='254' textLength='36' lengthAdjust='spacing' opacity='0.087'%3E110%3C/text%3E%3Ctext x='36' y='254' textLength='24' lengthAdjust='spacing' opacity='0.052'%3E00%3C/text%3E%3Ctext x='60' y='254' textLength='72' lengthAdjust='spacing' opacity='0.062'%3E101001%3C/text%3E%3Ctext x='132' y='254' textLength='72' lengthAdjust='spacing' opacity='0.046'%3E101101%3C/text%3E%3Ctext x='204' y='254' textLength='48' lengthAdjust='spacing' opacity='0.029'%3E1011%3C/text%3E%3Ctext x='252' y='254' textLength='24' lengthAdjust='spacing' opacity='0.080'%3E01%3C/text%3E%3Ctext x='276' y='254' textLength='36' lengthAdjust='spacing' opacity='0.052'%3E110%3C/text%3E%3Ctext x='360' y='254' textLength='48' lengthAdjust='spacing' opacity='0.037'%3E0101%3C/text%3E%3Ctext x='408' y='254' textLength='48' lengthAdjust='spacing' opacity='0.124'%3E1100%3C/text%3E%3Ctext x='0' y='270' textLength='36' lengthAdjust='spacing' opacity='0.070'%3E010%3C/text%3E%3Ctext x='156' y='270' textLength='48' lengthAdjust='spacing' opacity='0.089'%3E1010%3C/text%3E%3Ctext x='204' y='270' textLength='36' lengthAdjust='spacing' opacity='0.033'%3E111%3C/text%3E%3Ctext x='420' y='270' textLength='24' lengthAdjust='spacing' opacity='0.101'%3E00%3C/text%3E%3Ctext x='444' y='270' textLength='36' lengthAdjust='spacing' opacity='0.080'%3E010%3C/text%3E%3Ctext x='0' y='286' textLength='24' lengthAdjust='spacing' opacity='0.138'%3E01%3C/text%3E%3Ctext x='24' y='286' textLength='48' lengthAdjust='spacing' opacity='0.049'%3E0100%3C/text%3E%3Ctext x='72' y='286' textLength='72' lengthAdjust='spacing' opacity='0.049'%3E000001%3C/text%3E%3Ctext x='144' y='286' textLength='48' lengthAdjust='spacing' opacity='0.047'%3E1001%3C/text%3E%3Ctext x='192' y='286' textLength='72' lengthAdjust='spacing' opacity='0.036'%3E110101%3C/text%3E%3Ctext x='264' y='286' textLength='60' lengthAdjust='spacing' opacity='0.032'%3E01100%3C/text%3E%3Ctext x='324' y='286' textLength='48' lengthAdjust='spacing' opacity='0.074'%3E1011%3C/text%3E%3Ctext x='372' y='286' textLength='36' lengthAdjust='spacing' opacity='0.050'%3E000%3C/text%3E%3Ctext x='408' y='286' textLength='48' lengthAdjust='spacing' opacity='0.064'%3E1101%3C/text%3E%3Ctext x='72' y='302' textLength='48' lengthAdjust='spacing' opacity='0.087'%3E0001%3C/text%3E%3Ctext x='120' y='302' textLength='24' lengthAdjust='spacing' opacity='0.036'%3E10%3C/text%3E%3Ctext x='144' y='302' textLength='60' lengthAdjust='spacing' opacity='0.055'%3E01100%3C/text%3E%3Ctext x='228' y='302' textLength='72' lengthAdjust='spacing' opacity='0.043'%3E000111%3C/text%3E%3Ctext x='300' y='302' textLength='60' lengthAdjust='spacing' opacity='0.091'%3E00111%3C/text%3E%3Ctext x='360' y='302' textLength='60' lengthAdjust='spacing' opacity='0.042'%3E10011%3C/text%3E%3Ctext x='420' y='302' textLength='36' lengthAdjust='spacing' opacity='0.090'%3E111%3C/text%3E%3Ctext x='456' y='302' textLength='24' lengthAdjust='spacing' opacity='0.054'%3E11%3C/text%3E%3Ctext x='0' y='318' textLength='24' lengthAdjust='spacing' opacity='0.068'%3E10%3C/text%3E%3Ctext x='24' y='318' textLength='48' lengthAdjust='spacing' opacity='0.055'%3E0001%3C/text%3E%3Ctext x='72' y='318' textLength='72' lengthAdjust='spacing' opacity='0.132'%3E000001%3C/text%3E%3Ctext x='144' y='318' textLength='48' lengthAdjust='spacing' opacity='0.106'%3E0111%3C/text%3E%3Ctext x='192' y='318' textLength='24' lengthAdjust='spacing' opacity='0.124'%3E00%3C/text%3E%3Ctext x='216' y='318' textLength='72' lengthAdjust='spacing' opacity='0.051'%3E111111%3C/text%3E%3Ctext x='288' y='318' textLength='72' lengthAdjust='spacing' opacity='0.062'%3E100011%3C/text%3E%3Ctext x='360' y='318' textLength='60' lengthAdjust='spacing' opacity='0.047'%3E00100%3C/text%3E%3Ctext x='444' y='318' textLength='36' lengthAdjust='spacing' opacity='0.057'%3E001%3C/text%3E%3C/g%3E%3C/svg%3E");
+  background-size: 480px 320px;
+}
+.reveal .slides section.ink h1, .reveal .slides section.ink h2,
+.reveal .slides section.ink h3, .reveal .slides section.ink h4 { color: var(--paper-1); }
+.reveal .slides section.ink p { color: var(--ink-band-text); }
+.reveal .slides section.ink .label { color: var(--ink-band-label); }
+.reveal .slides section.ink .label--accent { color: var(--amber); }
+.reveal .slides section.ink .text-accent { color: var(--amber); }
+.reveal .slides section.ink .eyebrow::before { background: var(--paper-1); }
+.reveal .slides section.ink .slide-foot { border-top-color: var(--ink-band-rule); }
+.reveal .slides section.ink .brand img { filter: invert(1); }
+.reveal .slides section.ink .brand span { color: var(--paper-1); }
+.reveal .slides section.ink .feature-list,
+.reveal .slides section.ink .feature-row,
+.reveal .slides section.ink ul > li,
+.reveal .slides section.ink ol > li { border-color: var(--ink-band-rule); }
+.reveal .slides section.ink .feature-row h4 { color: var(--paper-1); }
+.reveal .slides section.ink .chip { background: transparent; border-color: var(--ink-band-rule); color: var(--paper-1); }
+
+/* ============================================================
+   Typography  (base.css §3, sized per slides/*.html)
+   ============================================================ */
+.reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--ink-1);
+  margin: 0;
+  text-transform: none;
+  text-shadow: none;
+  word-wrap: normal;
+}
+.reveal h1 { font-size: var(--slide-h1); line-height: var(--leading-tight); letter-spacing: var(--tracking-display); max-width: 960px; }
+.reveal h2 { font-size: var(--slide-h2); line-height: var(--leading-snug); letter-spacing: var(--tracking-heading); max-width: 900px; }
+.reveal h3 { font-size: var(--slide-h3); line-height: var(--leading-snug); letter-spacing: var(--tracking-heading); }
+.reveal h4 { font-size: var(--slide-body); line-height: var(--leading-snug); letter-spacing: var(--tracking-heading); }
+
+.reveal p { font-size: var(--slide-body); line-height: var(--leading-normal); color: var(--ink-2); margin: 0; }
+.reveal p strong, .reveal li strong { color: var(--ink-1); font-weight: 600; }
+.reveal .lead { font-size: var(--slide-lead); line-height: var(--leading-relaxed); color: var(--ink-2); }
+
+.reveal .text-ink    { color: var(--ink-1); }
+.reveal .text-muted  { color: var(--ink-3); }
+.reveal .text-accent { color: var(--amber-ink); }   /* raw --amber is never text on paper */
+.reveal .mono { font-family: var(--font-mono); font-size: 0.92em; }
+
+/* Mono metadata / labels — the system's voice for structure */
+.reveal .label {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--slide-label);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.reveal .label--accent { color: var(--amber-ink); }
+.reveal .label--ink    { color: var(--ink-1); }
+
+/* Eyebrow: a 24px ink rule + index label above a heading — "01 — The problem" */
+.reveal .eyebrow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-bottom: 20px;
+}
+.reveal .eyebrow::before {
+  content: "";
+  width: var(--space-6);
+  height: 1px;
+  background: var(--ink-1);
+  align-self: center;
+  flex: none;
+}
+
+.reveal a.link {
+  color: var(--ink-1);
+  text-decoration: none;
+  border-bottom: 1px solid var(--amber);
+  padding-bottom: 1px;
+  transition: color var(--duration-fast) var(--ease-mechanical), border-color var(--duration-fast) var(--ease-mechanical);
+}
+.reveal a.link:hover { color: var(--amber-ink); border-color: var(--amber-ink); }
+
+/* Lists — hairline rows, no bullets. Ordered lists index in mono: "01 — " */
+.reveal ul, .reveal ol { list-style: none; margin: 0; padding: 0; display: block; }
+.reveal ul > li, .reveal ol > li {
+  padding: 12px 0;
+  border-bottom: var(--border-hairline);
+  color: var(--ink-1);
+  line-height: var(--leading-normal);
+}
+.reveal ul.rows, .reveal ol.rows { border-top: var(--border-hairline); }
+.reveal ol { counter-reset: item; }
+.reveal ol > li { display: flex; gap: var(--space-4); align-items: baseline; }
+.reveal ol > li::before {
+  counter-increment: item;
+  content: counter(item, decimal-leading-zero) " —";
+  font-family: var(--font-mono);
+  font-size: var(--slide-label);
+  letter-spacing: var(--tracking-label);
+  color: var(--ink-3);
+  flex: none;
+}
+.reveal ul.plain > li, .reveal ol.plain > li { border-bottom: none; padding: 6px 0; }
+
+.reveal .rule { border: none; border-top: var(--border-hairline); margin: 0; }
+.reveal .rule--strong { border-top: var(--border-strong); }
+
+/* ============================================================
+   Slide types
+   ============================================================ */
+/* Title — two-part headline, amber second clause (slides/title.html) */
+.reveal section.title .label { margin-bottom: 28px; }
+.reveal section.title .lead { max-width: 680px; margin-top: 32px; }
+
+/* Divider and closing on ink (slides/section-divider.html, closing.html) */
+.reveal section.divider h2, .reveal section.closing h2 { font-size: var(--slide-h2-band); }
+.reveal section.divider .eyebrow { margin-bottom: 24px; }
+.reveal section.divider p, .reveal section.closing p { max-width: 720px; margin-top: 24px; }
+.reveal section.closing > .label { margin-bottom: 28px; }
+.reveal section.closing .actions { margin-top: 44px; display: flex; gap: var(--space-4); }
+
+/* Content slides: heading then a grid or a list, pushed down 44px (argument.html) */
+.reveal h2 + .grid-split, .reveal h2 + .grid-2, .reveal h2 + .grid-3, .reveal h2 + .grid-4,
+.reveal h2 + .table-wrap, .reveal h2 + .feature-list, .reveal h2 + ul, .reveal h2 + ol,
+.reveal h2 + .flow, .reveal h2 + .panel, .reveal h2 + .card { margin-top: 44px; }
+.reveal h2 + p, .reveal h2 + .lead { margin-top: 24px; }
+
+/* Slide foot — brand mark + wordmark left, a mono label right.
+   Injected per slide by the deck script; author with data-foot="…" to override. */
+.reveal .slide-foot {
+  position: absolute;
+  left: 88px; right: 88px; bottom: 40px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: var(--border-hairline);
+  padding-top: 14px;
+}
+.reveal .brand { display: flex; align-items: center; gap: 10px; }
+.reveal .brand img { width: 20px; height: 20px; display: block; }
+.reveal .brand span {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+/* ============================================================
+   Layout  (base.css §4)
+   ============================================================ */
+.reveal .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-8); }
+.reveal .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-8); }
+.reveal .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); }
+/* The signature grid — 5fr argument left, 7fr evidence right */
+.reveal .grid-split { display: grid; grid-template-columns: 5fr 7fr; gap: var(--space-16); align-items: start; }
+.reveal .grid-split--even { grid-template-columns: 1fr 1fr; }
+.reveal .grid-split.middle { align-items: center; }
+.reveal .fill { flex: 1; }
+
+/* ============================================================
+   Components  (components.css, scaled for the slide)
+   ============================================================ */
+/* Buttons — UPPERCASE mono, verb-first */
+.reveal .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  padding: 16px 28px;
+  font-family: var(--font-mono); font-weight: 500; font-size: 15px;
+  letter-spacing: var(--tracking-label); text-transform: uppercase; text-decoration: none;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-mechanical),
+              color var(--duration-fast) var(--ease-mechanical),
+              box-shadow var(--duration-fast) var(--ease-mechanical),
+              transform var(--duration-fast) var(--ease-mechanical);
+}
+.reveal .btn--primary { background: var(--primary); color: var(--primary-foreground); border: var(--border-ink); }
+.reveal .btn--primary:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-offset); }
+.reveal .btn--primary:active { transform: translate(0, 0); box-shadow: none; }
+.reveal .btn--ghost { background: transparent; color: var(--ink-1); border: var(--border-ink); }
+.reveal .btn--ghost:hover { background: var(--ink-1); color: var(--paper-1); }
+.reveal section.ink .btn--primary { background: var(--paper-1); color: var(--ink-1); border-color: var(--paper-1); }
+.reveal section.ink .btn--primary:hover { box-shadow: 4px 4px 0 0 var(--amber); }
+.reveal section.ink .btn--ghost { color: var(--paper-1); border-color: var(--paper-1); }
+.reveal section.ink .btn--ghost:hover { background: var(--paper-1); color: var(--ink-1); }
+
+/* Panels — flat paper with a border */
+.reveal .panel { background: var(--paper-1); border: var(--border-strong); padding: var(--space-8); }
+.reveal .panel--inset  { background: var(--paper-3); border: var(--border-hairline); }
+.reveal .panel--muted  { background: var(--paper-2); border: var(--border-hairline); }
+.reveal .panel--offset { box-shadow: var(--shadow-offset); }
+.reveal .panel--flush  { padding: 0; }
+
+/* Card with mono header strip */
+.reveal .card { border: var(--border-strong); background: var(--paper-1); }
+.reveal .card-header {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border-hairline);
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: var(--tracking-label); text-transform: uppercase;
+  color: var(--ink-3); background: var(--paper-2);
+}
+.reveal .card-body { padding: var(--space-6); }
+.reveal .card-body p { font-size: 17px; }
+
+/* Inline icons — Phosphor "regular" glyphs, drawn as SVG in the markup rather
+   than loaded as a webfont. They inherit the surrounding text size and colour,
+   which is how the icon font behaved. */
+.reveal .icon { width: 1em; height: 1em; vertical-align: -0.125em; fill: currentColor; }
+
+/* Hairline-divided feature list — one Phosphor icon per row, amber-ink */
+.reveal .feature-list { border-top: var(--border-hairline); }
+.reveal .feature-row {
+  display: flex; gap: var(--space-4); align-items: flex-start;
+  padding: 14px 0;
+  border-bottom: var(--border-hairline);
+}
+.reveal .feature-row > i, .reveal .feature-row > svg { flex: none; font-size: 22px; color: var(--amber-ink); margin-top: 2px; }
+.reveal .feature-row h4 { margin-bottom: var(--space-1); font-size: var(--slide-body); }
+.reveal .feature-row p { font-size: 17px; }
+
+/* Stat blocks — only real measurements */
+.reveal .stat { padding: 28px; border: var(--border-hairline); background: var(--paper-1); }
+.reveal .stat-value {
+  font-family: var(--font-mono); font-weight: 500; font-size: 56px;
+  line-height: var(--leading-tight); letter-spacing: var(--tracking-heading); color: var(--ink-1);
+}
+.reveal .stat-label { margin-top: var(--space-2); }
+
+/* Badges / chips */
+.reveal .badge {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  padding: 2px var(--space-2);
+  font-family: var(--font-mono); font-weight: 500; font-size: 12px;
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+  border: var(--border-hairline); color: var(--ink-2); background: var(--paper-2); white-space: nowrap;
+}
+.reveal .badge--ok     { color: var(--amber-ink); border-color: var(--amber); background: transparent; }
+.reveal .badge--ink    { color: var(--paper-1); background: var(--ink-1); border-color: var(--ink-1); }
+.reveal .badge--danger { color: var(--destructive); border-color: currentColor; background: transparent; }
+
+.reveal .chip {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: 6px 14px;
+  font-family: var(--font-mono); font-size: var(--slide-label); letter-spacing: var(--tracking-label);
+  border: var(--border-hairline); background: var(--paper-1); color: var(--ink-2); white-space: nowrap;
+}
+.reveal .chip--ink { background: var(--ink-1); color: var(--paper-1); border-color: var(--ink-1); }
+.reveal .chip--accent { color: var(--amber-ink); border-color: var(--amber); }
+
+/* Flow — chips joined by bare arrows: collect → evaluate → decide */
+.reveal .flow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.reveal .flow .arrow { font-family: var(--font-mono); font-size: var(--slide-body); color: var(--ink-3); }
+.reveal .flow .hint { font-family: var(--font-mono); font-size: var(--slide-label); color: var(--ink-3); margin-left: var(--space-2); }
+
+/* Tables — mono uppercase headers on paper-2, hairline rows */
+.reveal .table-wrap { overflow-x: auto; border: var(--border-strong); }
+.reveal table.table { width: 100%; border-collapse: collapse; font-size: 18px; margin: 0; }
+.reveal .table th {
+  font-family: var(--font-mono); font-weight: 500; font-size: 12px;
+  letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--ink-3);
+  text-align: left; padding: var(--space-3) var(--space-4);
+  background: var(--paper-2); border-bottom: var(--border-strong);
+}
+.reveal .table td { padding: var(--space-3) var(--space-4); border-bottom: var(--border-hairline); color: var(--ink-2); font-weight: 400; }
+.reveal .table td:first-child { color: var(--ink-1); }
+.reveal .table tr:last-child td { border-bottom: none; }
+.reveal .table td, .reveal .table th { border-left: none; border-right: none; }
+
+/* AI Passport auditor row (patterns.css) — question / answer / stats */
+.reveal .pp-auditor { padding: var(--space-3) var(--space-4); border-bottom: var(--border-hairline); }
+.reveal .pp-auditor:last-child { border-bottom: none; }
+.reveal .pp-auditor-head { display: flex; align-items: center; gap: var(--space-3); }
+.reveal .pp-auditor-head i { color: var(--ink-2); font-size: 18px; flex: none; }
+.reveal .pp-question { flex: 1; font-size: 16px; font-weight: 500; color: var(--ink-1); }
+.reveal .pp-answer { margin-top: var(--space-1); padding-left: 30px; font-size: 16px; color: var(--ink-2); }
+.reveal .pp-stats {
+  display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4);
+  margin-top: var(--space-1); padding-left: 30px;
+  font-family: var(--font-mono); font-size: 13px; color: var(--ink-3);
+}
+
+/* Rack skyline — the brand's one signature illustration (components.css §14).
+   Drop in .skyline-glow, .skyline-beam, then ten .skyline-rack divs; geometry below. */
+.reveal .skyline { position: relative; border: var(--border-strong); overflow: hidden; height: 480px; }
+.reveal .skyline-glow {
+  position: absolute; left: 50%; top: 50%; width: 15%; height: 24%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, rgba(201, 162, 39, 0.32), rgba(201, 162, 39, 0.1) 55%, transparent 75%);
+  filter: blur(1px);
+}
+.reveal .skyline-beam {
+  position: absolute; left: 50%; bottom: 0; width: 30%; height: 48%;
+  transform: translateX(-50%);
+  background: linear-gradient(rgba(201, 162, 39, 0.2), transparent);
+  clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
+  filter: blur(2px);
+}
+.reveal .skyline-rack {
+  position: absolute;
+  border: 1px solid rgba(30, 31, 34, 0.4);
+  border-top: 2px solid rgba(201, 162, 39, 0.85);
+  background-image:
+    repeating-linear-gradient(0deg, rgba(30, 31, 34, 0.16) 0 1px, transparent 1px var(--pitch, 8px)),
+    linear-gradient(180deg, rgba(30, 31, 34, 0.06), rgba(30, 31, 34, 0.01));
+  box-shadow: inset 0 0 12px rgba(30, 31, 34, 0.05);
+}
+.reveal .skyline-rack:nth-child(3)  { --pitch: 9px; left: -3%;   top: 21%;   width: 12%;  height: 62%; }
+.reveal .skyline-rack:nth-child(4)  { --pitch: 8px; left: 11%;   top: 27%;   width: 10%;  height: 48%; }
+.reveal .skyline-rack:nth-child(5)  { --pitch: 7px; left: 23%;   top: 31.5%; width: 8%;   height: 37%; border-top-width: 1.5px; }
+.reveal .skyline-rack:nth-child(6)  { --pitch: 6px; left: 32.5%; top: 35.5%; width: 6%;   height: 28%; border-top-width: 1.5px; }
+.reveal .skyline-rack:nth-child(7)  { --pitch: 5px; left: 40%;   top: 39%;   width: 4.5%; height: 20%; border-top-width: 1.5px; }
+.reveal .skyline-rack:nth-child(8)  { --pitch: 9px; right: -3%;  top: 21%;   width: 12%;  height: 62%; }
+.reveal .skyline-rack:nth-child(9)  { --pitch: 8px; right: 11%;  top: 27%;   width: 10%;  height: 48%; }
+.reveal .skyline-rack:nth-child(10) { --pitch: 7px; right: 23%;  top: 31.5%; width: 8%;   height: 37%; border-top-width: 1.5px; }
+.reveal .skyline-rack:nth-child(11) { --pitch: 6px; right: 32.5%; top: 35.5%; width: 6%;  height: 28%; border-top-width: 1.5px; }
+.reveal .skyline-rack:nth-child(12) { --pitch: 5px; right: 40%;  top: 39%;   width: 4.5%; height: 20%; border-top-width: 1.5px; }
+
+/* Figures — diagrams are DOM or inline SVG, never photographic scene-setting */
+.reveal figure { margin: 0; }
+.reveal figcaption { margin-top: var(--space-3); }
+.reveal .frame { border: var(--border-strong); background: var(--paper-1); }
+.reveal .frame img { display: block; width: 100%; }
+
+/* Code — mono on paper-2, bordered, no highlight-theme colouring beyond three token roles */
+.reveal pre {
+  width: 100%; margin: 0;
+  font-family: var(--font-mono); font-size: 16px; line-height: 1.5;
+  border: var(--border-strong); background: var(--paper-2);
+  box-shadow: none;
+}
+.reveal pre code { padding: var(--space-4) var(--space-6); max-height: none; background: transparent; color: var(--ink-1); }
+.reveal code { font-family: var(--font-mono); }
+.reveal :not(pre) > code { font-size: 0.92em; background: var(--paper-2); padding: 1px 6px; border: var(--border-hairline); }
+.reveal .hljs-keyword, .reveal .hljs-title { color: var(--ink-1); font-weight: 600; }
+.reveal .hljs-string, .reveal .hljs-number { color: var(--amber-ink); }
+.reveal .hljs-comment { color: var(--ink-3); }
+
+/* ============================================================
+   Motion  (motion tokens; base.css §13)
+   ============================================================ */
+/* Fragments: fade only, mechanical, no travel — except .rise, the site's 12px reveal */
+.reveal .slides section .fragment {
+  transition-duration: var(--duration-base);
+  transition-timing-function: var(--ease-mechanical);
+}
+.reveal .slides section .fragment.rise { opacity: 0; transform: translateY(12px); transition-duration: var(--duration-reveal); }
+.reveal .slides section .fragment.rise.visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .reveal .slides section .fragment { transition: none; }
+}
+
+/* Reveal chrome — a 2px amber progress rule; nothing else */
+.reveal .progress { height: 2px; background: var(--rule); }
+.reveal .progress span { background: var(--amber); transition: width var(--duration-base) var(--ease-mechanical); }
+.reveal .controls { color: var(--ink-3); }
+.reveal .slide-number { display: none; }
+
+/* Speaker-notes view: keep notes readable in sans */
+.reveal .notes, .reveal aside.notes { font-family: var(--font-sans); }

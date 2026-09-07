@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 360" width="1720" height="720" font-family="Helvetica, Arial, sans-serif" font-size="12">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#3b4a58"/></marker>
+    <marker id="arrb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d5c86"/></marker>
+  </defs>
+  <rect x="0" y="0" width="860" height="360" fill="#ffffff"/>
+
+  <!-- outside: relying parties and policy service (left) -->
+  <text x="20" y="30" font-size="11" letter-spacing="1" fill="#7d8a96">OUTSIDE THE FACILITY</text>
+
+  <rect x="20" y="52" width="170" height="86" rx="6" fill="#fbfcfd" stroke="#c9d1d9"/>
+  <text x="32" y="72" font-weight="bold" fill="#172029">Relying parties</text>
+  <text x="32" y="90" fill="#4b5966" font-size="11">licensing authority, regulator,</text>
+  <text x="32" y="104" fill="#4b5966" font-size="11">auditor: web and native tools,</text>
+  <text x="32" y="118" fill="#4b5966" font-size="11">data feeds, other monitoring</text>
+  <text x="32" y="132" fill="#4b5966" font-size="11">systems, application interfaces</text>
+
+  <rect x="20" y="168" width="170" height="150" rx="6" fill="#fbfcfd" stroke="#c9d1d9"/>
+  <text x="32" y="188" font-weight="bold" fill="#172029">Policy service</text>
+  <text x="32" y="206" fill="#4b5966" font-size="11">one service, many facilities</text>
+  <text x="32" y="220" fill="#4b5966" font-size="11">policies defined by the authority</text>
+  <text x="32" y="234" fill="#4b5966" font-size="11">policy evaluation (see 4.5)</text>
+  <text x="32" y="248" fill="#4b5966" font-size="11">alerts: missed reports, changes</text>
+  <text x="32" y="262" fill="#4b5966" font-size="11">holds log commitments</text>
+  <text x="32" y="276" fill="#4b5966" font-size="11">estate view, case records</text>
+  <text x="32" y="304" fill="#7d8a96" font-size="10">hosted outside every facility</text>
+
+  <path d="M105 168 V140" stroke="#3b4a58" stroke-width="1.4" fill="none" marker-end="url(#arr)"/>
+
+  <!-- boundary crossing -->
+  <path d="M190 232 H326" stroke="#3b4a58" stroke-width="1.4" fill="none" marker-start="url(#arr)"/>
+  <text x="258" y="214" text-anchor="middle" font-size="10" fill="#3b4a58">results, qualifiers,</text>
+  <text x="258" y="226" text-anchor="middle" font-size="10" fill="#3b4a58">log commitment,</text>
+  <text x="258" y="248" text-anchor="middle" font-size="10" fill="#3b4a58">node state</text>
+
+  <!-- facility boundary (right) -->
+  <rect x="300" y="42" width="540" height="300" rx="10" fill="none" stroke="#9aa5b1" stroke-dasharray="6 5"/>
+  <text x="314" y="64" font-size="11" letter-spacing="1" fill="#7d8a96">DECLARED FACILITY</text>
+
+  <!-- cage -->
+  <rect x="322" y="82" width="206" height="250" rx="8" fill="none" stroke="#1d5c86" stroke-dasharray="3 3"/>
+  <text x="425" y="322" text-anchor="middle" font-size="10" fill="#1d5c86">instrumented cage (physical security workstream)</text>
+
+  <!-- node -->
+  <rect x="336" y="96" width="178" height="206" rx="8" fill="#e2edf5" stroke="#1d5c86"/>
+  <text x="348" y="118" font-weight="bold" fill="#164b6e">Assurance node</text>
+  <text x="348" y="138" fill="#4b5966" font-size="11">challenge generation, schedule</text>
+  <text x="348" y="152" fill="#4b5966" font-size="11">timing on its own clock</text>
+  <text x="348" y="166" fill="#4b5966" font-size="11">evidence log</text>
+  <text x="348" y="180" fill="#4b5966" font-size="11">enrollment baseline</text>
+  <text x="348" y="194" fill="#4b5966" font-size="11">evidence evaluation (see 4.5)</text>
+  <text x="348" y="208" fill="#4b5966" font-size="11">signing of outbound reports</text>
+  <text x="348" y="222" fill="#4b5966" font-size="11">attestation of its own software</text>
+  <text x="348" y="236" fill="#4b5966" font-size="11">tamper and environment sensors</text>
+
+  <!-- challenge arrows -->
+  <path d="M514 140 H598" stroke="#1d5c86" stroke-width="1.4" fill="none" marker-end="url(#arrb)"/>
+  <path d="M598 196 H514" stroke="#1d5c86" stroke-width="1.4" fill="none" marker-end="url(#arrb)"/>
+  <text x="556" y="130" text-anchor="middle" font-size="10" fill="#164b6e">challenge (nonce)</text>
+  <text x="556" y="212" text-anchor="middle" font-size="10" fill="#164b6e">attestation report</text>
+
+  <!-- attesters -->
+  <g>
+    <rect x="600" y="96" width="206" height="48" rx="6" fill="#fbfcfd" stroke="#c9d1d9"/>
+    <text x="612" y="116" font-weight="bold" fill="#172029">Attester</text>
+    <text x="612" y="132" fill="#4b5966" font-size="11">accelerator in CC mode, host, client</text>
+    <rect x="600" y="156" width="206" height="48" rx="6" fill="#fbfcfd" stroke="#c9d1d9"/>
+    <text x="612" y="176" font-weight="bold" fill="#172029">Attester</text>
+    <text x="612" y="192" fill="#4b5966" font-size="11">accelerator in CC mode, host, client</text>
+    <rect x="600" y="216" width="206" height="48" rx="6" fill="#fbfcfd" stroke="#c9d1d9"/>
+    <text x="612" y="236" font-weight="bold" fill="#172029">Attester</text>
+    <text x="612" y="252" fill="#4b5966" font-size="11">accelerator in CC mode, host, client</text>
+    <text x="703" y="290" text-anchor="middle" font-size="11" fill="#7d8a96">one per governed accelerator</text>
+  </g>
+</svg>
