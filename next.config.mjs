@@ -37,6 +37,13 @@ const nextConfig = {
         destination: '/demos/verifying-compute-location',
         permanent: false,
       },
+      {
+        // Short, speakable alias for the RISE workshop deck, following the
+        // /vcl precedent. Temporary so it can be repointed at a later design.
+        source: '/rise',
+        destination: '/presentations/rise-design-01',
+        permanent: false,
+      },
     ]
   },
   async rewrites() {
@@ -48,6 +55,10 @@ const nextConfig = {
       {
         source: '/presentations/os-poc',
         destination: '/presentations/os-poc/index.html',
+      },
+      {
+        source: '/presentations/rise-design-01',
+        destination: '/presentations/rise-design-01/index.html',
       },
       {
         // Standalone full-viewport interactive visualization, served as a
@@ -91,6 +102,27 @@ const nextConfig = {
         // Same policy for the underlying static file paths and the story's
         // clean URL.
         source: '/demos/verifying-compute-location/:file(index\\.html|story|story\\.html)',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+      {
+        // The RISE deck is unreleased and passphrase-gated, so keep it and
+        // everything it loads out of search indexes entirely.
+        source: '/presentations/rise-design-01/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+      {
+        // Same policy for the clean URL that the rewrite above serves.
+        source: '/presentations/rise-design-01',
         headers: [
           {
             key: 'X-Robots-Tag',
