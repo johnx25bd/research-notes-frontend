@@ -601,68 +601,73 @@
                     <section>
                         <div class="eyebrow"><span class="label label--accent">04 — Design 01</span></div>
                         <h2 style="font-size: 36px">Proposed architecture.</h2>
-                        <svg class="dgm" viewBox="0 0 1160 420" style="margin-top: 14px" role="img" aria-label="Assurance service and relying parties outside the facility; assurance node in an instrumented enclosure linked to each attester inside">
+                        <svg class="dgm" viewBox="0 0 1160 420" style="margin-top: 14px" role="img" aria-label="Attesters inside a declared facility, an assurance node in an instrumented enclosure linked to each of them, and an assurance service and relying parties outside">
                             <defs>
                                 <marker id="ar5" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1.5 1.5L8.5 5L1.5 8.5" fill="none" stroke="#1E1F22" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></marker>
                                 <marker id="ar5a" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1.5 1.5L8.5 5L1.5 8.5" fill="none" stroke="#8A6E12" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></marker>
                             </defs>
 
-                            <text class="t-bnd" x="0" y="14">OUTSIDE THE FACILITY</text>
-                            <rect class="bx" x="0" y="28" width="200" height="92" />
-                            <text class="t-title" x="14" y="56">Relying parties</text>
-                            <text class="t-body" x="14" y="82">authority, regulator,</text>
-                            <text class="t-body" x="14" y="102">auditor, monitoring</text>
-
-                            <path class="ln" d="M100 160 V126" marker-end="url(#ar5)" />
-
-                            <rect class="bx" x="0" y="160" width="200" height="156" />
-                            <text class="t-title" x="14" y="188">Assurance service</text>
-                            <text class="t-body" x="14" y="214">one service, many nodes</text>
-                            <text class="t-body" x="14" y="234">alerts, estate view</text>
-                            <text class="t-body" x="14" y="254">holds log commitments</text>
-                            <text class="t-body" x="14" y="274">presents results</text>
-                            <text class="t-small" x="14" y="302">hosted outside facilities</text>
-
+                            <!-- the stage: an empty declared facility -->
                             <rect class="bnd--strong" x="360" y="20" width="800" height="384" />
                             <text class="t-bnd" x="376" y="46">DECLARED FACILITY</text>
 
-                            <path class="ln" d="M356 194 H208" marker-end="url(#ar5)" />
-                            <text class="t-small" x="282" y="182" text-anchor="middle">results, qualifiers</text>
+                            <!-- 1 · the governed accelerators -->
+                            <g class="fragment fade-in" data-fragment-index="0">
+                                <rect class="bx--ink" x="760" y="70" width="380" height="68" />
+                                <text class="t-ink-title" x="774" y="100">Attester</text>
+                                <text class="t-ink-body" x="774" y="122">accelerator in CC mode · host · client</text>
+                                <rect class="bx--ink" x="760" y="176" width="380" height="68" />
+                                <text class="t-ink-title" x="774" y="206">Attester</text>
+                                <text class="t-ink-body" x="774" y="228">accelerator in CC mode · host · client</text>
+                                <rect class="bx--ink" x="760" y="282" width="380" height="68" />
+                                <text class="t-ink-title" x="774" y="312">Attester</text>
+                                <text class="t-ink-body" x="774" y="334">accelerator in CC mode · host · client</text>
+                                <text class="t-small" x="950" y="382" text-anchor="middle">one per governed accelerator</text>
+                            </g>
 
-                            <rect class="bnd--accent-strong" x="384" y="64" width="290" height="296" />
-                            <text class="t-small t-accent" x="529" y="382" text-anchor="middle">instrumented enclosure</text>
+                            <!-- 2 · the instrument we install -->
+                            <g class="fragment fade-in" data-fragment-index="1">
+                                <rect class="bnd--accent-strong" x="384" y="64" width="290" height="296" />
+                                <text class="t-small t-accent" x="529" y="382" text-anchor="middle">instrumented enclosure</text>
+                                <rect class="bx bx--accent" x="402" y="86" width="218" height="252" />
+                                <text class="t-title" x="416" y="114">Assurance node</text>
+                                <text class="t-body" x="416" y="142">challenge generation</text>
+                                <text class="t-body" x="416" y="162">schedule and timing</text>
+                                <text class="t-body" x="416" y="182">its own clock</text>
+                                <text class="t-body" x="416" y="202">evidence log</text>
+                                <text class="t-body" x="416" y="222">enrollment baseline</text>
+                                <text class="t-body" x="416" y="242">evidence assessment</text>
+                                <text class="t-body" x="416" y="262">signs outbound reports</text>
+                                <text class="t-body" x="416" y="282">tamper sensors</text>
+                                <text class="t-body t-accent" x="416" y="314">plays the landmark role</text>
+                                <text class="t-small t-accent" x="690" y="56" text-anchor="middle">challenge · report</text>
+                                <path class="ln--accent" d="M624 104 H756" marker-start="url(#ar5a)" marker-end="url(#ar5a)" />
+                                <path class="ln--accent" d="M624 210 H756" marker-start="url(#ar5a)" marker-end="url(#ar5a)" />
+                                <path class="ln--accent" d="M624 316 H756" marker-start="url(#ar5a)" marker-end="url(#ar5a)" />
+                            </g>
 
-                            <rect class="bx bx--accent" x="402" y="86" width="218" height="252" />
-                            <text class="t-title" x="416" y="114">Assurance node</text>
-                            <text class="t-body" x="416" y="142">challenge generation</text>
-                            <text class="t-body" x="416" y="162">schedule and timing</text>
-                            <text class="t-body" x="416" y="182">its own clock</text>
-                            <text class="t-body" x="416" y="202">evidence log</text>
-                            <text class="t-body" x="416" y="222">enrollment baseline</text>
-                            <text class="t-body" x="416" y="242">evidence assessment</text>
-                            <text class="t-body" x="416" y="262">signs outbound reports</text>
-                            <text class="t-body" x="416" y="282">tamper sensors</text>
-                            <text class="t-body t-accent" x="416" y="314">plays the landmark role</text>
-
-                            <text class="t-small t-accent" x="690" y="56" text-anchor="middle">challenge · report</text>
-                            <path class="ln--accent" d="M624 104 H756" marker-start="url(#ar5a)" marker-end="url(#ar5a)" />
-                            <path class="ln--accent" d="M624 210 H756" marker-start="url(#ar5a)" marker-end="url(#ar5a)" />
-                            <path class="ln--accent" d="M624 316 H756" marker-start="url(#ar5a)" marker-end="url(#ar5a)" />
-
-                            <rect class="bx--ink" x="760" y="70" width="380" height="68" />
-                            <text class="t-ink-title" x="774" y="100">Attester</text>
-                            <text class="t-ink-body" x="774" y="122">accelerator in CC mode · host · client</text>
-                            <rect class="bx--ink" x="760" y="176" width="380" height="68" />
-                            <text class="t-ink-title" x="774" y="206">Attester</text>
-                            <text class="t-ink-body" x="774" y="228">accelerator in CC mode · host · client</text>
-                            <rect class="bx--ink" x="760" y="282" width="380" height="68" />
-                            <text class="t-ink-title" x="774" y="312">Attester</text>
-                            <text class="t-ink-body" x="774" y="334">accelerator in CC mode · host · client</text>
-                            <text class="t-small" x="950" y="382" text-anchor="middle">one per governed accelerator</text>
+                            <!-- 3 · who the evidence is for -->
+                            <g class="fragment fade-in" data-fragment-index="2">
+                                <text class="t-bnd" x="0" y="14">OUTSIDE THE FACILITY</text>
+                                <rect class="bx" x="0" y="28" width="200" height="92" />
+                                <text class="t-title" x="14" y="56">Relying parties</text>
+                                <text class="t-body" x="14" y="82">authority, regulator,</text>
+                                <text class="t-body" x="14" y="102">auditor, monitoring</text>
+                                <path class="ln" d="M100 160 V126" marker-end="url(#ar5)" />
+                                <rect class="bx" x="0" y="160" width="200" height="156" />
+                                <text class="t-title" x="14" y="188">Assurance service</text>
+                                <text class="t-body" x="14" y="214">one service, many nodes</text>
+                                <text class="t-body" x="14" y="234">alerts, estate view</text>
+                                <text class="t-body" x="14" y="254">holds log commitments</text>
+                                <text class="t-body" x="14" y="274">presents results</text>
+                                <text class="t-small" x="14" y="302">hosted outside facilities</text>
+                                <path class="ln" d="M356 194 H208" marker-end="url(#ar5)" />
+                                <text class="t-small" x="282" y="182" text-anchor="middle">results, qualifiers</text>
+                            </g>
                         </svg>
                         <aside class="notes">
                             <ul>
-                                <li>Walk it: attesters, client, assurance node, facility boundary, assurance service, relying parties</li>
+                                <li>Builds in three: the attesters, then the node we install, then who the evidence is for</li>
                                 <li>Attester: each covered accelerator with its host, in confidential-computing mode</li>
                                 <li>The client on the host is trusted for nothing</li>
                                 <li>Assurance node: our hardware in the rack, in an enclosure. It plays the landmark role</li>
