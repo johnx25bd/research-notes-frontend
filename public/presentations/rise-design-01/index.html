@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Verifying compute location — Design 01</title>
+
+        <base href="/presentations/rise-design-01/" />
+
+        <link rel="icon" href="theme/favicon.svg" type="image/svg+xml" />
+
+        <link rel="stylesheet" href="lib/reveal/reset.css" />
+        <link rel="stylesheet" href="lib/reveal/reveal.css" />
+        <!-- Lucid Computing design system — the only theme. Bump ?v=N when editing. -->
+        <link rel="stylesheet" href="theme/lucid.css?v=2" />
+
+        <style>
+            /* ------------------------------------------------------------
+               Diagram layer. Every figure in this deck is inline SVG drawn
+               from the theme tokens: no radius, hairlines divide, amber is
+               the single accent. Classes here so the SVG markup stays thin.
+               ------------------------------------------------------------ */
+            .reveal .dgm { display: block; width: 100%; height: auto; }
+            .reveal .dgm text { font-family: var(--font-mono); fill: var(--ink-2); }
+            .reveal .dgm .t-title { font-size: 15px; font-weight: 500; fill: var(--ink-1); }
+            .reveal .dgm .t-body { font-size: 12px; fill: var(--ink-2); }
+            .reveal .dgm .t-small { font-size: 11px; fill: var(--ink-2); }
+            .reveal .dgm .t-label { font-size: 11px; fill: var(--ink-2); letter-spacing: 0.08em; }
+            .reveal .dgm .t-lg { font-size: 13px; fill: var(--ink-2); }
+            .reveal .dgm .t-anno { font-size: 11px; fill: var(--ink-2); }
+            .reveal .dgm .t-accent { fill: var(--amber-ink); }
+            .reveal .dgm .t-ink { fill: var(--ink-1); }
+            .reveal .dgm .bx { fill: var(--paper-1); stroke: rgba(30, 31, 34, 0.22); stroke-width: 1; }
+            .reveal .dgm .bx--muted { fill: var(--paper-2); stroke: rgba(30, 31, 34, 0.22); }
+            .reveal .dgm .bx--accent { fill: var(--paper-1); stroke: var(--amber); stroke-width: 1.5; }
+            .reveal .dgm .bx--fill { fill: rgba(201, 162, 39, 0.18); stroke: var(--amber); }
+            .reveal .dgm .bnd { fill: none; stroke: rgba(30, 31, 34, 0.22); stroke-dasharray: 6 5; }
+            .reveal .dgm .bnd--accent { fill: none; stroke: var(--amber); stroke-dasharray: 4 4; }
+            .reveal .dgm .ln { fill: none; stroke: var(--ink-1); stroke-width: 1; }
+            .reveal .dgm .ln--muted { fill: none; stroke: rgba(30, 31, 34, 0.22); stroke-width: 1; }
+            .reveal .dgm .ln--accent { fill: none; stroke: var(--amber); stroke-width: 1.5; }
+            .reveal .dgm .oos { opacity: 0.28; }
+            .reveal .dgm .bx--ink { fill: var(--ink-1); stroke: var(--ink-1); }
+            .reveal .dgm .bx--gold { fill: var(--amber); stroke: var(--amber); }
+            .reveal .dgm .bx--pivot { fill: var(--paper-1); stroke: var(--ink-1); stroke-width: 1.5; }
+            .reveal .dgm .t-on-ink { font-size: 13px; fill: var(--paper-1); }
+            .reveal .dgm .t-on-gold { font-size: 13px; fill: var(--ink-1); }
+            .reveal .dgm .t-ink-title { font-size: 15px; font-weight: 500; fill: var(--paper-1); }
+            .reveal .dgm .t-ink-body { font-size: 12px; fill: rgba(246, 241, 231, 0.74); }
+            .reveal .dgm .bnd--strong { fill: none; stroke: rgba(30, 31, 34, 0.42); stroke-width: 1.5; stroke-dasharray: 9 5; }
+            .reveal .dgm .bnd--accent-strong { fill: none; stroke: var(--amber); stroke-width: 1.5; stroke-dasharray: 5 4; }
+            .reveal .dgm .t-bnd { font-size: 12px; fill: var(--ink-2); letter-spacing: 0.08em; }
+
+            /* Nested-scope figure: primitive inside mechanism inside design. */
+            .reveal .nest { border: var(--border-strong); padding: 22px; }
+            .reveal .nest .label { display: block; margin-bottom: 10px; }
+            .reveal .nest h3 { font-size: 22px; }
+            .reveal .nest .nest { margin-top: 18px; }
+
+            /* Document reference: a whole cover page, sized to the slide, not the file. */
+            .reveal .frame.doc { width: fit-content; }
+            .reveal .frame.doc img { height: 380px; width: auto; }
+
+            /* Nest boxes draw inside-out: the border is the fragment, not the contents. */
+            .reveal .slides section .fragment.nest-box { opacity: 1; visibility: inherit; border-color: transparent; }
+            .reveal .slides section .fragment.nest-box.visible { border-color: var(--rule-strong); }
+
+            /* Pipeline: three prominent blocks joined by bare arrows. */
+            .reveal .pipeline { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: var(--space-4); align-items: stretch; margin-top: 44px; }
+            .reveal .pipeline .arrow { align-self: center; font-family: var(--font-mono); font-size: var(--slide-h3); color: var(--ink-3); }
+            .reveal .stage .card-header span:first-child { text-transform: none; font-size: 16px; color: var(--ink-1); letter-spacing: var(--tracking-heading); }
+            .reveal .stage .card-body { padding: var(--space-6); }
+            .reveal .stage .card-body h4 { font-size: 19px; margin-bottom: var(--space-2); }
+            .reveal .stage .card-body p { font-size: 16px; }
+
+            /* Claim slide: the sentence lights up phrase by phrase as each term lands. */
+            .reveal .claim-quote { font-size: 34px; line-height: 1.4; color: var(--ink-1); max-width: 1080px; margin-top: 30px; }
+            .reveal .slides section .fragment.lit { opacity: 1; visibility: inherit; }
+            .reveal .slides section .fragment.lit.visible {
+                color: var(--amber-ink);
+                text-decoration: underline;
+                text-decoration-color: var(--amber);
+                text-decoration-thickness: 1px;
+                text-underline-offset: 6px;
+            }
+            .reveal .claim-terms { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 40px; }
+            .reveal .claim-terms .chip { font-size: 18px; padding: 10px 18px; font-weight: 500; }
+            .reveal .claim-terms--sm .chip { font-size: 16px; padding: 8px 16px; }
+
+            /* Card header strips align across a row whether or not they carry a badge. */
+            .reveal .card-header { min-height: 46px; }
+
+            /* Assumptions: one list, tighter rows, no dangling rule at the foot. */
+            .reveal .assump-list li { font-size: 18px; padding: 10px 0; }
+            .reveal .assump-list li:last-child { border-bottom: none; }
+        </style>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <!-- ============================================================
+                     00 · TITLE
+                     ============================================================ -->
+                <section class="title">
+                    <p class="label">Design 01 · co-located assurance node</p>
+                    <h1>Verifying<br /><span class="text-accent">compute location.</span></h1>
+                    <p class="lead">RISE Verifiable AI Cluster · 8 September 2026<br />John Hoopes, Lucid Computing</p>
+                    <aside class="notes">
+                        <ul>
+                            <li>Yesterday: what we verify, against whom, with what access</li>
+                            <li>Today: one design, end to end</li>
+                            <li>First half context, second half yours</li>
+                            <li>Interrupt at any point</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- 1.1 The claim — each term lights its phrase in the sentence -- -->
+                <section>
+                    <div class="eyebrow"><span class="label label--accent">01 — Framing</span></div>
+                    <h2>The claim.</h2>
+                    <p class="claim-quote">“These <span class="fragment lit" data-fragment-index="0">sixteen accelerators</span> stayed <span class="fragment lit" data-fragment-index="1">within an agreed distance of this site</span> <span class="fragment lit" data-fragment-index="2">for the whole of October</span>.”</p>
+                    <div class="claim-terms">
+                        <span class="chip chip--ink fragment fade-in" data-fragment-index="0">a set of governed devices</span>
+                        <span class="chip chip--ink fragment fade-in" data-fragment-index="1">a policy zone</span>
+                        <span class="chip chip--ink fragment fade-in" data-fragment-index="2">a time interval</span>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>Same example as yesterday. This is LOC</li>
+                            <li>Read the sentence, then name the three variables underneath it</li>
+                            <li>Governed devices, policy zone, time interval — the vocabulary for the rest of the hour</li>
+                            <li>All three have to hold</li>
+                            <li>The interval matters: collection rate sets the gap an operator could use</li>
+                            <li>Hours, not minutes, to unrack, transport, reinstall</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- 1.2 Theory of change — the no path, then the yes path ------- -->
+                <section>
+                    <div class="eyebrow"><span class="label label--accent">01 — Framing</span></div>
+                    <h2>Theory of change.</h2>
+                    <svg class="dgm" viewBox="0 0 1160 310" style="margin-top: 40px" role="img" aria-label="Inputs feed a decision to verify location, branching to elevated risk or reduced risk">
+                        <defs>
+                            <marker id="ar2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1.5 1.5L8.5 5L1.5 8.5" fill="none" stroke="#1E1F22" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></marker>
+                            <marker id="ar2a" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1.5 1.5L8.5 5L1.5 8.5" fill="none" stroke="#8A6E12" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></marker>
+                        </defs>
+
+                        <text class="t-label" x="0" y="72">INPUTS</text>
+                        <rect class="bx--ink" x="0" y="84" width="160" height="48" />
+                        <text class="t-on-ink" x="80" y="113" text-anchor="middle">Talent</text>
+                        <rect class="bx--ink" x="0" y="158" width="160" height="48" />
+                        <text class="t-on-ink" x="80" y="187" text-anchor="middle">Frontier chips</text>
+                        <rect class="bx--ink" x="0" y="232" width="160" height="48" />
+                        <text class="t-on-ink" x="80" y="261" text-anchor="middle">Energy</text>
+
+                        <g class="fragment fade-in" data-fragment-index="0">
+                            <rect class="bx--gold" x="0" y="158" width="160" height="48" />
+                            <text class="t-on-gold" x="80" y="187" text-anchor="middle">Frontier chips</text>
+                        </g>
+
+                        <g class="fragment fade-in" data-fragment-index="1">
+                            <path class="ln" d="M164 182 H236" marker-end="url(#ar2)" />
+                            <rect class="bx--pivot" x="240" y="150" width="180" height="64" />
+                            <text class="t-title" x="330" y="188" text-anchor="middle">Verify location?</text>
+                        </g>
+
+                        <g class="fragment fade-in" data-fragment-index="2">
+                            <path class="ln" d="M330 150 V96 H456" marker-end="url(#ar2)" />
+                            <text class="t-small" x="344" y="120">no</text>
+                            <rect class="bx--ink" x="460" y="70" width="150" height="52" />
+                            <text class="t-on-ink" x="535" y="101" text-anchor="middle">Diversion</text>
+                        </g>
+                        <g class="fragment fade-in" data-fragment-index="3">
+                            <path class="ln" d="M614 96 H646" marker-end="url(#ar2)" />
+                            <rect class="bx--ink" x="650" y="70" width="150" height="52" />
+                            <text class="t-on-ink" x="725" y="93" text-anchor="middle">Dangerous</text>
+                            <text class="t-on-ink" x="725" y="111" text-anchor="middle">models</text>
+                        </g>
+                        <g class="fragment fade-in" data-fragment-index="4">
+                            <path class="ln" d="M804 96 H836" marker-end="url(#ar2)" />
+                            <rect class="bx--ink" x="840" y="70" width="150" height="52" />
+                            <text class="t-on-ink" x="915" y="101" text-anchor="middle">Proliferation</text>
+                        </g>
+                        <g class="fragment fade-in" data-fragment-index="5">
+                            <path class="ln" d="M994 96 H1026" marker-end="url(#ar2)" />
+                            <rect class="bx--ink" x="1030" y="70" width="130" height="52" />
+                            <text class="t-on-ink" x="1095" y="93" text-anchor="middle">Elevated</text>
+                            <text class="t-on-ink" x="1095" y="111" text-anchor="middle">risk</text>
+                        </g>
+
+                        <g class="fragment fade-in" data-fragment-index="6">
+                            <path class="ln--accent" d="M330 214 V268 H456" marker-end="url(#ar2a)" />
+                            <text class="t-small t-accent" x="344" y="260">yes</text>
+                            <rect class="bx--gold" x="460" y="242" width="150" height="52" />
+                            <text class="t-on-gold" x="535" y="265" text-anchor="middle">Detect diversion</text>
+                            <text class="t-on-gold" x="535" y="283" text-anchor="middle">attempts</text>
+                        </g>
+                        <g class="fragment fade-in" data-fragment-index="7">
+                            <path class="ln--accent" d="M614 268 H646" marker-end="url(#ar2a)" />
+                            <rect class="bx--gold" x="650" y="242" width="150" height="52" />
+                            <text class="t-on-gold" x="725" y="265" text-anchor="middle">Less covert</text>
+                            <text class="t-on-gold" x="725" y="283" text-anchor="middle">training</text>
+                        </g>
+                        <g class="fragment fade-in" data-fragment-index="8">
+                            <path class="ln--accent" d="M804 268 H836" marker-end="url(#ar2a)" />
+                            <rect class="bx--gold" x="840" y="242" width="150" height="52" />
+                            <text class="t-on-gold" x="915" y="265" text-anchor="middle">Less</text>
+                            <text class="t-on-gold" x="915" y="283" text-anchor="middle">proliferation</text>
+                        </g>
+                        <g class="fragment fade-in" data-fragment-index="9">
+                            <path class="ln--accent" d="M994 268 H1026" marker-end="url(#ar2a)" />
+                            <rect class="bx--gold" x="1030" y="242" width="130" height="52" />
+                            <text class="t-on-gold" x="1095" y="265" text-anchor="middle">Reduced</text>
+                            <text class="t-on-gold" x="1095" y="283" text-anchor="middle">risk</text>
+                        </g>
+                    </svg>
+                    <aside class="notes">
+                        <ul>
+                            <li>Back up from the claim: why does this matter at all?</li>
+                            <li>Frontier chips are the input you can actually govern</li>
+                            <li>Without verifying location: diversion, dangerous models, proliferation, elevated risk</li>
+                            <li>With it: detect diversion attempts in time, less covert training, less proliferation</li>
+                            <li>One layer of a defense in depth. Detection in time to respond is the job</li>
+                            <li><strong>Align —</strong> John to refine this after this afternoon's sessions</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- 1.3 Two goals ------------------------------------------------- -->
+                <section>
+                    <div class="eyebrow"><span class="label label--accent">01 — Framing</span></div>
+                    <h2>Goals.</h2>
+                    <div class="grid-2 fill" style="align-content: start">
+                        <div class="panel fragment fade-in">
+                            <span class="label label--accent">Primary</span>
+                            <h3 style="margin-top: 14px">Detect diversion in time to prevent it.</h3>
+                        </div>
+                        <div class="panel fragment fade-in">
+                            <span class="label">Secondary</span>
+                            <h3 style="margin-top: 14px">Deter diversion through accountability.</h3>
+                        </div>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>Primary: catch an attempt early enough to stop chips going off grid</li>
+                            <li>Keeps diverted compute out of the unaccounted market</li>
+                            <li>Location tells you where to go</li>
+                            <li>Secondary: strong penalties for entities that allow diversion</li>
+                            <li>Location links chips to a legal entity subject to regulatory action</li>
+                            <li>Scope, if asked: declared large data centers only — Andrew set this yesterday</li>
+                            <li>Small deployments need a lighter method; undeclared compute needs supply-chain controls first</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- 1.4 The primitive — walked one step at a time ------------------ -->
+                <section>
+                    <div class="eyebrow"><span class="label label--accent">01 — Framing</span></div>
+                    <h2>Primitive.</h2>
+                    <div class="grid-split middle" style="margin-top: 36px; gap: var(--space-12); grid-template-columns: 8fr 3fr">
+                        <div>
+                            <div class="claim-terms" style="margin-bottom: 26px"><span class="chip chip--ink">RTT LATENCY MEASUREMENT</span></div>
+                            <svg class="dgm" viewBox="0 0 560 152" role="img" aria-label="Assurance node sends a challenge, accelerator signs it, signed response returns and is timestamped">
+                                <defs>
+                                    <marker id="ar1" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1.5 1.5L8.5 5L1.5 8.5" fill="none" stroke="#1E1F22" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></marker>
+                                </defs>
+                                <g class="fragment fade-in" data-fragment-index="0">
+                                    <rect class="bx" x="0" y="8" width="200" height="136" />
+                                    <text class="t-title" x="14" y="36">Assurance node</text>
+                                    <text class="t-body" x="14" y="64">originates challenges</text>
+                                    <text class="t-body" x="14" y="86">times on its own clock</text>
+                                    <text class="t-body" x="14" y="108">writes the record</text>
+                                </g>
+                                <g class="fragment fade-in" data-fragment-index="1">
+                                    <rect class="bx" x="360" y="8" width="200" height="136" />
+                                    <text class="t-title" x="374" y="36">Accelerator</text>
+                                    <text class="t-body" x="374" y="64">signs the nonce</text>
+                                    <text class="t-body" x="374" y="86">confidential mode</text>
+                                    <path class="ln" d="M204 60 H356" marker-end="url(#ar1)" />
+                                    <text class="t-body" x="280" y="48" text-anchor="middle">challenge (nonce)</text>
+                                    <text class="t-body t-accent" x="210" y="82">t₀</text>
+                                </g>
+                                <g class="fragment fade-in" data-fragment-index="2">
+                                    <path class="ln" d="M356 116 H208" marker-end="url(#ar1)" />
+                                    <text class="t-body" x="282" y="104" text-anchor="middle">signed response</text>
+                                    <text class="t-body t-accent" x="210" y="138">t₁</text>
+                                </g>
+                            </svg>
+                        </div>
+                        <figure class="fragment fade-in" data-fragment-index="3">
+                            <div class="frame doc"><img src="figures/iaps-location-verification-p1.png" alt="Cover of the IAPS brief on location verification" /></div>
+                            <figcaption class="label">Brass &amp; Aarne, IAPS · 2024</figcaption>
+                        </figure>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>A signal cannot travel faster than light — about 300 km per ms in vacuum, about 200 in fiber</li>
+                            <li>Real routes are not great circles, so the bound is looser still</li>
+                            <li>The node originates the challenge and times it on its own clock</li>
+                            <li>The accelerator signs the nonce in confidential mode</li>
+                            <li>The round trip gives an <em>upper bound</em> on distance, nothing more</li>
+                            <li>A round trip can be delayed. It cannot be shortened</li>
+                            <li>Brass and Aarne at IAPS laid out the policy case in 2024 — established technique</li>
+                            <li>Over the internet the bound is hundreds of km: continents, not sites</li>
+                            <li>Greg's 100 km is the starting hypothesis; the prototype calibrates it</li>
+                            <li><strong>Ask —</strong> anyone want to push on this before I build on it?</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- ============================================================
+                     THE SETTING · ROLES · LAYERING
+                     ============================================================ -->
+                <section>
+                    <div class="eyebrow"><span class="label label--accent">01 — Framing</span></div>
+                    <h2>The setting.</h2>
+                    <div class="feature-list" style="margin-top: 44px; max-width: 900px">
+                        <div class="feature-row fragment fade-in"><svg class="icon" viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"/></svg><div><h4>Claim: LOC</h4></div></div>
+                        <div class="feature-row fragment fade-in"><svg class="icon" viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M208,136H48a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V152A16,16,0,0,0,208,136Zm0,64H48V152H208v48Zm0-160H48A16,16,0,0,0,32,56v48a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V56A16,16,0,0,0,208,40Zm0,64H48V56H208v48ZM192,80a12,12,0,1,1-12-12A12,12,0,0,1,192,80Zm0,96a12,12,0,1,1-12-12A12,12,0,0,1,192,176Z"/></svg><div><h4>Adversary: the operator</h4></div></div>
+                        <div class="feature-row fragment fade-in"><svg class="icon" viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M152,96H104a8,8,0,0,0-8,8v48a8,8,0,0,0,8,8h48a8,8,0,0,0,8-8V104A8,8,0,0,0,152,96Zm-8,48H112V112h32Zm88,0H216V112h16a8,8,0,0,0,0-16H216V56a16,16,0,0,0-16-16H160V24a8,8,0,0,0-16,0V40H112V24a8,8,0,0,0-16,0V40H56A16,16,0,0,0,40,56V96H24a8,8,0,0,0,0,16H40v32H24a8,8,0,0,0,0,16H40v40a16,16,0,0,0,16,16H96v16a8,8,0,0,0,16,0V216h32v16a8,8,0,0,0,16,0V216h40a16,16,0,0,0,16-16V160h16a8,8,0,0,0,0-16Zm-32,56H56V56H200v95.87s0,.09,0,.13,0,.09,0,.13V200Z"/></svg><div><h4>Access: instruments in the rack, remote reports</h4></div></div>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>Greg's three axes, stated plainly for Design 01</li>
+                            <li>Adversary: hypervisor, host kernel, BMC, staff with physical access to the rack</li>
+                            <li>Not the supply chain — Greg's level 6 is out of scope here</li>
+                            <li>Greg's principle: if it cannot be done with instruments inside, it cannot be done without them</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- Roles — built from the facility outward ----------------------- -->
+                <section>
+                    <div class="eyebrow"><span class="label label--accent">01 — Framing</span></div>
+                    <h2>Roles.</h2>
+                    <div class="grid-4">
+                        <div class="card fragment fade-in">
+                            <div class="card-header"><span><svg class="icon" viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M208,136H48a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V152A16,16,0,0,0,208,136Zm0,64H48V152H208v48Zm0-160H48A16,16,0,0,0,32,56v48a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V56A16,16,0,0,0,208,40Zm0,64H48V56H208v48ZM192,80a12,12,0,1,1-12-12A12,12,0,0,1,192,80Zm0,96a12,12,0,1,1-12-12A12,12,0,0,1,192,176Z"/></svg> Operator</span><span class="badge badge--danger">Adversary</span></div>
+                            <div class="card-body"><p>Runs the facility and the hosts.</p></div>
+                        </div>
+                        <div class="card fragment fade-in">
+                            <div class="card-header"><span><svg class="icon" viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M152,96H104a8,8,0,0,0-8,8v48a8,8,0,0,0,8,8h48a8,8,0,0,0,8-8V104A8,8,0,0,0,152,96Zm-8,48H112V112h32Zm88,0H216V112h16a8,8,0,0,0,0-16H216V56a16,16,0,0,0-16-16H160V24a8,8,0,0,0-16,0V40H112V24a8,8,0,0,0-16,0V40H56A16,16,0,0,0,40,56V96H24a8,8,0,0,0,0,16H40v32H24a8,8,0,0,0,0,16H40v40a16,16,0,0,0,16,16H96v16a8,8,0,0,0,16,0V216h32v16a8,8,0,0,0,16,0V216h40a16,16,0,0,0,16-16V160h16a8,8,0,0,0,0-16Zm-32,56H56V56H200v95.87s0,.09,0,.13,0,.09,0,.13V200Z"/></svg> Builder</span></div>
+                            <div class="card-body"><p>Builds the system. Does enrollment.</p></div>
+                        </div>
+                        <div class="card fragment fade-in">
+                            <div class="card-header"><span><svg class="icon" viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M225.86,102.82c-3.77-3.94-7.67-8-9.14-11.57-1.36-3.27-1.44-8.69-1.52-13.94-.15-9.76-.31-20.82-8-28.51s-18.75-7.85-28.51-8c-5.25-.08-10.67-.16-13.94-1.52-3.56-1.47-7.63-5.37-11.57-9.14C146.28,23.51,138.44,16,128,16s-18.27,7.51-25.18,14.14c-3.94,3.77-8,7.67-11.57,9.14C88,40.64,82.56,40.72,77.31,40.8c-9.76.15-20.82.31-28.51,8S41,67.55,40.8,77.31c-.08,5.25-.16,10.67-1.52,13.94-1.47,3.56-5.37,7.63-9.14,11.57C23.51,109.72,16,117.56,16,128s7.51,18.27,14.14,25.18c3.77,3.94,7.67,8,9.14,11.57,1.36,3.27,1.44,8.69,1.52,13.94.15,9.76.31,20.82,8,28.51s18.75,7.85,28.51,8c5.25.08,10.67.16,13.94,1.52,3.56,1.47,7.63,5.37,11.57,9.14C109.72,232.49,117.56,240,128,240s18.27-7.51,25.18-14.14c3.94-3.77,8-7.67,11.57-9.14,3.27-1.36,8.69-1.44,13.94-1.52,9.76-.15,20.82-.31,28.51-8s7.85-18.75,8-28.51c.08-5.25.16-10.67,1.52-13.94,1.47-3.56,5.37-7.63,9.14-11.57C232.49,146.28,240,138.44,240,128S232.49,109.73,225.86,102.82Zm-11.55,39.29c-4.79,5-9.75,10.17-12.38,16.52-2.52,6.1-2.63,13.07-2.73,19.82-.1,7-.21,14.33-3.32,17.43s-10.39,3.22-17.43,3.32c-6.75.1-13.72.21-19.82,2.73-6.35,2.63-11.52,7.59-16.52,12.38S132,224,128,224s-9.15-4.92-14.11-9.69-10.17-9.75-16.52-12.38c-6.1-2.52-13.07-2.63-19.82-2.73-7-.1-14.33-.21-17.43-3.32s-3.22-10.39-3.32-17.43c-.1-6.75-.21-13.72-2.73-19.82-2.63-6.35-7.59-11.52-12.38-16.52S32,132,32,128s4.92-9.15,9.69-14.11,9.75-10.17,12.38-16.52c2.52-6.1,2.63-13.07,2.73-19.82.1-7,.21-14.33,3.32-17.43S70.51,56.9,77.55,56.8c6.75-.1,13.72-.21,19.82-2.73,6.35-2.63,11.52-7.59,16.52-12.38S124,32,128,32s9.15,4.92,14.11,9.69,10.17,9.75,16.52,12.38c6.1,2.52,13.07,2.63,19.82,2.73,7,.1,14.33.21,17.43,3.32s3.22,10.39,3.32,17.43c.1,6.75.21,13.72,2.73,19.82,2.63,6.35,7.59,11.52,12.38,16.52S224,124,224,128,219.08,137.15,214.31,142.11ZM173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34Z"/></svg> Verifier</span></div>
+                            <div class="card-body"><p>Runs the instruments. Ideally a regulator.</p></div>
+                        </div>
+                        <div class="card fragment fade-in">
+                            <div class="card-header"><span><svg class="icon" viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"/></svg> Relying party</span></div>
+                            <div class="card-body"><p>Acts on the claim. Was not in the room.</p></div>
+                        </div>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>Built from the facility outward — operator, builder, verifier, relying party</li>
+                            <li>Operator: the adversary throughout this design</li>
+                            <li>Builder: Lucid. Enrollment is ours</li>
+                            <li>Verifier: Lucid in the project; in deployment, a body acting for an authority</li>
+                            <li>Relying party: a treaty body, a ministry, an auditor</li>
+                            <li><strong>Align —</strong> Greg's deck puts the builder inside the threat model too; say so out loud</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- Layering — built from the inside out --------------------------- -->
+                <section>
+                    <div class="eyebrow"><span class="label label--accent">01 — Framing</span></div>
+                    <h2>Layers.</h2>
+                    <div class="nest nest-box fragment" data-fragment-index="2" style="margin-top: 40px; max-width: 900px">
+                        <span class="label fragment fade-in" data-fragment-index="2">Design</span>
+                        <h3 class="fragment fade-in" data-fragment-index="2">Co-located assurance node</h3>
+                        <div class="nest nest-box fragment" data-fragment-index="1">
+                            <span class="label fragment fade-in" data-fragment-index="1">Mechanism</span>
+                            <h3 class="fragment fade-in" data-fragment-index="1">Bounds over time, assessed and evaluated</h3>
+                            <div class="nest nest-box fragment" data-fragment-index="0">
+                                <span class="label fragment fade-in" data-fragment-index="0">Primitive</span>
+                                <h3 class="fragment fade-in" data-fragment-index="0">Round-trip distance bound</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>Greg's layering, built from the inside out</li>
+                            <li>One primitive for LOC: a single round trip gives one distance bound</li>
+                            <li>The mechanism composes many bounds, over time and across accelerators</li>
+                            <li>Assessed against the enrollment baseline, then evaluated against policy — that is the next slide</li>
+                            <li>Identity, tamper evidence, log integrity belong to other claims — they compose</li>
+                            <li>No trilateration in this design: one node, one bound per ping</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- ============================================================
+                     02 · PIPELINE — three blocks, each naming its output
+                     ============================================================ -->
+                <section>
+                    <div class="eyebrow"><span class="label label--accent">02 — Pipeline</span></div>
+                    <h2>Pipeline.</h2>
+                    <div class="pipeline">
+                        <div class="card stage fragment fade-in">
+                            <div class="card-header"><span>Collect evidence</span></div>
+                            <div class="card-body">
+                                <h4>Evidence log</h4>
+                                <p>Every challenge and response, signed and timed.</p>
+                            </div>
+                        </div>
+                        <span class="arrow fragment fade-in">→</span>
+                        <div class="card stage fragment fade-in">
+                            <div class="card-header"><span>Assess evidence</span></div>
+                            <div class="card-body">
+                                <h4>Credibility assessment</h4>
+                                <p>Where the device was, with what confidence and qualifiers.</p>
+                            </div>
+                        </div>
+                        <span class="arrow fragment fade-in">→</span>
+                        <div class="card stage fragment fade-in">
+                            <div class="card-header"><span>Evaluate policy</span></div>
+                            <div class="card-body">
+                                <h4>Determination</h4>
+                                <p>One answer per policy question.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <aside class="notes">
+                        <ul>
+                            <li>Three jobs usually blended together. We separate them</li>
+                            <li>Collect: challenges, responses, records — including the ones that never came back</li>
+                            <li>Assess: the evidence function. Location evidence against the claim, producing a credibility assessment plus qualifiers</li>
+                            <li>Formally: a posterior over space and time, conditional on the evidence</li>
+                            <li>The middle stage is neutral — it neither measures nor decides. A relying party can re-run it</li>
+                            <li>Evaluate: test that assessment against a policy. Change detection, containment, whatever the authority sets</li>
+                            <li>"Evaluate" is reserved for policy; evidence is assessed</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- Policy output (+ vertical step-down) -------------------------- -->
+                <section>
+                    <section>
+                        <div class="eyebrow"><span class="label label--accent">02 — Pipeline</span></div>
+                        <h2>Policy output.</h2>
+                        <div class="claim-terms claim-terms--sm" style="margin-top: 44px">
+                            <span class="chip chip--ink fragment fade-in">Supported</span>
+                            <span class="chip chip--ink fragment fade-in">Contradicted</span>
+                            <span class="chip chip--ink fragment fade-in">Indeterminate</span>
+                        </div>
+                        <aside class="notes">
+                            <ul>
+                                <li>Policy evaluation ends in one of three. Indeterminate never passes</li>
+                                <li>Every output carries qualifiers: what it rests on. Still being defined</li>
+                                <li>Björn's question: the output is a probabilistic case with its assumptions, not a proof</li>
+                                <li>Step down only if the room wants it</li>
+                            </ul>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <div class="eyebrow"><span class="label label--accent">02 — Pipeline</span></div>
+                        <h2>Alternate framing.</h2>
+                        <ol class="rows" style="margin-top: 40px; max-width: 960px">
+                            <li>Evidence: a series of signed, timed responses.</li>
+                            <li>Assessment: a probability distribution over where the accelerator was, given the evidence.</li>
+                            <li>Policy: how much of that distribution falls inside the zone, for the whole period.</li>
+                        </ol>
+                        <aside class="notes">
+                            <ul>
+                                <li>No symbols on the slide, deliberately</li>
+                                <li><strong>Align —</strong> Greg and John still harmonizing the claim vocabulary with the c, e, z notation</li>
+                            </ul>
+                        </aside>
+                    </section>
+                </section>
+
+                <!-- ============================================================
+                     03 · PRIMITIVE — divider
+                     ============================================================ -->
+                <section class="ink divider">
+                    <div class="eyebrow"><span class="label label--accent">03 — Primitive</span></div>
+                    <h2>Lifecycle of a ping.</h2>
+                    <aside class="notes">
+                        <ul>
+                            <li>Seven minutes — the technical heart of the first half</li>
+                            <li>Ends on a question for the room</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- Anatomy of a measurement — walked left to right ---------------- -->
+                <section>
+                    <div class="eyebrow"><span class="label label--accent">03 — Primitive</span></div>
+                    <h2>Lifecycle of a ping.</h2>
+                    <svg class="dgm" viewBox="0 0 1160 220" style="margin-top: 36px" role="img" aria-label="A timeline of a round trip in eight segments, widths proportional to how long each takes, with the measured interval bracketed">
+                        <g class="fragment fade-in" data-fragment-index="0">
+                            <rect class="bx bx--muted" x="20" y="86" width="58" height="10" />
+                            <path class="ln--muted" d="M49 96 V118" />
+                            <text class="t-anno" x="49" y="132" text-anchor="middle">landmark</text>
+                            <text class="t-anno" x="49" y="146" text-anchor="middle">initiates</text>
+                            <text class="t-anno" x="49" y="160" text-anchor="middle">measurement</text>
+                        </g>
+
+                        <g class="fragment fade-in" data-fragment-index="1">
+                            <path class="ln--accent" d="M85 36 V104" />
+                            <text class="t-anno t-accent" x="91" y="58">clock starts</text>
+                            <rect class="bx bx--muted" x="92" y="86" width="116" height="10" />
+                            <path class="ln--muted" d="M150 96 V166" />
+                            <text class="t-anno" x="150" y="180" text-anchor="middle">message</text>
+                            <text class="t-anno" x="150" y="194" text-anchor="middle">transits</text>
+                            <text class="t-anno" x="150" y="208" text-anchor="middle">network</text>
+                        </g>
+
+                        <g class="fragment fade-in" data-fragment-index="2">
+                            <rect class="bx bx--muted" x="222" y="86" width="58" height="10" />
+                            <path class="ln--muted" d="M251 96 V118" />
+                            <text class="t-anno" x="251" y="132" text-anchor="middle">message</text>
+                            <text class="t-anno" x="251" y="146" text-anchor="middle">transits</text>
+                            <text class="t-anno" x="251" y="160" text-anchor="middle">LAN</text>
+                        </g>
+
+                        <g class="fragment fade-in" data-fragment-index="3">
+                            <rect class="bx bx--muted" x="294" y="86" width="424" height="10" />
+                            <path class="ln--muted" d="M506 96 V166" />
+                            <text class="t-anno" x="506" y="180" text-anchor="middle">nonce signed</text>
+                            <text class="t-anno" x="506" y="194" text-anchor="middle">by accelerator</text>
+                        </g>
+
+                        <g class="fragment fade-in" data-fragment-index="4">
+                            <rect class="bx bx--muted" x="732" y="86" width="58" height="10" />
+                            <path class="ln--muted" d="M761 96 V118" />
+                            <text class="t-anno" x="761" y="132" text-anchor="middle">signature</text>
+                            <text class="t-anno" x="761" y="146" text-anchor="middle">transits</text>
+                            <text class="t-anno" x="761" y="160" text-anchor="middle">LAN</text>
+                        </g>
+
+                        <g class="fragment fade-in" data-fragment-index="5">
+                            <rect class="bx bx--muted" x="804" y="86" width="116" height="10" />
+                            <path class="ln--muted" d="M862 96 V166" />
+                            <text class="t-anno" x="862" y="180" text-anchor="middle">signature</text>
+                            <text class="t-anno" x="862" y="194" text-anchor="middle">transits</text>
+                            <text class="t-anno" x="862" y="208" text-anchor="middle">network</text>
+                        </g>
+
+                        <g class="fragment fade-in" data-fragment-index="6">
+                            <rect class="bx bx--muted" x="934" y="86" width="58" height="10" />
+                            <path class="ln--muted" d="M963 96 V118" />
+                            <text class="t-anno" x="963" y="132" text-anchor="middle">landmark</text>
+                            <text class="t-anno" x="963" y="146" text-anchor="middle">receives</text>
+                            <text class="t-anno" x="963" y="160" text-anchor="middle">signed message</text>
+                            <path class="ln--accent" d="M999 36 V104" />
+                            <text class="t-anno t-accent" x="993" y="58" text-anchor="end">clock stops</text>
+                        </g>
+
+                        <g class="fragment fade-in" data-fragment-index="7">
+                            <rect class="bx bx--muted" x="1006" y="86" width="116" height="10" />
+                            <path class="ln--muted" d="M1064 96 V166" />
+                            <text class="t-anno" x="1064" y="180" text-anchor="middle">landmark</text>
+                            <text class="t-anno" x="1064" y="194" text-anchor="middle">verifies</text>
+                            <text class="t-anno" x="1064" y="208" text-anchor="middle">and stores</text>
+                        </g>
+
+                        <g class="fragment fade-in" data-fragment-index="8">
+                            <path class="ln--accent" d="M85 36 H999" />
+                            <text class="t-label t-accent" x="542" y="26" text-anchor="middle">MEASURED INTERVAL · Δt</text>
+                        </g>
+                    </svg>
+                    <p class="fragment fade-in" data-fragment-index="8" style="margin-top: 40px; max-width: 1000px">In a co-located node, almost none of this is distance.</p>
+                    <aside class="notes">
+                        <ul>
+                            <li>Walk it left to right. This is the general shape, not Design 01 specifically</li>
+                            <li>Landmark is the general term — in Design 01 the assurance node plays that role</li>
+                            <li>The clock starts when the message leaves and stops when the signed message returns</li>
+                            <li>Everything between is the measured interval. Verification and storage sit outside it</li>
+                            <li>Two hops shown: the wide network and the facility LAN. Co-located collapses the first</li>
+                            <li>The interval is a budget made of these elements — switching, queueing, driver, signing, and a little distance</li>
+                            <li>Others on the team have done a fair bit of empirical work quantifying this. More to be done</li>
+                            <li>This points at a class of attack: deflate the non-distance contributions so the device looks closer than it is</li>
+                            <li>That buys room to move the device — provided you also subvert the continuity mechanisms</li>
+                            <li><strong>Ask —</strong> you run this hardware. Where could you add or hide delay, and which of these numbers do you already know?</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- ============================================================
+                     04 · DESIGN 01 — divider
+                     ============================================================ -->
+                <section class="ink divider">
+                    <div class="eyebrow"><span class="label label--accent">04 — Design 01</span></div>
+                    <h2>Co-located assurance node.</h2>
+                    <aside class="notes">
+                        <ul>
+                            <li>Twelve minutes — the longest section</li>
+                            <li>7.4 is genuinely open; put it to the room</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- Architecture, with three optional step-downs beneath it ------- -->
+                <section>
+                    <section>
+                        <div class="eyebrow"><span class="label label--accent">04 — Design 01</span></div>
+                        <h2 style="font-size: 36px">Proposed architecture.</h2>
+                        <svg class="dgm" viewBox="0 0 1160 420" style="margin-top: 14px" role="img" aria-label="Attesters inside a declared facility, an assurance node in an instrumented enclosure linked to each of them, and an assurance service and relying parties outside">
+                            <defs>
+                                <marker id="ar5" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1.5 1.5L8.5 5L1.5 8.5" fill="none" stroke="#1E1F22" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></marker>
+                                <marker id="ar5a" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1.5 1.5L8.5 5L1.5 8.5" fill="none" stroke="#8A6E12" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></marker>
+                            </defs>
+
+                            <!-- the stage: an empty declared facility -->
+                            <rect class="bnd--strong" x="360" y="20" width="800" height="384" />
+                            <text class="t-bnd" x="376" y="46">DECLARED FACILITY</text>
+
+                            <!-- 1 · the governed accelerators -->
+                            <g class="fragment fade-in" data-fragment-index="0">
+                                <rect class="bx--ink" x="760" y="70" width="380" height="68" />
+                                <text class="t-ink-title" x="774" y="100">Attester</text>
+                                <text class="t-ink-body" x="774" y="122">accelerator in CC mode · host · client</text>
+                                <rect class="bx--ink" x="760" y="176" width="380" height="68" />
+                                <text class="t-ink-title" x="774" y="206">Attester</text>
+                                <text class="t-ink-body" x="774" y="228">accelerator in CC mode · host · client</text>
+                                <rect class="bx--ink" x="760" y="282" width="380" height="68" />
+                                <text class="t-ink-title" x="774" y="312">Attester</text>
+                                <text class="t-ink-body" x="774" y="334">accelerator in CC mode · host · client</text>
+                                <text class="t-small" x="950" y="382" text-anchor="middle">one per governed accelerator</text>
+                            </g>
+
+                            <!-- 2 · the instrument we install -->
+                            <g class="fragment fade-in" data-fragment-index="1">
+                                <rect class="bnd--accent-strong" x="384" y="64" width="290" height="296" />
+                                <text class="t-small t-accent" x="529" y="382" text-anchor="middle">instrumented enclosure</text>
+                                <rect class="bx bx--accent" x="402" y="86" width="218" height="252" />
+                                <text class="t-title" x="416" y="114">Assurance node</text>
+                                <text class="t-body" x="416" y="142">challenge generation</text>
+                                <text class="t-body" x="416" y="162">schedule and timing</text>
+                                <text class="t-body" x="416" y="182">its own clock</text>
+                                <text class="t-body" x="416" y="202">evidence log</text>
+                                <text class="t-body" x="416" y="222">enrollment baseline</text>
+                                <text class="t-body" x="416" y="242">evidence assessment</text>
+                                <text class="t-body" x="416" y="262">signs outbound reports</text>
+                                <text class="t-body" x="416" y="282">tamper sensors</text>
+                                <text class="t-body t-accent" x="416" y="314">plays the landmark role</text>
+                                <text class="t-small t-accent" x="690" y="56" text-anchor="middle">challenge · report</text>
+                                <path class="ln--accent" d="M624 104 H756" marker-start="url(#ar5a)" marker-end="url(#ar5a)" />
+                                <path class="ln--accent" d="M624 210 H756" marker-start="url(#ar5a)" marker-end="url(#ar5a)" />
+                                <path class="ln--accent" d="M624 316 H756" marker-start="url(#ar5a)" marker-end="url(#ar5a)" />
+                            </g>
+
+                            <!-- 3 · who the evidence is for -->
+                            <g class="fragment fade-in" data-fragment-index="2">
+                                <text class="t-bnd" x="0" y="14">OUTSIDE THE FACILITY</text>
+                                <rect class="bx" x="0" y="28" width="200" height="92" />
+                                <text class="t-title" x="14" y="56">Relying parties</text>
+                                <text class="t-body" x="14" y="82">authority, regulator,</text>
+                                <text class="t-body" x="14" y="102">auditor, monitoring</text>
+                                <path class="ln" d="M100 160 V126" marker-end="url(#ar5)" />
+                                <rect class="bx" x="0" y="160" width="200" height="156" />
+                                <text class="t-title" x="14" y="188">Assurance service</text>
+                                <text class="t-body" x="14" y="214">one service, many nodes</text>
+                                <text class="t-body" x="14" y="234">alerts, estate view</text>
+                                <text class="t-body" x="14" y="254">holds log commitments</text>
+                                <text class="t-body" x="14" y="274">presents results</text>
+                                <text class="t-small" x="14" y="302">hosted outside facilities</text>
+                                <path class="ln" d="M356 194 H208" marker-end="url(#ar5)" />
+                                <text class="t-small" x="282" y="182" text-anchor="middle">results, qualifiers</text>
+                            </g>
+                        </svg>
+                        <aside class="notes">
+                            <ul>
+                                <li>Builds in three: the attesters, then the node we install, then who the evidence is for</li>
+                                <li>Attester: each covered accelerator with its host, in confidential-computing mode</li>
+                                <li>The client on the host is trusted for nothing</li>
+                                <li>Assurance node: our hardware in the rack, in an enclosure. It plays the landmark role</li>
+                                <li>Devin and Andrew cover the enclosure</li>
+                                <li>Assurance service: off site, serves many nodes, presents results to relying parties</li>
+                                <li>Three step-downs below this slide: enrollment, evidence log, structured transparency. Only if asked</li>
+                            </ul>
+                        </aside>
+                    </section>
+
+                    <!-- step down 1 -->
+                    <section>
+                        <div class="eyebrow"><span class="label label--accent">04 — Design 01</span></div>
+                        <h2>Enrollment.</h2>
+                        <ol class="rows" style="margin-top: 40px; max-width: 1000px">
+                            <li class="fragment fade-in">Install the node on site, with the operator present.</li>
+                            <li class="fragment fade-in">Inspect the accelerators and record their identities.</li>
+                            <li class="fragment fade-in">Run challenges long enough to characterize normal timing.</li>
+                            <li class="fragment fade-in">Re-enroll after maintenance or updates, authorized by the verifier.</li>
+                        </ol>
+                        <aside class="notes">
+                            <ul>
+                                <li>Characterize the installation at the start. Detect change after</li>
+                                <li>Step three is the baseline — normal timing per accelerator</li>
+                                <li>Proposed, not open for debate today: the challenge seed is loaded securely on the node at enrollment</li>
+                            </ul>
+                        </aside>
+                    </section>
+
+                    <!-- step down 2 -->
+                    <section>
+                        <div class="eyebrow"><span class="label label--accent">04 — Design 01</span></div>
+                        <h2>Location evidence log.</h2>
+                        <svg class="dgm" viewBox="0 0 1160 200" style="margin-top: 44px" role="img" aria-label="A chain of evidence records, each committing to the one before, including a recorded non-response">
+                            <defs>
+                                <marker id="ar6" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1.5 1.5L8.5 5L1.5 8.5" fill="none" stroke="#1E1F22" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></marker>
+                            </defs>
+                            <g>
+                                <rect class="bx" x="20" y="30" width="150" height="92" />
+                                <text class="t-label" x="34" y="56">REC 0142</text>
+                                <text class="t-body" x="34" y="82">Δt 10.3 ms</text>
+                                <text class="t-small" x="34" y="104">signed</text>
+                            </g>
+                            <path class="ln" d="M174 76 H206" marker-end="url(#ar6)" />
+                            <g>
+                                <rect class="bx" x="210" y="30" width="150" height="92" />
+                                <text class="t-label" x="224" y="56">REC 0143</text>
+                                <text class="t-body" x="224" y="82">Δt 10.1 ms</text>
+                                <text class="t-small" x="224" y="104">signed</text>
+                            </g>
+                            <path class="ln" d="M364 76 H396" marker-end="url(#ar6)" />
+                            <g>
+                                <rect class="bx" x="400" y="30" width="150" height="92" />
+                                <text class="t-label" x="414" y="56">REC 0144</text>
+                                <text class="t-body" x="414" y="82">Δt 10.4 ms</text>
+                                <text class="t-small" x="414" y="104">signed</text>
+                            </g>
+                            <path class="ln" d="M554 76 H586" marker-end="url(#ar6)" />
+                            <g>
+                                <rect class="bnd--accent" x="590" y="30" width="150" height="92" />
+                                <text class="t-label t-accent" x="604" y="56">REC 0145</text>
+                                <text class="t-body t-accent" x="604" y="82">no response</text>
+                                <text class="t-small t-accent" x="604" y="104">recorded</text>
+                            </g>
+                            <path class="ln" d="M744 76 H776" marker-end="url(#ar6)" />
+                            <g>
+                                <rect class="bx" x="780" y="30" width="150" height="92" />
+                                <text class="t-label" x="794" y="56">REC 0146</text>
+                                <text class="t-body" x="794" y="82">Δt 10.2 ms</text>
+                                <text class="t-small" x="794" y="104">signed</text>
+                            </g>
+                            <path class="ln" d="M934 76 H966" marker-end="url(#ar6)" />
+                            <g>
+                                <rect class="bx bx--muted" x="970" y="30" width="170" height="92" />
+                                <text class="t-label" x="984" y="56">COMMITMENT</text>
+                                <text class="t-body" x="984" y="82">leaves the node</text>
+                            </g>
+                            <path class="ln--muted" d="M20 156 H1140" />
+                            <text class="t-body" x="20" y="182">Each record commits to the one before. Truncation shows.</text>
+                        </svg>
+                        <aside class="notes">
+                            <ul>
+                                <li>Every challenge and response is a record. Non-responses too</li>
+                                <li>The log cannot be altered or truncated without it showing</li>
+                                <li>We are looking at designs like Certificate Transparency logs</li>
+                            </ul>
+                        </aside>
+                    </section>
+
+                    <!-- step down 3 -->
+                    <section>
+                        <div class="eyebrow"><span class="label label--accent">04 — Design 01</span></div>
+                        <h2>Structured transparency.</h2>
+                        <div class="grid-2" style="margin-top: 40px">
+                            <div class="card">
+                                <div class="card-header"><span>Assess on site</span><span class="badge badge--ok">Our leaning</span></div>
+                                <div class="card-body"><p>Evidence stays on the node. Only policy outputs and qualifiers leave.</p></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header"><span>Assess off site</span><span class="badge">Alternative</span></div>
+                                <div class="card-body"><p>Evidence leaves. Simpler, and a relying party can re-run the assessment.</p></div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 36px; max-width: 900px">Inbound either way: policies and approved versions, signed by the verifier.</p>
+                        <aside class="notes">
+                            <ul>
+                                <li>What crosses the facility boundary is genuinely open</li>
+                                <li>Our leaning: the node assesses evidence and evaluates policy locally</li>
+                                <li>Alternative is simpler and more checkable by a relying party — that is a real argument</li>
+                                <li>A node that stops reporting is a finding in itself</li>
+                                <li><strong>Ask —</strong> as breakers, which arrangement would you rather attack?</li>
+                            </ul>
+                        </aside>
+                    </section>
+                </section>
+
+                <!-- Assumptions ---------------------------------------------------- -->
+                <section>
+                    <div class="eyebrow"><span class="label label--accent">04 — Design 01</span></div>
+                    <h2>Assumptions<span class="text-accent">*</span></h2>
+                    <div class="panel assump-list" style="margin-top: 40px; max-width: 940px">
+                        <ul>
+                            <li>Enrollment was secure</li>
+                            <li>The device key cannot be copied</li>
+                            <li>The enclosure is intact, or sensors say otherwise</li>
+                            <li>Node software is as installed</li>
+                            <li>Signatures are sound</li>
+                        </ul>
+                    </div>
+                    <p class="label" style="margin-top: 24px"><span class="text-accent">*</span> A proposed and incomplete list</p>
+                    <aside class="notes">
+                        <ul>
+                            <li>Proposed, not settled — the question for the room is which of these should stay assumptions and which should be attackable</li>
+                            <li>Deliberately not assumed: the node's clock is honest</li>
+                            <li>Deliberately not assumed: the network is benign — the adversary controls it</li>
+                            <li>We rely only on the fact that a round trip cannot be shortened</li>
+                            <li>How the clock drifts and how it could be influenced is a prototype question</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <!-- Questions ------------------------------------------------------ -->
+                <section class="ink closing">
+                    <div class="eyebrow"><span class="label label--accent">Location verification</span></div>
+                    <h2>Questions.</h2>
+                    <p>RISE Verifiable AI Cluster · 8 September 2026<br />John Hoopes, Lucid Computing<br />john@lucidcomputing.ai</p>
+                    <aside class="notes">
+                        <ul>
+                            <li>Hand over to the room</li>
+                            <li>The HDD is the artifact — say where it lives and how to comment</li>
+                        </ul>
+                    </aside>
+                </section>
+            </div>
+        </div>
+
+        <script src="lib/reveal/reveal.js"></script>
+        <script src="lib/reveal/plugin/notes.js"></script>
+        <script src="lib/reveal/plugin/highlight.js"></script>
+        <script src="lib/reveal/plugin/markdown.js"></script>
+        <script>
+            // Default right-hand foot label; a slide's overrides it.
+            const DECK_FOOT = "Verifying compute location · Design 01";
+
+            Reveal.initialize({
+                width: 1280,
+                height: 720,
+                margin: 0,
+                minScale: 0.2,
+                maxScale: 2.0,
+                center: false,        // the theme centres with flex
+                display: "flex",      // so section layout rules own the slide
+                hash: true,
+                slideNumber: false,   // numbering lives in the slide foot
+                transition: "fade",
+                transitionSpeed: "fast",
+                controls: false,
+                progress: true,
+                plugins: [RevealNotes, RevealHighlight, RevealMarkdown],
+            }).then(() => {
+                // Slide foot: brand mark + wordmark left, mono label right (slides/*.html).
+                document.querySelectorAll(".reveal .slides section:not(.stack)").forEach((s) => {
+                    if (s.classList.contains("no-foot") || s.querySelector(":scope > .slide-foot")) return;
+                    const foot = document.createElement("div");
+                    foot.className = "slide-foot";
+                    foot.innerHTML =
+                        '<div class="brand"><img src="theme/lucid-logo.svg" alt=""><span>Lucid Computing</span></div>' +
+                        '<span class="label"></span>';
+                    foot.querySelector(".label").textContent = s.dataset.foot || DECK_FOOT;
+                    s.appendChild(foot);
+                });
+            });
+        </script>
+    </body>
+</html>
