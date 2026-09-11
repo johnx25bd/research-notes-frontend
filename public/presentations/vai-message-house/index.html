@@ -337,6 +337,73 @@
             }
 
             /* ------------------------------------------------------------
+               Click navigation.
+
+               Lives in .reveal rather than .slides, so it sits outside the
+               scaled slide and stays the same size at any window size. Down
+               doubles as "next": it steps the fragments before moving on, so
+               a viewer who never touches the keyboard cannot skip past the
+               sub-messages.
+               ------------------------------------------------------------ */
+            .reveal .nav {
+                position: absolute;
+                right: 22px;
+                bottom: 20px;
+                z-index: 30;
+                display: flex;
+                gap: 6px;
+            }
+            .reveal .nav button {
+                width: 38px;
+                height: 38px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                background: var(--paper-1);
+                border: var(--border-ink);
+                color: var(--ink-1);
+                cursor: pointer;
+                transition:
+                    transform var(--duration-fast) var(--ease-mechanical),
+                    box-shadow var(--duration-fast) var(--ease-mechanical),
+                    opacity var(--duration-base) var(--ease-mechanical);
+            }
+            .reveal .nav button:hover:not(:disabled) {
+                transform: translate(-2px, -2px);
+                box-shadow: 4px 4px 0 0 var(--ink-1);
+            }
+            .reveal .nav button:active:not(:disabled) { transform: translate(0, 0); box-shadow: none; }
+            .reveal .nav button:disabled { opacity: 0.25; cursor: default; }
+
+            /* Same rotated-corner chevron as the down cue, pointed four ways. */
+            .reveal .nav .g {
+                display: block;
+                width: 9px;
+                height: 9px;
+                border-right: 2px solid var(--amber);
+                border-bottom: 2px solid var(--amber);
+            }
+            .reveal .nav .g-left  { transform: rotate(135deg); margin-left: 3px; }
+            .reveal .nav .g-right { transform: rotate(-45deg); margin-right: 3px; }
+            .reveal .nav .g-up    { transform: rotate(225deg); margin-top: 3px; }
+            .reveal .nav .g-down  { transform: rotate(45deg); margin-bottom: 3px; }
+            .reveal .nav button:disabled .g { border-color: var(--ink-3); }
+            .reveal .nav .grid rect { fill: var(--amber); }
+            .reveal .nav button:disabled .grid rect { fill: var(--ink-3); }
+
+            /* The deeper button is the one a mouse-only viewer needs most. */
+            .reveal .nav button.primary { background: var(--ink-1); border-color: var(--ink-1); }
+            .reveal .nav button.primary:hover:not(:disabled) { box-shadow: 4px 4px 0 0 var(--amber); }
+
+            html.print-pdf .reveal .nav { display: none; }
+
+            /* The buttons sit in the foot's right-hand corner, so the foot
+               label stops short of them. Only needed on screen: print has no
+               nav, and the export would otherwise carry a dead gap. */
+            html:not(.print-pdf) .reveal .slide-foot { padding-right: 234px; }
+
+            /* ------------------------------------------------------------
                The street — all six houses at a glance
                ------------------------------------------------------------ */
             .reveal .street { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex: 1; min-height: 0; }

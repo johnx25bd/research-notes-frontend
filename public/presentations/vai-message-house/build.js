@@ -364,6 +364,8 @@ function sayHTML() {
             s.appendChild(foot);
         });
 
+        if (!IS_PRINT) buildNav();
+
         fitRooms();
         // A slide is only measurable once reveal has laid it out, so fit the
         // one being shown as it arrives.
@@ -378,6 +380,55 @@ function sayHTML() {
         if (IS_PRINT) settleForPrint();
     });
 })();
+
+/* ---- Click navigation ----------------------------------------
+   Everything the arrow keys do, for a viewer using a mouse.
+
+   The deeper button is deliberately not a plain Reveal.down(): if the
+   slide still has hidden fragments it steps those first, so clicking
+   through never skips the sub-messages the way bare Down does.
+   ------------------------------------------------------------ */
+function buildNav() {
+    const chev = (dir) => `<span class="g g-${dir}"></span>`;
+    const grid =
+        '<svg class="grid" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">' +
+        '<rect x="0" y="0" width="6" height="6"/><rect x="8" y="0" width="6" height="6"/>' +
+        '<rect x="0" y="8" width="6" height="6"/><rect x="8" y="8" width="6" height="6"/></svg>';
+
+    const nav = document.createElement("nav");
+    nav.className = "nav";
+    nav.setAttribute("aria-label", "Slide navigation");
+    nav.innerHTML = `
+        <button type="button" data-go="left"  title="Previous house"   aria-label="Previous house">${chev("left")}</button>
+        <button type="button" data-go="up"    title="Back out a level" aria-label="Back out a level">${chev("up")}</button>
+        <button type="button" data-go="down"  title="Go deeper"        aria-label="Go deeper" class="primary">${chev("down")}</button>
+        <button type="button" data-go="right" title="Next house"       aria-label="Next house">${chev("right")}</button>
+        <button type="button" data-go="grid"  title="Overview of every slide" aria-label="Overview of every slide">${grid}</button>`;
+
+    nav.addEventListener("click", (e) => {
+        const go = e.target.closest("button")?.dataset.go;
+        if (!go) return;
+        if (go === "grid") Reveal.toggleOverview();
+        else if (go === "down") Reveal.availableFragments().next ? Reveal.next() : Reveal.down();
+        else Reveal[go]();
+    });
+
+    document.querySelector(".reveal").appendChild(nav);
+
+    const sync = () => {
+        const routes = Reveal.availableRoutes();
+        const frags = Reveal.availableFragments();
+        const can = { left: routes.left, right: routes.right, up: routes.up, down: routes.down || frags.next, grid: true };
+        nav.querySelectorAll("button").forEach((b) => {
+            b.disabled = !can[b.dataset.go];
+        });
+    };
+
+    ["ready", "slidechanged", "fragmentshown", "fragmenthidden", "overviewshown", "overviewhidden"].forEach((ev) =>
+        Reveal.on(ev, sync),
+    );
+    sync();
+}
 
 /* ---- Fit -----------------------------------------------------
    The houses carry real copy of uneven length, and a room that
