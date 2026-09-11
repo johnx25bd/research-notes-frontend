@@ -61,8 +61,8 @@ const nextConfig = {
         destination: '/presentations/rise-design-01/index.html',
       },
       {
-        source: '/presentations/message-house',
-        destination: '/presentations/message-house/index.html',
+        source: '/presentations/vai-message-house',
+        destination: '/presentations/vai-message-house/index.html',
       },
       {
         // Standalone full-viewport interactive visualization, served as a
@@ -137,7 +137,7 @@ const nextConfig = {
       {
         // The message house deck is an internal working draft and is
         // passphrase-gated, so keep it out of search indexes entirely.
-        source: '/presentations/message-house/:path*',
+        source: '/presentations/vai-message-house/:path*',
         headers: [
           {
             key: 'X-Robots-Tag',
@@ -147,7 +147,7 @@ const nextConfig = {
       },
       {
         // Same policy for the clean URL that the rewrite above serves.
-        source: '/presentations/message-house',
+        source: '/presentations/vai-message-house',
         headers: [
           {
             key: 'X-Robots-Tag',

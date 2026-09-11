@@ -1,8 +1,8 @@
 # Message house options — RISE Verifiable AI
 
 Six message houses for three audiences, built on the Lucid Computing design
-system. Served at `/presentations/message-house`, behind the same kind of
-passphrase gate as the RISE design-01 deck (`MESSAGE_HOUSE_PASSWORD` in the
+system. Served at `/presentations/vai-message-house`, behind the same kind of
+passphrase gate as the RISE design-01 deck (`VAI_MESSAGE_HOUSE_PASSWORD` in the
 Vercel project env).
 
 ## Files
@@ -50,8 +50,8 @@ python3 -m http.server 8771
 
 # export — 13 pages at 960×540pt
 node scripts/export-deck-pdf.mjs \
-  "http://localhost:8771/presentations/message-house/?print-pdf" \
-  ~/Desktop/message-house.pdf
+  "http://localhost:8771/presentations/vai-message-house/?print-pdf" \
+  ~/Desktop/vai-message-house.pdf
 ```
 
 By hand in a browser: open `…/message-house/?print-pdf`, print, choose

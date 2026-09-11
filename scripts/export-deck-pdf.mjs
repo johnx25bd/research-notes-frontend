@@ -16,8 +16,8 @@
  *
  *   python3 -m http.server 8771          # from public/
  *   node scripts/export-deck-pdf.mjs \
- *     "http://localhost:8771/presentations/message-house/?print-pdf" \
- *     ~/Desktop/message-house.pdf
+ *     "http://localhost:8771/presentations/vai-message-house/?print-pdf" \
+ *     ~/Desktop/vai-message-house.pdf
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -68,7 +68,7 @@ try {
   await page.setViewport({ width: Number(width), height: Number(height) });
   await page.goto(url, { waitUntil: 'networkidle0', timeout: 60_000 });
 
-  // Decks built by public/presentations/message-house/build.js raise this once
+  // Decks built by public/presentations/vai-message-house/build.js raise this once
   // reveal's print pages exist, webfonts have loaded, and the room fitter has
   // settled. Any other deck just gets the load event plus a short grace.
   await page

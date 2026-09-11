@@ -2,7 +2,7 @@
 
 import { type FormEvent, useState } from "react"
 
-const DECK_PATH = "/presentations/message-house"
+const DECK_PATH = "/presentations/vai-message-house"
 
 // Lucid Computing design-system tokens, matching the deck behind this gate
 // (kept local to the gate). No border-radius; hairlines divide; amber is the
@@ -28,7 +28,7 @@ export function UnlockGate() {
     if (!password || status === "submitting") return
     setStatus("submitting")
     try {
-      const res = await fetch("/api/message-house-unlock", {
+      const res = await fetch("/api/vai-message-house-unlock", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ password }),
@@ -102,7 +102,7 @@ export function UnlockGate() {
 
         <form onSubmit={onSubmit} noValidate>
           <label
-            htmlFor="message-house-pass"
+            htmlFor="vai-message-house-pass"
             style={{
               display: "block",
               fontSize: "13px",
@@ -114,7 +114,7 @@ export function UnlockGate() {
             Passphrase
           </label>
           <input
-            id="message-house-pass"
+            id="vai-message-house-pass"
             type="password"
             autoFocus
             autoComplete="off"

@@ -9,6 +9,6 @@ export const metadata: Metadata = {
 // Rendered (via proxy rewrite) in place of the message house deck for visitors
 // who haven't entered the passphrase. The browser URL stays on the deck path; a
 // correct passphrase sets the gate cookie and reloads into it.
-export default function MessageHouseUnlockPage() {
+export default function VaiMessageHouseUnlockPage() {
   return <UnlockGate />
 }
