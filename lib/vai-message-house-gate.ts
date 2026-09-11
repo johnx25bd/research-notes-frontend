@@ -27,11 +27,23 @@ export async function sha256(value: string): Promise<string> {
 }
 
 // The cookie value a successful unlock sets: the digest of the configured
-// passphrase, so a cookie cannot be forged without knowing it. Null when
-// VAI_MESSAGE_HOUSE_PASSWORD is unset -- callers must read that as "nobody is
-// let in".
+// passphrase, so a cookie cannot be forged without knowing it. Null when no
+// passphrase is configured -- callers must read that as "nobody is let in".
+//
+// Three names are accepted. The deck's slug changed once during setup and the
+// variable was typed a third way in the dashboard, and the only person who
+// knows the passphrase should not have to keep re-entering it to find the
+// spelling the code agrees with. VAI_ is canonical and wins where several are
+// set, so removing the other two later is safe and changes nothing.
+//
+// These must stay separate static reads. The proxy runs as middleware, where
+// Next.js substitutes process.env.SOME_NAME at build time; a dynamic lookup
+// like process.env[name] is not substituted and would come back undefined.
 export async function vaiMessageHouseToken(): Promise<string | null> {
-  const password = process.env.VAI_MESSAGE_HOUSE_PASSWORD
+  const password =
+    process.env.VAI_MESSAGE_HOUSE_PASSWORD ||
+    process.env.VIA_MESSAGE_HOUSE_PASSWORD ||
+    process.env.MESSAGE_HOUSE_PASSWORD
   if (!password) return null
   return sha256(password)
 }
