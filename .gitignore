@@ -39,3 +39,6 @@ next-env.d.ts
 .worktrees
 research-notes
 .playwright-mcp/
+
+# agent scratch space
+tmp/
