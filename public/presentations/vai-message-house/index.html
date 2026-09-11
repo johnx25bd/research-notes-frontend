@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Verifiable AI Message House</title>
+
+        <base href="/presentations/vai-message-house/" />
+
+        <link rel="icon" href="theme/favicon.svg" type="image/svg+xml" />
+
+        <link rel="stylesheet" href="lib/reveal/reset.css" />
+        <link rel="stylesheet" href="lib/reveal/reveal.css" />
+        <!-- Lucid Computing design system — the only theme. Bump ?v=N when editing. -->
+        <link rel="stylesheet" href="theme/lucid.css?v=1" />
+
+        <style>
+            /* ------------------------------------------------------------
+               The house.
+
+               One component, six instances, six zoom levels. The house
+               keeps the same footprint on every slide — only its insides
+               redistribute — so reveal's auto-animate can tween between
+               levels and the move reads as a camera, not a cut.
+
+               Geometry: the slide is 1280x720. House slides trade a little
+               of the theme's generous padding for room, since a whole house
+               at full detail is the densest thing in the deck.
+               ------------------------------------------------------------ */
+            .reveal .slides > section.house-slide,
+            .reveal .slides > section > section.house-slide {
+                padding: 44px 56px 76px;
+            }
+            .reveal .house-slide .slide-foot { left: 56px; right: 56px; bottom: 30px; }
+
+            /* ---- Locator: who this house is for, and where you are in it ---- */
+            .reveal .hh {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: var(--space-6);
+                border-bottom: var(--border-strong);
+                padding-bottom: 10px;
+                margin-bottom: 14px;
+                flex: none;
+            }
+            .reveal .hh-l { display: flex; align-items: baseline; gap: 14px; min-width: 0; }
+            .reveal .hh-aud {
+                font-family: var(--font-mono);
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--paper-1);
+                background: var(--ink-1);
+                padding: 5px 10px;
+                flex: none;
+            }
+            .reveal .hh-var {
+                font-family: var(--font-mono);
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--amber-ink);
+                flex: none;
+            }
+            .reveal .hh-name {
+                font-family: var(--font-sans);
+                font-size: 19px;
+                font-weight: 600;
+                letter-spacing: var(--tracking-heading);
+                color: var(--ink-1);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* Zoom ladder — six rungs, the current one filled */
+            .reveal .hh-r { display: flex; align-items: center; gap: 10px; flex: none; }
+            .reveal .ladder { display: flex; gap: 3px; }
+            .reveal .ladder i {
+                display: block;
+                width: 16px;
+                height: 4px;
+                background: var(--rule-strong);
+            }
+            .reveal .ladder i.on { background: var(--amber); }
+            .reveal .hh-lvl {
+                font-family: var(--font-mono);
+                font-size: 11px;
+                font-weight: 500;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--ink-3);
+                min-width: 112px;
+                text-align: right;
+            }
+
+            /* ---- The house itself ---- */
+            .reveal .house {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                min-height: 0;
+            }
+
+            /* Roof — the main message */
+            .reveal .roof {
+                flex: none;
+                background: var(--paper-2);
+                border: var(--border-strong);
+                padding: 14px 20px 16px;
+            }
+            .reveal .roof .label { display: block; margin-bottom: 6px; }
+            .reveal .roof p {
+                font-size: 23px;
+                line-height: 1.32;
+                color: var(--ink-1);
+                font-weight: 500;
+                letter-spacing: var(--tracking-heading);
+                max-width: 1000px;
+            }
+
+            /* Rooms — three across, widths driven by the zoom level */
+            .reveal .rooms {
+                flex: 1;
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 12px;
+                min-height: 0;
+                transition: grid-template-columns var(--duration-reveal) var(--ease-mechanical);
+            }
+            .reveal .room {
+                position: relative;
+                border: var(--border-strong);
+                background: var(--paper-1);
+                overflow: hidden;
+                min-width: 0;
+            }
+            .reveal .room.is-focus { border-color: var(--amber); }
+
+            /* Open state: the room you can read into.
+
+               Everything inside a room is sized in em off .room-open, so one
+               font-size drives the whole room and the fitter in build.js can
+               shrink a dense room to fit by changing that single number. */
+            .reveal .room-open {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                padding: 14px 16px;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                font-size: 13px;
+                transition:
+                    opacity var(--duration-base) var(--ease-mechanical),
+                    width var(--duration-reveal) var(--ease-mechanical);
+            }
+            .reveal .room-tag {
+                font-family: var(--font-mono);
+                font-size: 0.85em;
+                font-weight: 600;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--ink-3);
+                flex: none;
+                margin-bottom: 0.62em;
+            }
+            .reveal .room.is-focus .room-tag { color: var(--amber-ink); }
+
+            /* The room's anchor: its own headline, or — where the source gives
+               none — its opening sentence set as a lead. */
+            .reveal .room-head,
+            .reveal .room-lead {
+                line-height: 1.32;
+                color: var(--ink-1);
+                letter-spacing: var(--tracking-heading);
+                flex: none;
+            }
+            .reveal .room-head { font-size: 1.15em; font-weight: 600; }
+            .reveal .room-lead { font-size: 1.06em; font-weight: 500; }
+
+            .reveal .room-lines {
+                margin-top: 0.75em;
+                padding-top: 0.75em;
+                border-top: var(--border-hairline);
+                display: flex;
+                flex-direction: column;
+                gap: 0.55em;
+                /* Must not shrink: if it absorbed the overflow the room would
+                   clip silently and the fitter would measure nothing. */
+                flex: 0 0 auto;
+            }
+            .reveal .room-lines p {
+                font-size: 1em;
+                line-height: 1.44;
+                color: var(--ink-1);
+                position: relative;
+                padding-left: 1em;
+            }
+            .reveal .room-lines p::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0.68em;
+                width: 0.4em;
+                height: 1px;
+                background: var(--rule-strong);
+            }
+            .reveal .room-lines:empty { display: none; }
+
+            /* Collapsed state: the other rooms, seen edge-on */
+            .reveal .room-spine {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                background: var(--paper-2);
+                transition: opacity var(--duration-base) var(--ease-mechanical);
+                pointer-events: none;
+            }
+            .reveal .room-spine span {
+                writing-mode: vertical-rl;
+                transform: rotate(180deg);
+                font-family: var(--font-mono);
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+                color: var(--ink-3);
+                white-space: nowrap;
+            }
+            .reveal .room.is-collapsed .room-open { opacity: 0; width: 352px; }
+            .reveal .room.is-collapsed .room-spine { opacity: 1; }
+
+            /* Zoomed-in typography — the reason to walk into a room at all.
+               One number; the em scale above does the rest. */
+            .reveal .room.is-focus .room-open { font-size: 18px; padding: 24px 30px; }
+            .reveal .room.is-focus .room-head { font-size: 1.5em; line-height: 1.22; max-width: 900px; }
+            .reveal .room.is-focus .room-lead { font-size: 1.28em; line-height: 1.3; max-width: 980px; }
+            .reveal .room.is-focus .room-tag { font-size: 0.72em; margin-bottom: 0.9em; }
+            .reveal .room.is-focus .room-lines { margin-top: 0.95em; padding-top: 0.85em; gap: 0.66em; }
+            .reveal .room.is-focus .room-lines p { line-height: 1.5; }
+
+            /* Empty states — the house before anything has been said in it */
+            .reveal .room.is-empty .room-open { opacity: 0; }
+            .reveal .room.is-frame .room-lines { opacity: 0; }
+
+            /* Foundation — the evidence the house stands on */
+            .reveal .found {
+                flex: none;
+                border: var(--border-strong);
+                background: var(--paper-2);
+                padding: 10px 16px 12px;
+                min-height: 62px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            .reveal .found .label { display: block; margin-bottom: 7px; }
+            .reveal .found-items {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+                transition: opacity var(--duration-base) var(--ease-mechanical);
+            }
+            .reveal .found-items span {
+                font-family: var(--font-sans);
+                font-size: 12px;
+                line-height: 1.3;
+                color: var(--ink-2);
+                border: var(--border-hairline);
+                background: var(--paper-1);
+                padding: 4px 9px;
+            }
+            .reveal .found.is-empty .found-items { opacity: 0; }
+
+            /* ---- Down cue ----------------------------------------------
+               Shown once, on the first house's first level, where the house
+               is still empty and nothing yet says the detail is underneath.
+               Floats over the empty rooms rather than sitting in the layout,
+               so it cannot shift the house the zoom animates.
+               ------------------------------------------------------------ */
+            .reveal .cue {
+                position: absolute;
+                left: 56px;
+                right: 56px;
+                top: 54%;
+                display: flex;
+                justify-content: center;
+                pointer-events: none;
+                z-index: 2;
+            }
+            .reveal .cue button {
+                pointer-events: auto;
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 13px 20px;
+                background: var(--paper-1);
+                border: var(--border-ink);
+                box-shadow: var(--shadow-offset);
+                color: var(--ink-1);
+                font-family: var(--font-mono);
+                font-size: 13px;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                cursor: pointer;
+                transition:
+                    transform var(--duration-base) var(--ease-mechanical),
+                    box-shadow var(--duration-base) var(--ease-mechanical);
+            }
+            .reveal .cue button:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--ink-1); }
+            .reveal .cue button:active { transform: translate(0, 0); box-shadow: none; }
+            .reveal .cue .chev {
+                display: block;
+                width: 15px;
+                height: 15px;
+                border-right: 2px solid var(--amber);
+                border-bottom: 2px solid var(--amber);
+                transform: rotate(45deg);
+                /* Mechanical, not springy: the system does not bounce. */
+                animation: cue-step 1.8s var(--ease-mechanical) infinite;
+            }
+            @keyframes cue-step {
+                0%, 55%, 100% { transform: rotate(45deg) translate(0, 0); opacity: 1; }
+                25% { transform: rotate(45deg) translate(4px, 4px); opacity: 0.45; }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .reveal .cue .chev { animation: none; }
+            }
+
+            /* ------------------------------------------------------------
+               Click navigation.
+
+               Lives in .reveal rather than .slides, so it sits outside the
+               scaled slide and stays the same size at any window size. Down
+               doubles as "next": it steps the fragments before moving on, so
+               a viewer who never touches the keyboard cannot skip past the
+               sub-messages.
+               ------------------------------------------------------------ */
+            .reveal .nav {
+                position: absolute;
+                right: 22px;
+                bottom: 20px;
+                z-index: 30;
+                display: flex;
+                gap: 6px;
+            }
+            .reveal .nav button {
+                width: 38px;
+                height: 38px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                background: var(--paper-1);
+                border: var(--border-ink);
+                color: var(--ink-1);
+                cursor: pointer;
+                transition:
+                    transform var(--duration-fast) var(--ease-mechanical),
+                    box-shadow var(--duration-fast) var(--ease-mechanical),
+                    opacity var(--duration-base) var(--ease-mechanical);
+            }
+            .reveal .nav button:hover:not(:disabled) {
+                transform: translate(-2px, -2px);
+                box-shadow: 4px 4px 0 0 var(--ink-1);
+            }
+            .reveal .nav button:active:not(:disabled) { transform: translate(0, 0); box-shadow: none; }
+            .reveal .nav button:disabled { opacity: 0.25; cursor: default; }
+
+            /* Same rotated-corner chevron as the down cue, pointed four ways. */
+            .reveal .nav .g {
+                display: block;
+                width: 9px;
+                height: 9px;
+                border-right: 2px solid var(--amber);
+                border-bottom: 2px solid var(--amber);
+            }
+            .reveal .nav .g-left  { transform: rotate(135deg); margin-left: 3px; }
+            .reveal .nav .g-right { transform: rotate(-45deg); margin-right: 3px; }
+            .reveal .nav .g-up    { transform: rotate(225deg); margin-top: 3px; }
+            .reveal .nav .g-down  { transform: rotate(45deg); margin-bottom: 3px; }
+            .reveal .nav button:disabled .g { border-color: var(--ink-3); }
+            .reveal .nav .grid rect { fill: var(--amber); }
+            .reveal .nav button:disabled .grid rect { fill: var(--ink-3); }
+
+            /* The deeper button is the one a mouse-only viewer needs most. */
+            .reveal .nav button.primary { background: var(--ink-1); border-color: var(--ink-1); }
+            .reveal .nav button.primary:hover:not(:disabled) { box-shadow: 4px 4px 0 0 var(--amber); }
+
+            html.print-pdf .reveal .nav { display: none; }
+
+            /* The buttons sit in the foot's right-hand corner, so the foot
+               label stops short of them. Only needed on screen: print has no
+               nav, and the export would otherwise carry a dead gap. */
+            html:not(.print-pdf) .reveal .slide-foot { padding-right: 234px; }
+
+            /* ------------------------------------------------------------
+               The street — all six houses at a glance
+               ------------------------------------------------------------ */
+            .reveal .street { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex: 1; min-height: 0; }
+            .reveal a.st {
+                border: var(--border-strong);
+                background: var(--paper-1);
+                padding: 14px 16px;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+                text-decoration: none;
+                color: inherit;
+                transition:
+                    border-color var(--duration-base) var(--ease-mechanical),
+                    box-shadow var(--duration-base) var(--ease-mechanical),
+                    transform var(--duration-base) var(--ease-mechanical);
+            }
+            .reveal a.st:hover {
+                border-color: var(--ink-1);
+                transform: translate(-2px, -2px);
+                box-shadow: var(--shadow-offset);
+            }
+            .reveal a.st:active { transform: translate(0, 0); box-shadow: none; }
+            .reveal .st-head { display: flex; align-items: baseline; gap: 8px; flex: none; }
+            .reveal .st-aud {
+                font-family: var(--font-mono);
+                font-size: 10px;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--paper-1);
+                background: var(--ink-1);
+                padding: 3px 7px;
+            }
+            .reveal .st-var {
+                font-family: var(--font-mono);
+                font-size: 10px;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                color: var(--amber-ink);
+            }
+            .reveal .st-name {
+                margin-top: 9px;
+                font-size: 17px;
+                line-height: 1.22;
+                font-weight: 600;
+                color: var(--ink-1);
+                letter-spacing: var(--tracking-heading);
+                flex: none;
+            }
+            .reveal .st-core {
+                margin-top: 9px;
+                padding-top: 9px;
+                border-top: var(--border-hairline);
+                font-size: 12.5px;
+                line-height: 1.42;
+                color: var(--ink-1);
+                flex: 1;
+                min-height: 0;
+            }
+
+            /* ------------------------------------------------------------
+               Reference + list slides
+               ------------------------------------------------------------ */
+            .reveal .draft-rooms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; flex: 1; min-height: 0; }
+            /* Sets the em base for the .room-tag it borrows from the house. */
+            .reveal .dr { border: var(--border-strong); background: var(--paper-1); padding: 14px 16px; font-size: 13px; }
+            .reveal .dr.open {
+                border-style: dashed;
+                border-color: var(--rule-strong);
+                background: transparent;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .reveal .dr .room-tag { margin-bottom: 10px; }
+            .reveal .dr p { font-size: 13px; line-height: 1.45; color: var(--ink-1); margin-bottom: 6px; }
+            .reveal .dr-open-label {
+                font-family: var(--font-mono);
+                font-size: 12px;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--ink-3);
+            }
+
+            .reveal .say { border-top: var(--border-hairline); margin-top: 26px; }
+            .reveal .say .row {
+                display: grid;
+                grid-template-columns: 200px 1fr;
+                gap: var(--space-6);
+                padding: 11px 0;
+                border-bottom: var(--border-hairline);
+                align-items: baseline;
+            }
+            .reveal .say .row b {
+                font-family: var(--font-mono);
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--amber-ink);
+                letter-spacing: 0.02em;
+            }
+            .reveal .say .row p { font-size: 14.5px; line-height: 1.45; color: var(--ink-1); }
+
+            /* Four cards sharing the height they are given, so the last one
+               cannot run under the slide foot. */
+            .reveal .xc {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 26px;
+                flex: 1;
+                min-height: 0;
+            }
+            .reveal .xc .card { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+            .reveal .xc .card-header { flex: none; }
+            .reveal .xc .card-body {
+                padding: 10px 18px;
+                flex: 1;
+                display: flex;
+                align-items: center;
+            }
+            .reveal .xc .card-body p { font-size: 17px; line-height: 1.42; color: var(--ink-1); }
+
+            .reveal .legend { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); margin-top: 40px; }
+            .reveal .legend h4 { margin-bottom: 8px; }
+            .reveal .legend p { font-size: 15px; line-height: 1.5; }
+            .reveal .keys {
+                font-family: var(--font-mono);
+                font-size: 12px;
+                border: var(--border-hairline);
+                padding: 2px 7px;
+                background: var(--paper-2);
+                color: var(--ink-1);
+            }
+
+            /* ------------------------------------------------------------
+               Print. Each house exports as one full page: build.js emits
+               only the complete level in ?print-pdf mode, so a normal PDF
+               export gives one whole house per page.
+
+               In print view reveal wraps every slide in a .pdf-page, so the
+               theme's `.slides > section` rules stop matching and the slides
+               lose their layout. These restate them one level deeper.
+               ------------------------------------------------------------ */
+            html.print-pdf .reveal .slides .pdf-page {
+                position: relative;
+                overflow: hidden;
+            }
+            /* Reveal's print stylesheet zeroes padding and forces display:block
+               with !important, so these have to answer in kind. */
+            html.print-pdf .reveal .slides .pdf-page > section {
+                top: 0 !important;
+                left: 0 !important;
+                height: 100%;
+                width: 100%;
+                padding: 72px 88px 100px !important;
+                display: flex !important;
+                flex-direction: column;
+                justify-content: center;
+                background-color: var(--paper-1);
+                overflow: hidden;
+            }
+            html.print-pdf .reveal .slides .pdf-page > section.house-slide {
+                padding: 44px 56px 76px !important;
+            }
+            html.print-pdf .reveal .slides .pdf-page > section.top {
+                justify-content: flex-start;
+            }
+            html.print-pdf .reveal .slides .pdf-page > section.ink {
+                background-color: var(--ink-1);
+            }
+            /* The zoom ladder is a screen affordance; on paper every house
+               is shown whole, so it has nothing to say. */
+            html.print-pdf .reveal .hh-r,
+            html.print-pdf .reveal .room-spine { display: none; }
+        </style>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides"><!-- built by build.js from houses.js --></div>
+        </div>
+
+        <script src="lib/reveal/reveal.js"></script>
+        <script src="lib/reveal/plugin/notes.js"></script>
+        <script src="houses.js"></script>
+        <script src="build.js"></script>
+    </body>
+</html>

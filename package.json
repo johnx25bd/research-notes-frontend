@@ -5,6 +5,7 @@
   "scripts": {
     "build": "pnpm validate && next build",
     "dev": "next dev",
+    "export:deck-pdf": "node scripts/export-deck-pdf.mjs",
     "generate:pdfs": "tsx scripts/generate-research-pdfs.ts",
     "lint": "eslint .",
     "notify": "tsx scripts/notify-subscribers.ts",
