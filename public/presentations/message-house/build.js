@@ -16,7 +16,11 @@
    ============================================================ */
 
 const IS_PRINT = /print-pdf/gi.test(window.location.search);
-const DECK_FOOT = "Message house options · RISE Verifiable AI";
+const DECK_FOOT = "Verifiable AI Message House";
+
+// Horizontal index of the first house: cover, instructions, overview, draft.
+// The overview's links are built from it.
+const HOUSE_SLIDE_0 = 4;
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -47,23 +51,32 @@ function houseHTML(house, levels, i) {
             else if (lv.key === "frame") cls += " is-frame";
             else if (lv.key === "room") cls += n === lv.room ? " is-focus" : " is-collapsed";
 
+            // Sub-messages land one at a time at the frame level; a room's
+            // bullets land one at a time once you are standing in it.
+            const headFrag = lv.key === "frame" ? ` fragment fade-in" data-fragment-index="${n}` : "";
+            const lineFrag = lv.key === "room" && n === lv.room ? " fragment fade-in" : "";
+
             // Every room gets an anchor. Where the source writes a headline,
             // that is it; where it does not, the room's opening sentence is
             // set as a lead. No words are added either way.
             let anchor, rest;
             if (room.head) {
-                anchor = `<div class="room-head" data-id="${house.id}-h${n}">${esc(room.head)}</div>`;
+                anchor = `<div class="room-head${headFrag}">${esc(room.head)}</div>`;
                 rest = room.lines;
             } else {
-                anchor = `<p class="room-lead" data-id="${house.id}-h${n}">${esc(room.lines[0])}</p>`;
+                anchor = `<p class="room-lead${headFrag}">${esc(room.lines[0])}</p>`;
                 rest = room.lines.slice(1);
             }
-            const lines = rest.map((l, k) => `<p data-id="${house.id}-l${n}-${k}">${esc(l)}</p>`).join("");
+            const lines = rest.map((l) => `<p class="${lineFrag.trim()}">${esc(l)}</p>`).join("");
 
+            // data-id lives only on the room box. The auto-animate matcher
+            // below pairs nothing else, so changing level moves these three
+            // boxes horizontally and cross-fades their contents. Nothing flies
+            // in from a corner, and a fast keypress has little to interrupt.
             return `
                 <div class="${cls}" data-id="${house.id}-room${n}">
                     <div class="room-open">
-                        <div class="room-tag" data-id="${house.id}-t${n}">${esc(room.tag)}</div>
+                        <div class="room-tag">${esc(room.tag)}</div>
                         ${anchor}
                         <div class="room-lines">${lines}</div>
                     </div>
@@ -74,8 +87,17 @@ function houseHTML(house, levels, i) {
 
     const found = house.evidence.map((e) => `<span>${esc(e)}</span>`).join("");
 
-    return `
-        <div class="hh" data-id="${house.id}-hh">
+    // One cue, on the first house's empty first level: at that point nothing
+    // on screen says the detail is underneath rather than to the right.
+    const cue =
+        house.id === HOUSES[0].id && lv.key === "core"
+            ? `<div class="cue"><button type="button" onclick="Reveal.down()">
+                   <span>Go deeper</span><span class="chev"></span>
+               </button></div>`
+            : "";
+
+    return `${cue}
+        <div class="hh">
             <div class="hh-l">
                 <span class="hh-aud">${esc(house.audience)}</span>
                 <span class="hh-var">Variant ${esc(house.variant)}</span>
@@ -86,13 +108,13 @@ function houseHTML(house, levels, i) {
                 <span class="ladder">${ladder}</span>
             </div>
         </div>
-        <div class="house" data-id="${house.id}-house">
-            <div class="roof" data-id="${house.id}-roof">
+        <div class="house">
+            <div class="roof">
                 <span class="label label--accent">Main message</span>
                 <p>${esc(house.core)}</p>
             </div>
-            <div class="rooms" data-id="${house.id}-rooms" style="grid-template-columns: ${lv.cols}">${rooms}</div>
-            <div class="found${lv.key === "all" ? "" : " is-empty"}" data-id="${house.id}-found">
+            <div class="rooms" style="grid-template-columns: ${lv.cols}">${rooms}</div>
+            <div class="found${lv.key === "all" ? "" : " is-empty"}">
                 <span class="label">Evidence</span>
                 <div class="found-items">${found}</div>
             </div>
@@ -132,14 +154,16 @@ function notesFor(house, levels, i) {
 
 /* ---- Static slides ------------------------------------------ */
 function streetHTML() {
+    // Each card links straight into its house. HOUSE_SLIDE_0 is the horizontal
+    // index of the first house, so the hrefs stay right if slides are added
+    // before them.
     const cards = HOUSES.map(
-        (h) => `
-        <div class="st">
+        (h, i) => `
+        <a class="st" href="#/${HOUSE_SLIDE_0 + i}">
             <div class="st-head"><span class="st-aud">${esc(h.audience)}</span><span class="st-var">Variant ${esc(h.variant)}</span></div>
             <div class="st-name">“${esc(h.name)}”</div>
             <div class="st-core">${esc(h.core)}</div>
-            <div class="st-rooms">${h.rooms.map((r) => `<b>${esc(r.tag)}</b>`).join("")}</div>
-        </div>`,
+        </a>`,
     ).join("");
     return `
         <div class="eyebrow"><span class="label label--accent">Overview</span></div>
@@ -169,7 +193,7 @@ function draftHTML() {
 function howHTML() {
     return `
         <div class="eyebrow"><span class="label label--accent">How to move</span></div>
-        <h2>Across for variants, down for detail.</h2>
+        <h2>Instructions</h2>
         <div class="legend">
             <div>
                 <h4>Across <span class="keys">←</span> <span class="keys">→</span></h4>
@@ -180,11 +204,15 @@ function howHTML() {
                 <p>Six levels inside every house: the main message, the three rooms named, each room walked into, then the whole house with its evidence.</p>
             </div>
             <div>
+                <h4>Step <span class="keys">Space</span></h4>
+                <p>Sub-messages arrive one at a time, and so do the bullets inside a room. Down skips straight to the next level.</p>
+            </div>
+            <div>
                 <h4>Out <span class="keys">Esc</span></h4>
                 <p>The full grid, every house and every level at once. <span class="keys">S</span> opens the speaker notes.</p>
             </div>
         </div>
-        <p class="label" style="margin-top: 36px">Every house runs the same spine — risk, then the reason restraint is hard, then verification</p>`;
+        <p class="label" style="margin-top: 32px">On the next slide, click any house to jump straight into it</p>`;
 }
 
 function crossHTML() {
@@ -197,7 +225,7 @@ function crossHTML() {
     ).join("");
     return `
         <div class="eyebrow"><span class="label label--accent">Cross-cutting</span></div>
-        <h2 style="font-size: 36px">Lines that work in any house.</h2>
+        <h2 style="font-size: 36px">Global messages</h2>
         <div class="xc">${cards}</div>`;
 }
 
@@ -217,10 +245,8 @@ function sayHTML() {
     const out = [];
 
     out.push(`
-        <section class="title">
-            <p class="label">RISE × Lucid Computing · Verifiable AI</p>
-            <h1>Message<br /><span class="text-accent">house options.</span></h1>
-            <p class="lead">Six ways to say the same thing, for three audiences.<br />Working draft · ${new Date().getFullYear()}</p>
+        <section class="title" data-foot="RISE × Lucid Computing">
+            <h1>Verifiable AI<br /><span class="text-accent">Message House</span></h1>
             <aside class="notes"><ul>
                 <li>Six houses, three audiences, two variants each</li>
                 <li>Same structure every time: one roof, three rooms, one foundation</li>
@@ -278,9 +304,8 @@ function sayHTML() {
 
     out.push(`
         <section class="ink closing">
-            <div class="eyebrow"><span class="label label--accent">Message house options</span></div>
-            <h2>Which house?</h2>
-            <p>Pick one per audience, then fill the evidence.<br />RISE × Lucid Computing · Verifiable AI</p>
+            <div class="eyebrow"><span class="label label--accent">Verifiable AI Message House</span></div>
+            <h2>Questions</h2>
             <aside class="notes"><ul>
                 <li>The ask: one house per audience</li>
                 <li>Then the foundation gets filled with real evidence</li>
@@ -305,6 +330,26 @@ function sayHTML() {
         progress: true,
         pdfMaxPagesPerSlide: 1,
         pdfSeparateFragments: false,
+
+        // Auto-animate pairs elements by data-id first and then guesses at the
+        // rest by shape and text. The guessing is what made the zoom lurch:
+        // headings and bullets in one room were being matched to their
+        // counterparts in another and flown diagonally across the slide, and
+        // interrupting that mid-flight left the house in pieces. Pair only
+        // what carries a data-id -- the three room boxes -- so the only thing
+        // that moves is a room's width. Everything else cross-fades in place.
+        autoAnimateMatcher: (fromSlide, toSlide) => {
+            const pairs = [];
+            toSlide.querySelectorAll("[data-id]").forEach((to) => {
+                const from = fromSlide.querySelector(`[data-id="${to.dataset.id}"]`);
+                if (from) pairs.push({ from, to });
+            });
+            return pairs;
+        },
+        autoAnimateDuration: 0.45,
+        autoAnimateEasing: "cubic-bezier(0.2, 0, 0, 1)",
+        autoAnimateUnmatched: false,
+
         plugins: [RevealNotes],
     }).then(() => {
         // Slide foot: brand mark + wordmark left, mono label right.

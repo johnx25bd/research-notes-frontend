@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Message house options — RISE Verifiable AI</title>
+        <title>Verifiable AI Message House</title>
 
         <base href="/presentations/message-house/" />
 
@@ -197,7 +197,7 @@
             .reveal .room-lines p {
                 font-size: 1em;
                 line-height: 1.44;
-                color: var(--ink-2);
+                color: var(--ink-1);
                 position: relative;
                 padding-left: 1em;
             }
@@ -280,18 +280,86 @@
             }
             .reveal .found.is-empty .found-items { opacity: 0; }
 
+            /* ---- Down cue ----------------------------------------------
+               Shown once, on the first house's first level, where the house
+               is still empty and nothing yet says the detail is underneath.
+               Floats over the empty rooms rather than sitting in the layout,
+               so it cannot shift the house the zoom animates.
+               ------------------------------------------------------------ */
+            .reveal .cue {
+                position: absolute;
+                left: 56px;
+                right: 56px;
+                top: 54%;
+                display: flex;
+                justify-content: center;
+                pointer-events: none;
+                z-index: 2;
+            }
+            .reveal .cue button {
+                pointer-events: auto;
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 13px 20px;
+                background: var(--paper-1);
+                border: var(--border-ink);
+                box-shadow: var(--shadow-offset);
+                color: var(--ink-1);
+                font-family: var(--font-mono);
+                font-size: 13px;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                cursor: pointer;
+                transition:
+                    transform var(--duration-base) var(--ease-mechanical),
+                    box-shadow var(--duration-base) var(--ease-mechanical);
+            }
+            .reveal .cue button:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--ink-1); }
+            .reveal .cue button:active { transform: translate(0, 0); box-shadow: none; }
+            .reveal .cue .chev {
+                display: block;
+                width: 15px;
+                height: 15px;
+                border-right: 2px solid var(--amber);
+                border-bottom: 2px solid var(--amber);
+                transform: rotate(45deg);
+                /* Mechanical, not springy: the system does not bounce. */
+                animation: cue-step 1.8s var(--ease-mechanical) infinite;
+            }
+            @keyframes cue-step {
+                0%, 55%, 100% { transform: rotate(45deg) translate(0, 0); opacity: 1; }
+                25% { transform: rotate(45deg) translate(4px, 4px); opacity: 0.45; }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .reveal .cue .chev { animation: none; }
+            }
+
             /* ------------------------------------------------------------
                The street — all six houses at a glance
                ------------------------------------------------------------ */
             .reveal .street { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; flex: 1; min-height: 0; }
-            .reveal .st {
+            .reveal a.st {
                 border: var(--border-strong);
                 background: var(--paper-1);
                 padding: 14px 16px;
                 display: flex;
                 flex-direction: column;
                 min-height: 0;
+                text-decoration: none;
+                color: inherit;
+                transition:
+                    border-color var(--duration-base) var(--ease-mechanical),
+                    box-shadow var(--duration-base) var(--ease-mechanical),
+                    transform var(--duration-base) var(--ease-mechanical);
             }
+            .reveal a.st:hover {
+                border-color: var(--ink-1);
+                transform: translate(-2px, -2px);
+                box-shadow: var(--shadow-offset);
+            }
+            .reveal a.st:active { transform: translate(0, 0); box-shadow: none; }
             .reveal .st-head { display: flex; align-items: baseline; gap: 8px; flex: none; }
             .reveal .st-aud {
                 font-family: var(--font-mono);
@@ -325,22 +393,10 @@
                 border-top: var(--border-hairline);
                 font-size: 12.5px;
                 line-height: 1.42;
-                color: var(--ink-2);
+                color: var(--ink-1);
                 flex: 1;
                 min-height: 0;
             }
-            .reveal .st-rooms { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; flex: none; }
-            .reveal .st-rooms b {
-                font-family: var(--font-mono);
-                font-size: 9.5px;
-                font-weight: 600;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                color: var(--ink-3);
-                border: var(--border-hairline);
-                padding: 3px 6px;
-            }
-            .reveal .st-rooms b:last-child { color: var(--amber-ink); border-color: var(--amber); }
 
             /* ------------------------------------------------------------
                Reference + list slides
@@ -357,7 +413,7 @@
                 justify-content: center;
             }
             .reveal .dr .room-tag { margin-bottom: 10px; }
-            .reveal .dr p { font-size: 13px; line-height: 1.45; color: var(--ink-2); margin-bottom: 6px; }
+            .reveal .dr p { font-size: 13px; line-height: 1.45; color: var(--ink-1); margin-bottom: 6px; }
             .reveal .dr-open-label {
                 font-family: var(--font-mono);
                 font-size: 12px;
@@ -382,13 +438,29 @@
                 color: var(--amber-ink);
                 letter-spacing: 0.02em;
             }
-            .reveal .say .row p { font-size: 14.5px; line-height: 1.45; }
+            .reveal .say .row p { font-size: 14.5px; line-height: 1.45; color: var(--ink-1); }
 
-            .reveal .xc { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; }
-            .reveal .xc .card-body { padding: 16px 20px; }
-            .reveal .xc .card-body p { font-size: 19px; line-height: 1.45; color: var(--ink-1); }
+            /* Four cards sharing the height they are given, so the last one
+               cannot run under the slide foot. */
+            .reveal .xc {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 26px;
+                flex: 1;
+                min-height: 0;
+            }
+            .reveal .xc .card { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+            .reveal .xc .card-header { flex: none; }
+            .reveal .xc .card-body {
+                padding: 10px 18px;
+                flex: 1;
+                display: flex;
+                align-items: center;
+            }
+            .reveal .xc .card-body p { font-size: 17px; line-height: 1.42; color: var(--ink-1); }
 
-            .reveal .legend { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-8); margin-top: 40px; }
+            .reveal .legend { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); margin-top: 40px; }
             .reveal .legend h4 { margin-bottom: 8px; }
             .reveal .legend p { font-size: 15px; line-height: 1.5; }
             .reveal .keys {
