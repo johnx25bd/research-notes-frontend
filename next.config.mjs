@@ -44,6 +44,14 @@ const nextConfig = {
         destination: '/presentations/rise-design-01',
         permanent: false,
       },
+      {
+        // Short, speakable alias for the Verifiable AI message house deck,
+        // same precedent. Temporary so it can be repointed as the messaging
+        // settles on a single house per audience.
+        source: '/vai',
+        destination: '/presentations/vai-message-house',
+        permanent: false,
+      },
     ]
   },
   async rewrites() {
