@@ -52,39 +52,64 @@ const nextConfig = {
         destination: '/presentations/vai-message-house',
         permanent: false,
       },
+      {
+        // Short, speakable alias for the chip registry demo shown at UNGA.
+        // Temporary so it can be repointed later. It needs no gate of its
+        // own: the destination is passphrase-gated by the proxy.
+        source: '/unga',
+        destination: '/demos/chip-registry',
+        permanent: false,
+      },
     ]
   },
   async rewrites() {
-    return [
-      {
-        source: '/presentations/ai-agents',
-        destination: '/presentations/ai-agents/index.html',
-      },
-      {
-        source: '/presentations/os-poc',
-        destination: '/presentations/os-poc/index.html',
-      },
-      {
-        source: '/presentations/rise-design-01',
-        destination: '/presentations/rise-design-01/index.html',
-      },
-      {
-        source: '/presentations/vai-message-house',
-        destination: '/presentations/vai-message-house/index.html',
-      },
-      {
-        // Standalone full-viewport interactive visualization, served as a
-        // static asset with a clean URL.
-        source: '/demos/verifying-compute-location',
-        destination: '/demos/verifying-compute-location/index.html',
-      },
-      {
-        // The demo's mobile scroll story (small screens are redirected to
-        // it by the page itself), same clean-URL treatment.
-        source: '/demos/verifying-compute-location/story',
-        destination: '/demos/verifying-compute-location/story.html',
-      },
-    ]
+    // afterFiles: applied only after a request misses every real file under
+    // public/, so bundled assets keep winning and only the clean URLs and the
+    // SPA's client routes fall through to an index.html.
+    return {
+      afterFiles: [
+        {
+          source: '/presentations/ai-agents',
+          destination: '/presentations/ai-agents/index.html',
+        },
+        {
+          source: '/presentations/os-poc',
+          destination: '/presentations/os-poc/index.html',
+        },
+        {
+          source: '/presentations/rise-design-01',
+          destination: '/presentations/rise-design-01/index.html',
+        },
+        {
+          source: '/presentations/vai-message-house',
+          destination: '/presentations/vai-message-house/index.html',
+        },
+        {
+          // Standalone full-viewport interactive visualization, served as a
+          // static asset with a clean URL.
+          source: '/demos/verifying-compute-location',
+          destination: '/demos/verifying-compute-location/index.html',
+        },
+        {
+          // The demo's mobile scroll story (small screens are redirected to
+          // it by the page itself), same clean-URL treatment.
+          source: '/demos/verifying-compute-location/story',
+          destination: '/demos/verifying-compute-location/story.html',
+        },
+        {
+          // Chip registry demo (a Vite/React build), same clean-URL treatment.
+          source: '/demos/chip-registry',
+          destination: '/demos/chip-registry/index.html',
+        },
+        {
+          // The demo is client-routed (react-router), so every path under it
+          // that is not a real file in public/ must serve the SPA shell and let
+          // the router take it from there.
+          source: '/demos/chip-registry/:path*',
+          destination: '/demos/chip-registry/index.html',
+        },
+      ],
+    }
   },
   async headers() {
     return [
@@ -156,6 +181,27 @@ const nextConfig = {
       {
         // Same policy for the clean URL that the rewrite above serves.
         source: '/presentations/vai-message-house',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+      {
+        // The chip registry demo is pre-release and passphrase-gated, so
+        // keep it and everything it loads out of search indexes entirely.
+        source: '/demos/chip-registry/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+      {
+        // Same policy for the clean URL that the rewrite above serves.
+        source: '/demos/chip-registry',
         headers: [
           {
             key: 'X-Robots-Tag',
