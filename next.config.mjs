@@ -81,6 +81,10 @@ const nextConfig = {
           destination: '/presentations/rise-design-01/index.html',
         },
         {
+          source: '/presentations/rise-october-workshop',
+          destination: '/presentations/rise-october-workshop/index.html',
+        },
+        {
           source: '/presentations/vai-message-house',
           destination: '/presentations/vai-message-house/index.html',
         },
@@ -160,6 +164,27 @@ const nextConfig = {
       {
         // Same policy for the clean URL that the rewrite above serves.
         source: '/presentations/rise-design-01',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+      {
+        // The RISE October workshop deck is passphrase-gated, so keep it and
+        // everything it loads out of search indexes entirely.
+        source: '/presentations/rise-october-workshop/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+      {
+        // Same policy for the clean URL that the rewrite above serves.
+        source: '/presentations/rise-october-workshop',
         headers: [
           {
             key: 'X-Robots-Tag',

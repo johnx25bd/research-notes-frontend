@@ -1,0 +1,347 @@
+<!-- Block 1 · Shared opening · 90 minutes. Slides 1 to 9 of deck-outline.md. -->
+
+<!-- Title -->
+<section class="title">
+  <p class="label">RISE workshop</p>
+  <h1>LV-01<br /><span class="text-accent">Co-located Assurance Node</span></h1>
+  <p class="lead">13 to 14 October 2026<br />John Hoopes, Lucid Computing</p>
+  <aside class="notes">
+    <ul>
+      <li>Welcome; who is in the room</li>
+      <li>Tuesday: shared opening (90 min), two LV blocks (120 min each), then PoW 1</li>
+      <li>Wednesday: PoW 2, then LV block 3 (60 min)</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 1. Goals · 5 min -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">01 — Opening</span></div>
+  <h2>Goals</h2>
+  <ol class="rows" style="max-width: 900px">
+    <li class="fragment fade-in">Clarify the problem</li>
+    <li class="fragment fade-in">Examine the proposed design</li>
+    <li class="fragment fade-in">Identify what to learn next</li>
+  </ol>
+  <aside class="notes">
+    <ul>
+      <li>Orient the room: problem and constraints first, then LV, then selected challenges to pick investigations</li>
+      <li>The design is proposed; this is the chance to correct assumptions and shape the work</li>
+      <li>LV outputs: clearer problem specification, annotated design questions, two attack hypotheses discussed, a small number of next investigations</li>
+      <li>5 minutes</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 2. Agenda · 5 min -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">01 — Opening</span></div>
+  <h2>Agenda</h2>
+  <div class="agenda-day">
+    <span class="label">Tuesday</span>
+    <div class="pipeline">
+      <div class="card stage fragment fade-in" data-fragment-index="1">
+        <div class="card-header"><span>Opening</span></div>
+        <div class="card-body"><h4>Shared frame</h4></div>
+      </div>
+      <span class="arrow fragment fade-in" data-fragment-index="2">→</span>
+      <div class="card stage fragment fade-in" data-fragment-index="2">
+        <div class="card-header"><span>LV block 1</span></div>
+        <div class="card-body"><h4>System and lifecycle</h4></div>
+      </div>
+      <span class="arrow fragment fade-in" data-fragment-index="3">→</span>
+      <div class="card stage fragment fade-in" data-fragment-index="3">
+        <div class="card-header"><span>LV block 2</span></div>
+        <div class="card-body"><h4>Enrollment and collection</h4></div>
+      </div>
+      <span class="arrow fragment fade-in" data-fragment-index="4">→</span>
+      <div class="card stage fragment fade-in" data-fragment-index="4">
+        <div class="card-header"><span>PoW 1</span></div>
+        <div class="card-body"><h4>Problem statement</h4></div>
+      </div>
+    </div>
+  </div>
+  <div class="agenda-day">
+    <span class="label">Wednesday</span>
+    <div class="pipeline">
+      <div class="card stage fragment fade-in" data-fragment-index="5">
+        <div class="card-header"><span>PoW 2</span></div>
+        <div class="card-body"><h4>Assurance Node, ZKP, PoE</h4></div>
+      </div>
+      <span class="arrow fragment fade-in" data-fragment-index="6">→</span>
+      <div class="card stage fragment fade-in" data-fragment-index="6">
+        <div class="card-header"><span>LV block 3</span></div>
+        <div class="card-body"><h4>Challenges and next investigations</h4></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <ul>
+      <li>Tuesday: Opening, LV block 1, LV block 2, then PoW 1</li>
+      <li>Wednesday: PoW 2, then LV block 3</li>
+      <li>Opening establishes the six parameters</li>
+      <li>LV block 1 applies them and introduces the system and lifecycle</li>
+      <li>LV block 2 examines enrollment, collection and two scenarios</li>
+      <li>LV block 3 revisits disagreements and improves the next steps</li>
+      <li>Invite corrections throughout</li>
+      <li>Capture questions that need deeper treatment; return to them in the relevant block</li>
+      <li>Name the scribe; explain note-taking</li>
+      <li>If recording is arranged, confirm agreement before starting it</li>
+      <li>5 minutes</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 3. Reflections from the verification workshop · 20 min -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">01 — Opening</span></div>
+  <h2>AI verification in October 2026</h2>
+  <ol class="rows" style="margin-top: 44px; max-width: 900px">
+    <li class="fragment fade-in">What have we learned in the past 6 weeks?</li>
+    <li class="fragment fade-in">Which questions or disagreements remain important?</li>
+    <li class="fragment fade-in">What should those imply for the work we do here?</li>
+  </ol>
+  <aside class="notes">
+    <ul>
+      <li>Invite Naci to reflect on the earlier verification workshop</li>
+      <li>Leave the substance open: no conclusions supplied, no views attributed</li>
+      <li>Confirm this contribution with Naci before the session</li>
+      <li>Reveal the three questions one at a time as prompts</li>
+      <li>Capture: implications participants identify, including differences of view</li>
+      <li>20 minutes</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 4. Portfolio · 5 min -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">01 — Opening</span></div>
+  <h2>Portfolio</h2>
+  <div class="params" style="margin-top: 40px">
+    <span class="chip on fragment fade-in">Strategic frame</span>
+    <span class="chip on fragment fade-in">Claim set</span>
+    <span class="chip on fragment fade-in">Threat model</span>
+    <span class="chip on fragment fade-in">Verifier access regime</span>
+    <span class="chip on fragment fade-in">Time to deployment</span>
+    <span class="chip on fragment fade-in">Time to development</span>
+  </div>
+  <aside class="notes">
+    <ul>
+      <li>Attribute the framing to Gregory Kollmer's feedback</li>
+      <li>Lucid Labs seeks a portfolio of bets against important combinations of these six parameters</li>
+      <li>He described selecting five to ten important specifications: the portfolio ambition, not a target for this workshop</li>
+      <li>Practical point for today: make the problem clear before asking for responses to the proposed solution</li>
+      <li>Reveal the six labels one at a time; the next three slides make them concrete</li>
+      <li>5 minutes</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 5. Strategic frame and claim set · 10 min -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">01 — Opening</span></div>
+  <h2>Strategic frame and claim set</h2>
+  <div class="grid-split" style="margin-top: 40px">
+    <div class="params">
+      <span class="chip on">Strategic frame</span>
+      <span class="chip on">Claim set</span>
+      <span class="chip">Threat model</span>
+      <span class="chip">Verifier access regime</span>
+      <span class="chip">Time to deployment</span>
+      <span class="chip">Time to development</span>
+    </div>
+    <div>
+      <div class="panel fragment fade-in">
+        <span class="label label--accent">Strategic frame</span>
+        <h3>What decision should verification support?</h3>
+      </div>
+      <div class="panel fragment fade-in">
+        <span class="label">Claim set</span>
+        <h3>What do we need to establish?</h3>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <ul>
+      <li>Working meanings for discussion, not quotations or agreed definitions from Gregory</li>
+      <li>Strategic frame: the context, parties and decision that make verification useful</li>
+      <li>Claim set: the properties to establish, including scope and limits</li>
+      <li>LV starting example: an operator declares GPUs at a facility; another party needs evidence relevant to their diversion</li>
+      <li>Still to make explicit: the exact decision, covered devices, location tolerance, relevant period</li>
+      <li>Ask Naci: which use contexts matter? who relies on the evidence? what would make the claim useful?</li>
+      <li>Capture: where the answer is unknown, record a requirements question</li>
+      <li>10 minutes</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 6. Threat model and verifier access regime · 10 min -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">01 — Opening</span></div>
+  <h2>Threat model and verifier access regime</h2>
+  <div class="grid-split" style="margin-top: 40px">
+    <div class="params">
+      <span class="chip">Strategic frame</span>
+      <span class="chip">Claim set</span>
+      <span class="chip on">Threat model</span>
+      <span class="chip on">Verifier access regime</span>
+      <span class="chip">Time to deployment</span>
+      <span class="chip">Time to development</span>
+    </div>
+    <div>
+      <div class="panel fragment fade-in">
+        <span class="label label--accent">Threat model</span>
+        <h3>Who can do what?</h3>
+      </div>
+      <div class="panel fragment fade-in">
+        <span class="label">Verifier access regime</span>
+        <h3>What may the verifier inspect or operate?</h3>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <ul>
+      <li>Threat model: the adversaries, capabilities and assumed protections under consideration</li>
+      <li>Verifier access regime: the physical, technical and institutional access available to the verifier, e.g. inspection, installation, measurement, updates, evidence access</li>
+      <li>They interact: a check may depend on access that is unavailable; a protection may depend on excluding a capability the adversary actually has</li>
+      <li>Also examine the operator's exposure to a malicious or compromised verifier</li>
+      <li>Ask: which capabilities and access constraints should we design around?</li>
+      <li>Invite Naci for practical context; do not presume an agreed access regime</li>
+      <li>10 minutes</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 6b. Problem statement: threat model -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">01 — Opening</span></div>
+  <h2>Problem statement: threat model</h2>
+  <p class="table-lead">Compute verification has a different threat model than cybersecurity</p>
+  <div class="table-wrap">
+    <table class="table compare">
+      <thead>
+        <tr><th>Security</th><th>Verification</th></tr>
+      </thead>
+      <tbody>
+        <tr class="fragment fade-in"><td>One adversary (outside the fortress)</td><td>Two adversaries: verifier outside; prover inside</td></tr>
+        <tr class="fragment fade-in"><td>Secret needs to stay in the fortress</td><td>Secret needs to stay in the fortress + the verifier needs correct, limited information about the secret</td></tr>
+        <tr class="fragment fade-in"><td>Defender loses if the attacker captures the flag once</td><td>
+          <p>Prover loses if the verifier captures the flag</p>
+          <p>Prover loses if the verifier catches cheating (once is enough)</p>
+          <p>Verifier loses if the prover cheats <em>on a relevant scale</em></p>
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="notes">
+    <ul>
+      <li>Security: one adversary, outside the fortress</li>
+      <li>Verification: two adversaries; the verifier is outside, the prover inside</li>
+      <li>The secret must stay in, and the verifier still needs correct, limited information about it</li>
+      <li>Asymmetric losses: the prover loses on one caught cheat; the verifier loses only if cheating happens on a relevant scale</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 7. Time to deployment and time to development · 15 min -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">01 — Opening</span></div>
+  <h2>Time to deployment and time to development</h2>
+  <div class="grid-split" style="margin-top: 40px">
+    <div class="params">
+      <span class="chip">Strategic frame</span>
+      <span class="chip">Claim set</span>
+      <span class="chip">Threat model</span>
+      <span class="chip">Verifier access regime</span>
+      <span class="chip on">Time to deployment</span>
+      <span class="chip on">Time to development</span>
+    </div>
+    <div>
+      <div class="panel fragment fade-in">
+        <span class="label label--accent">Time to deployment</span>
+        <h3>When could we put it into use?</h3>
+      </div>
+      <div class="panel fragment fade-in">
+        <span class="label">Time to development</span>
+        <h3>What must we develop and validate first?</h3>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <ul>
+      <li>Gregory named both timescales; the excerpt does not define their boundaries. Confirm the intended distinction first</li>
+      <li>One reading: development time to build and validate a deployable approach; deployment time to install and make it operational in a setting</li>
+      <li>Other reading: time to deployment is the total from now to operational use, including development</li>
+      <li>Make the starting point explicit</li>
+      <li>LV dependencies to discuss: technical validation, facility access, installation, enrollment</li>
+      <li>Do not supply durations or assert which dependency dominates; those are questions for the room</li>
+      <li>Ask: what needs to be available by when? which dependencies could determine that? what do we know, and what needs an estimate from others?</li>
+      <li>15 minutes</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 8. Levers · 15 min -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">01 — Opening</span></div>
+  <h2>Levers</h2>
+  <div class="grid-split" style="margin-top: 40px">
+    <div class="params">
+      <span class="chip on">Strategic frame</span>
+      <span class="chip on">Claim set</span>
+      <span class="chip on">Threat model</span>
+      <span class="chip on">Verifier access regime</span>
+      <span class="chip on">Time to deployment</span>
+      <span class="chip on">Time to development</span>
+    </div>
+    <div>
+      <h3>The value of this approach in a dynamic situation</h3>
+      <ul class="rows" style="margin-top: 28px">
+        <li class="fragment fade-in">Less on-site access</li>
+        <li class="fragment fade-in">A shorter development horizon</li>
+        <li class="fragment fade-in">A faster rollout requirement</li>
+        <li class="fragment fade-in">A more capable adversary</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">
+    <ul>
+      <li>Location verification as the concrete case; change one assumption at a time, revealing each as a prompt</li>
+      <li>Purpose: expose dependencies between the problem specification and the technical approach</li>
+      <li>Do not claim an alternative works, or that LV-01 fails under a changed condition, without working through the assumptions</li>
+      <li>Ask: which parts of the proposed approach would need to change? would the claim need to become narrower? what new uncertainty would we have to investigate?</li>
+      <li>15 minutes</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 9. Applied to location verification · 5 min -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">01 — Opening</span></div>
+  <h2>Applied to location verification</h2>
+  <div class="grid-split" style="margin-top: 40px">
+    <div class="params">
+      <span class="chip on">Strategic frame</span>
+      <span class="chip on">Claim set</span>
+      <span class="chip on">Threat model</span>
+      <span class="chip on">Verifier access regime</span>
+      <span class="chip on">Time to deployment</span>
+      <span class="chip on">Time to development</span>
+    </div>
+    <ol class="rows">
+      <li class="fragment fade-in">Working assumptions</li>
+      <li class="fragment fade-in">Open requirements</li>
+      <li class="fragment fade-in">Questions for the design</li>
+    </ol>
+  </div>
+  <aside class="notes">
+    <ul>
+      <li>Summarize only what emerged in this conversation</li>
+      <li>Use the six parameters as a checklist</li>
+      <li>Distinguish shared assumptions from disagreements and unknowns</li>
+      <li>Nothing needs to be filled in merely to complete the table</li>
+      <li>Transition: with this problem framing in view, examine the proposed LV system</li>
+      <li>5 minutes</li>
+    </ul>
+  </aside>
+</section>

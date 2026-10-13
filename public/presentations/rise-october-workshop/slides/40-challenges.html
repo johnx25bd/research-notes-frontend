@@ -1,0 +1,126 @@
+<!-- Block 3 · LV: enrollment, collection and challenges · 120 minutes.
+     Slides 17 to 20 of deck-outline.md; L-02 and L-03 precede these from
+     20-lv-diagrams.html. Scenario detail lives in
+     tasks/prepare-attack-scenarios/attack-scenarios.md, not here. -->
+
+<!-- 17. AS-002 · 20 min -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">03 — Challenges</span></div>
+  <h2>AS-002: Remove inflated delay to conceal diversion</h2>
+  <div class="pipeline" style="grid-template-columns: 1fr auto 1fr auto 1fr">
+    <div class="card stage fragment fade-in">
+      <div class="card-header"><span>Enrollment, calibration or operation</span></div>
+      <div class="card-body"><h4>Add delay</h4></div>
+    </div>
+    <span class="arrow fragment fade-in">→</span>
+    <div class="card stage fragment fade-in">
+      <div class="card-header"><span>Diversion</span></div>
+      <div class="card-body"><h4>Attacker moves GPU</h4></div>
+    </div>
+    <span class="arrow fragment fade-in">→</span>
+    <div class="card stage fragment fade-in">
+      <div class="card-header"><span>Concealment</span></div>
+      <div class="card-body"><h4>Removes delay; GPU appears unmoved</h4></div>
+    </div>
+  </div>
+  <p class="prompt fragment fade-in">Could the observations still look acceptable?</p>
+  <aside class="notes">
+    <ul>
+      <li>A seeded hypothesis to examine together, not a demonstrated attack</li>
+      <li>Operator adds delay during enrollment or operation, then removes it (or reduces processing delay) to offset a longer path after diversion</li>
+      <li>Assumes the ability to delay/relay messages and change host/client configuration</li>
+      <li>Does not assume forged GPU signatures</li>
+      <li>Valid responses and similar timing might be observed, but continuity gaps could still reveal the move</li>
+      <li>Whether it works depends on conditions not yet established</li>
+      <li>Ask: how much delay could actually be removed?</li>
+      <li>Ask: what independent reference or continuity evidence would remain?</li>
+      <li>Ask: how would we distinguish this from congestion clearing or an in-place software optimization?</li>
+      <li>Ask: what experiment or analysis would most change our view?</li>
+      <li>~3 min introduce, 12 discuss, 5 record the decisive uncertainty</li>
+      <li>Reference: attack-scenarios.md#as-002 and its linked investigations; revisions go there</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 18. AS-005 · 20 min -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">03 — Challenges</span></div>
+  <h2>AS-005: Abuse verifier access to seek operator secrets</h2>
+  <div class="pipeline" style="grid-template-columns: 1fr auto 1fr auto 1fr">
+    <div class="card stage fragment fade-in">
+      <div class="card-header"><span>Verifier</span></div>
+      <div class="card-body"><h4>Malicious or compromised</h4></div>
+    </div>
+    <span class="arrow fragment fade-in">→</span>
+    <div class="card stage fragment fade-in">
+      <div class="card-header"><span>Interfaces</span></div>
+      <div class="card-body"><h4>Misuses collection, diagnostics or updates</h4></div>
+    </div>
+    <span class="arrow fragment fade-in">→</span>
+    <div class="card stage fragment fade-in">
+      <div class="card-header"><span>Outcome</span></div>
+      <div class="card-body"><h4>Operator information beyond what was agreed</h4></div>
+    </div>
+  </div>
+  <p class="prompt fragment fade-in">Could verifier access reach beyond the agreed evidence?</p>
+  <aside class="notes">
+    <ul>
+      <li>Reverse the adversarial perspective: the verifier as attacker</li>
+      <li>Consider handing to Naci here for practical context</li>
+      <li>First establish whether those interfaces and privileges actually exist in the proposed design</li>
+      <li>Do not assume arbitrary host access</li>
+      <li>Do not imply weights, prompts or other secrets have been shown to be accessible</li>
+      <li>Purpose: inspect the privilege and data boundaries</li>
+      <li>Comparison case: legitimate, bounded collection and diagnostics</li>
+      <li>Ask: what access does the verifier actually have?</li>
+      <li>Ask: what limits collection to the agreed fields and purposes?</li>
+      <li>Ask: who authorizes diagnostics and updates?</li>
+      <li>Ask: what can the operator inspect or restrict while retaining useful verification?</li>
+      <li>~3 min introduce, 12 discuss, 5 record the decisive uncertainty</li>
+      <li>Reference: attack-scenarios.md#as-005 and its linked investigation</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 19. What should we investigate first? · 15 min -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">03 — Challenges</span></div>
+  <h2>What should we investigate first?</h2>
+  <div class="grid-4 fill-cols" style="margin-top: 40px">
+    <div class="card fragment fade-in"><div class="card-header"><span>Question</span></div><div class="card-body"></div></div>
+    <div class="card fragment fade-in"><div class="card-header"><span>Way to learn</span></div><div class="card-body"></div></div>
+    <div class="card fragment fade-in"><div class="card-header"><span>Result that changes a decision</span></div><div class="card-body"></div></div>
+    <div class="card fragment fade-in"><div class="card-header"><span>Required access or expertise</span></div><div class="card-body"></div></div>
+  </div>
+  <aside class="notes">
+    <ul>
+      <li>Choose one or two consequential questions from the discussion</li>
+      <li>For each: what is uncertain, how it might be resolved, what different outcomes would imply</li>
+      <li>Link an existing investigation entry where appropriate</li>
+      <li>Aim: a useful next investigation proposal; detailed specs and the fuller coverage check can wait for Wednesday or after</li>
+      <li>Record dependencies and proposed responsibilities</li>
+      <li>Do not assign commitments to absent engineers</li>
+      <li>15 minutes</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 20. What we take into tomorrow · 5 min -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">03 — Challenges</span></div>
+  <h2>For tomorrow</h2>
+  <ol class="rows" style="max-width: 900px">
+    <li class="fragment fade-in">What became clearer?</li>
+    <li class="fragment fade-in">What remains disputed?</li>
+    <li class="fragment fade-in">Which questions should we revisit?</li>
+  </ol>
+  <aside class="notes">
+    <ul>
+      <li>Summarize the discussion; select three questions to sleep on</li>
+      <li>Use the actual notes; nothing pre-written</li>
+      <li>Check important unresolved concerns have been captured</li>
+      <li>Check the notes and annotations are saved</li>
+      <li>5 minutes</li>
+    </ul>
+  </aside>
+</section>

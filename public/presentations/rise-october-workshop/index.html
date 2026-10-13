@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LV-01 Co-located Assurance Node</title>
+    <base href="/presentations/rise-october-workshop/" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="lib/reveal/reset.css" />
+    <link rel="stylesheet" href="lib/reveal/reveal.css" />
+    <!-- Lucid Computing design system, as in rise-design-01. Diagram slides carry
+         their own style. Bump ?v=N when editing the theme so a refresh picks it up. -->
+    <link rel="stylesheet" href="css/theme.css?v=8" />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides"></div>
+    </div>
+
+    <script src="lib/reveal/reveal.js"></script>
+    <script src="lib/reveal/plugin/notes.js"></script>
+    <script src="js/fragment-notes.js"></script>
+    <script>
+      // Thin shell. slides.json lists partials in order; each partial is a plain
+      // HTML file whose top-level <section> elements are the slides (a top-level
+      // <style> in a partial is injected once as well). An entry is either
+      // "slides/x.html" or {"file": "...", "sections": [0, 1]} to take only some
+      // of a partial's top-level sections, by index, so one partial can be
+      // interleaved with others. A missing partial is skipped with a console
+      // warning so the deck renders while files are still in progress.
+      // Needs an http server (python3 serve.py, or any static server).
+      const DECK_FOOT = "LV-01 HDD v0.1.0";
+
+      (async () => {
+        const slidesEl = document.querySelector(".reveal .slides");
+        const manifest = await (await fetch("slides.json", { cache: "no-store" })).json();
+        const cache = new Map();
+        const load = async (file) => {
+          if (!cache.has(file)) {
+            const res = await fetch(file, { cache: "no-store" });
+            if (!res.ok) throw new Error(`${res.status}`);
+            const tpl = document.createElement("template");
+            tpl.innerHTML = await res.text();
+            cache.set(file, { styles: [...tpl.content.querySelectorAll(":scope > style")],
+                              sections: [...tpl.content.children].filter((el) => el.tagName === "SECTION") });
+          }
+          return cache.get(file);
+        };
+
+        const styled = new Set();
+        for (const entry of manifest.slides) {
+          const spec = typeof entry === "string" ? { file: entry } : entry;
+          let part;
+          try {
+            part = await load(spec.file);
+          } catch (err) {
+            console.warn("[deck] partial not available:", spec.file, err.message);
+            continue;
+          }
+          if (!styled.has(spec.file)) {
+            part.styles.forEach((s) => document.head.appendChild(s));
+            styled.add(spec.file);
+          }
+          const sections = Array.isArray(spec.sections)
+            ? spec.sections.map((i) => part.sections[i]).filter(Boolean)
+            : part.sections;
+          for (const section of sections) {
+            section.dataset.partial = spec.file;
+            slidesEl.appendChild(section);
+          }
+        }
+
+        // Slide foot: brand mark + wordmark left, a mono label right. A slide's
+        // data-foot overrides the deck label; diagram slides and stacks get none.
+        // Idempotent, because the speaker view loads this page more than once.
+        document.querySelectorAll(".reveal .slides section").forEach((s) => {
+          if (s.classList.contains("stack") || s.classList.contains("lv-diagram") ||
+              s.classList.contains("no-foot") || s.querySelector(":scope > .slide-foot")) return;
+          if (s.parentElement !== slidesEl && !s.parentElement.classList.contains("stack")) return;
+          const foot = document.createElement("div");
+          foot.className = "slide-foot";
+          foot.innerHTML =
+            '<div class="brand"><img src="assets/lucid-logo.svg" alt=""><span>Lucid Computing</span></div>' +
+            '<span class="label"></span>';
+          foot.querySelector(".label").textContent = s.dataset.foot || DECK_FOOT;
+          s.appendChild(foot);
+        });
+
+        await Reveal.initialize({
+          width: 1280,
+          height: 720,
+          margin: 0,
+          minScale: 0.2,
+          maxScale: 2.0,
+          center: false,
+          display: "flex",
+          hash: true,
+          slideNumber: false,
+          transition: "fade",
+          transitionSpeed: "fast",
+          controls: false,
+          progress: true,
+          plugins: [RevealNotes],
+        });
+        if (window.FragmentNotes) FragmentNotes.install(Reveal);
+      })();
+    </script>
+  </body>
+</html>

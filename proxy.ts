@@ -7,6 +7,11 @@ import {
 } from "@/lib/chip-registry-gate"
 import { RISE_DECK_COOKIE, RISE_DECK_PATH, riseDeckToken } from "@/lib/rise-deck-gate"
 import {
+  RISE_OCTOBER_WORKSHOP_COOKIE,
+  RISE_OCTOBER_WORKSHOP_PATH,
+  riseOctoberWorkshopToken,
+} from "@/lib/rise-october-workshop-gate"
+import {
   VAI_MESSAGE_HOUSE_COOKIE,
   VAI_MESSAGE_HOUSE_PATH,
   vaiMessageHouseToken,
@@ -27,6 +32,15 @@ export async function proxy(req: NextRequest) {
       return NextResponse.next()
     }
     return unlock(req, "/rise-design-01/unlock")
+  }
+
+  if (req.nextUrl.pathname.startsWith(RISE_OCTOBER_WORKSHOP_PATH)) {
+    // Same fail-closed shape, its own passphrase: RISE_OCTOBER_WORKSHOP_PASSWORD.
+    const token = await riseOctoberWorkshopToken()
+    if (token && req.cookies.get(RISE_OCTOBER_WORKSHOP_COOKIE)?.value === token) {
+      return NextResponse.next()
+    }
+    return unlock(req, "/rise-october-workshop/unlock")
   }
 
   if (req.nextUrl.pathname.startsWith(VAI_MESSAGE_HOUSE_PATH)) {
@@ -68,6 +82,8 @@ export const config = {
     "/presentations/os-poc/:path*",
     "/presentations/rise-design-01",
     "/presentations/rise-design-01/:path*",
+    "/presentations/rise-october-workshop",
+    "/presentations/rise-october-workshop/:path*",
     "/presentations/vai-message-house",
     "/presentations/vai-message-house/:path*",
     "/demos/chip-registry",
