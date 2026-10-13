@@ -45,6 +45,14 @@ const nextConfig = {
         permanent: false,
       },
       {
+        // Short, speakable alias for the RISE October workshop deck, same
+        // precedent. Temporary so it can be repointed later. The destination
+        // is passphrase-gated by the proxy, so the alias needs no gate.
+        source: '/october',
+        destination: '/presentations/rise-october-workshop',
+        permanent: false,
+      },
+      {
         // Short, speakable alias for the Verifiable AI message house deck,
         // same precedent. Temporary so it can be repointed as the messaging
         // settles on a single house per audience.
