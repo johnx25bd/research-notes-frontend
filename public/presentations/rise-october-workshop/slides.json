@@ -5,6 +5,7 @@
     { "file": "slides/20-lv-diagrams.html", "sections": [0, 1] },
     "slides/30-design-questions.html",
     { "file": "slides/20-lv-diagrams.html", "sections": [2, 3] },
-    "slides/40-challenges.html"
+    "slides/40-challenges.html",
+    "slides/50-premises.html"
   ]
 }
