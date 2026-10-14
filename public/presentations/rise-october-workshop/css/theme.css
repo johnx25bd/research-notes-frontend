@@ -604,3 +604,16 @@
 .reveal .table.compare em { font-style: italic; }
 .reveal .table.compare td p { color: inherit; font-size: inherit; }
 .reveal .agenda-day .stage .card-body { min-height: 118px; }
+
+/* Premises block (slides/50-premises.html) */
+/* Key/value rows: mono key in a fixed left column, text aligned beside it */
+.reveal ul.kv > li { display: grid; grid-template-columns: 170px 1fr; column-gap: var(--space-4); align-items: baseline; padding: 11px 0; }
+.reveal ul.kv .k { font-family: var(--font-mono); font-size: var(--slide-label); letter-spacing: var(--tracking-label); color: var(--ink-3); text-transform: uppercase; }
+.reveal ul.kv .k--accent { color: var(--amber-ink); }
+.reveal ul.kv .sub { display: block; margin-top: 4px; font-size: 17px; color: var(--ink-2); }
+.reveal .scenario { padding: 24px 28px; font-size: 21px; line-height: var(--leading-normal); }
+.reveal .scenario + .grid-2 { margin-top: 24px; }
+.reveal .scenario-cards .card-body { padding: 16px 20px; }
+.reveal .scenario-cards .card-body li { font-size: 17px; padding: 6px 0; }
+.reveal .scenario-cards .card-body p { font-size: 17px; color: var(--ink-1); }
+.reveal .scenario strong { color: var(--ink-1); font-weight: 600; }

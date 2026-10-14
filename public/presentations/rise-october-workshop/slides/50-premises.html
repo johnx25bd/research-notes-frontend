@@ -1,0 +1,256 @@
+<!-- Block 4 · LV-01 premises · Wednesday 14 October.
+     Source: meetings/2026-10-14-rise-lv-reflections/SLIDES.md; notes drawn from
+     meetings/2026-10-13-rise-lv-workshop/LV-01 RISE October Workshop Evening Reflections.md.
+     Every row is a fragment; notes bullets carry data-fragment="N" to match
+     data-fragment-index="N" and accumulate in the speaker view (js/fragment-notes.js). -->
+
+<!-- 21. What we need from this discussion -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">04 — Premises</span></div>
+  <h2>What we need from this discussion</h2>
+  <ol class="rows" style="max-width: 900px">
+    <li class="fragment fade-in" data-fragment-index="0">Which premises must hold for LV-01 to work?</li>
+    <li class="fragment fade-in" data-fragment-index="1">Which have sufficient evidence?</li>
+    <li class="fragment fade-in" data-fragment-index="2">What should we investigate first?</li>
+  </ol>
+  <aside class="notes">
+    <ul>
+      <li>Built from last night's reflections, prompted by dinner feedback from Naci</li>
+      <li>Goal: bring more rigor to the design process</li>
+      <li>Rough on purpose; react to it, correct it</li>
+      <li data-fragment="0">Premises the design cannot survive without</li>
+      <li data-fragment="1">Where we have evidence, and where we are relying on intuition</li>
+      <li data-fragment="2">Output: an ordered list of investigations</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 22. Threat model -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">04 — Premises</span></div>
+  <h2>Threat model</h2>
+  <ul class="rows kv" style="max-width: 1000px">
+    <li class="fragment fade-in" data-fragment-index="0"><span class="k">Attacker</span><span>Who, with what access and capabilities?</span></li>
+    <li class="fragment fade-in" data-fragment-index="1"><span class="k">Diversion</span><span>How many chips, how far away, for how long?</span></li>
+    <li class="fragment fade-in" data-fragment-index="2"><span class="k">Detection</span><span>Within what timeframe, at what confidence?</span></li>
+    <li class="fragment fade-in" data-fragment-index="3"><span class="k k--accent">Discussion</span><span>Agree a working scenario to evaluate the design against.</span></li>
+  </ul>
+  <aside class="notes">
+    <ul>
+      <li>Johannes: without a threat model this is very hard to analyze rigorously</li>
+      <li>I resisted nailing this down to keep flexibility; at this point that is counterproductive</li>
+      <li>Without it we cannot put numbers to investigations or weigh security properties</li>
+      <li data-fragment="0">Which attacker, wants what goal, with what access level?</li>
+      <li data-fragment="1">Scale and nature of the diversion we are trying to resist</li>
+      <li data-fragment="2">Detected within what timeframe, at what confidence?</li>
+      <li data-fragment="3">The analysis that follows is not yet based on a crisp threat model; we rework it once we have one</li>
+      <li data-fragment="3">Ask: how do we define this more thoughtfully than numbers from intuition?</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 23. Ballpark working threat scenario -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">04 — Premises</span></div>
+  <h2>Ballpark working threat scenario</h2>
+  <div class="panel panel--muted scenario fragment fade-in" data-fragment-index="0">
+    A well-resourced organized criminal network seeks to operate <strong>100+ declared H100 GPUs more than 500&nbsp;km from their authorized site for over one month</strong>, while continuing to produce location evidence accepted by the verifier, with an attack budget of <strong>approximately $1M</strong>.
+  </div>
+  <div class="grid-2 scenario-cards">
+    <div class="card fragment fade-in" data-fragment-index="1">
+      <div class="card-header"><span>Assumptions to settle</span></div>
+      <div class="card-body">
+        <ul>
+          <li class="fragment fade-in" data-fragment-index="1">Operator cooperation and physical/network access.</li>
+          <li class="fragment fade-in" data-fragment-index="2">Whether deception begins at enrollment or after verified installation.</li>
+          <li class="fragment fade-in" data-fragment-index="3">What the attack budget includes.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card fragment fade-in" data-fragment-index="4">
+      <div class="card-header"><span>Required detection performance</span></div>
+      <div class="card-body">
+        <p>Detect within <strong>[time]</strong>, with <strong>[probability]</strong>, at <strong>[acceptable false-alarm rate]</strong>.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <ul>
+      <li>A ballpark to evaluate against, not a settled requirement</li>
+      <li data-fragment="0">Attacker, scale, distance, duration and budget in one sentence</li>
+      <li data-fragment="0">Ask: is this the right order of magnitude?</li>
+      <li data-fragment="1">Is the operator cooperating, and what physical and network access do they have?</li>
+      <li data-fragment="2">Enrollment deception means a declared GPU could be remote from the outset; no diversion event needed</li>
+      <li data-fragment="3">Hardware, bribes, insiders, infrastructure?</li>
+      <li data-fragment="4">Fill these in together; they set the numbers for every investigation that follows</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 24. Binding fresh responses to GPUs · priority 1 -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">04 — Premises</span></div>
+  <h2>Can we bind fresh responses to individual GPUs?</h2>
+  <ul class="rows kv">
+    <li class="fragment fade-in" data-fragment-index="0"><span class="k">Essential premise</span><span>Valid responses require a realtime connection to the target GPU.</span></li>
+    <li class="fragment fade-in" data-fragment-index="1"><span class="k"></span><span>Candidate approaches exist; suitability remains unestablished.</span></li>
+    <li class="fragment fade-in" data-fragment-index="2"><span class="k">Investigation</span><span>Test device binding, freshness, and latency.</span></li>
+    <li class="fragment fade-in" data-fragment-index="3"><span class="k k--accent">Priority</span><span>1. Current confidence: moderately high.</span></li>
+  </ul>
+  <aside class="notes">
+    <ul>
+      <li data-fragment="0">The target GPU must respond to fresh challenges during the timed interval</li>
+      <li data-fragment="0">If valid responses can be returned without a realtime connection to the GPU, the whole design is invalidated</li>
+      <li data-fragment="1">Candidates: CC-mode signing, GPU fingerprinting (Tee and Happel), Hancke and Kuhn distance bounding, rounding-error analysis (Cankaya)</li>
+      <li data-fragment="1">Not aware of experiments sufficient to establish any of them as suitable for secure LV</li>
+      <li data-fragment="2">Spike: review and experimentally validate candidate primitives for RTT protocols</li>
+      <li data-fragment="2">Freshness and device-binding tests</li>
+      <li data-fragment="3">Hypothesis: a secure, low-latency primitive exists, assuming hardware vendor security; likely relies on CC mode</li>
+      <li data-fragment="3">Importance extremely high, so first despite moderately high confidence</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 25. Concealed delay · priority 2 -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">04 — Premises</span></div>
+  <h2>How much artificial delay can an attacker conceal?</h2>
+  <ul class="rows kv">
+    <li class="fragment fade-in" data-fragment-index="0"><span class="k"></span><span>Optimizing RTT does not by itself prevent inflated reference measurements.</span></li>
+    <li class="fragment fade-in" data-fragment-index="1"><span class="k"></span><span>Trusted reference measurements might expose deviations.</span></li>
+    <li class="fragment fade-in" data-fragment-index="2"><span class="k">Investigation</span><span>Distinguish ordinary variation from artificial delay.<span class="sub">Experiment: establish a fast path into a data center through an operator-controlled firewall; measure minimum achievable latency from a nearby (&lt;10&nbsp;km) landmark node.</span></span></li>
+    <li class="fragment fade-in" data-fragment-index="3"><span class="k k--accent">Discussion</span><span>Would the remaining concealed delay enable the specified diversion?</span></li>
+    <li class="fragment fade-in" data-fragment-index="4"><span class="k k--accent">Priority</span><span>2. Very important; premise and test need sharpening.</span></li>
+  </ul>
+  <aside class="notes">
+    <ul>
+      <li data-fragment="0">An optimized RTT protocol leaves little latency budget for an attacker to deflate</li>
+      <li data-fragment="0">But even optimized, I don't think we can stop an attacker inflating reference measurements</li>
+      <li data-fragment="1">We may be able to detect it, or at least flag unusual behavior, against references from a trusted interconnection</li>
+      <li data-fragment="1">Suspicion: loosely true but not to a useful degree; egregious deviations get caught, considerable added latency still looks normal</li>
+      <li data-fragment="2">Can we set a limit that accepts ordinary operation and rejects inflated measurements? To what accuracy?</li>
+      <li data-fragment="2">The firewall fast-path experiment gives a floor for achievable latency</li>
+      <li data-fragment="3">How much delay can hide under the limit, and does that enable the scenario we agreed?</li>
+      <li data-fragment="4">Still too woolly to rank higher; what is the actual premise?</li>
+      <li data-fragment="4">Ask: does this solve the enrollment problem?</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 26. Physical presence · priority 3 -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">04 — Premises</span></div>
+  <h2>Can we establish that declared GPUs are physically present?</h2>
+  <ul class="rows kv">
+    <li class="fragment fade-in" data-fragment-index="0"><span class="k"></span><span>Without initial verification, GPUs could be remote from the outset.</span></li>
+    <li class="fragment fade-in" data-fragment-index="1"><span class="k"></span><span>Physical identifiers must be reliably associated with cryptographic identities.</span></li>
+    <li class="fragment fade-in" data-fragment-index="2"><span class="k">Investigation</span><span>Access feasibility, identity checks, sampling requirements.</span></li>
+    <li class="fragment fade-in" data-fragment-index="3"><span class="k k--accent">Discussion</span><span>Do we need “all declared are present,” “all present are declared,” or both?</span></li>
+    <li class="fragment fade-in" data-fragment-index="4"><span class="k k--accent">Priority</span><span>3.</span></li>
+  </ul>
+  <aside class="notes">
+    <ul>
+      <li data-fragment="0">No diversion event needed if a GPU was never on site</li>
+      <li data-fragment="0">With a verified inventory, initial measurements are of real, present GPUs; with enough sampling, disconnections become easier to detect</li>
+      <li data-fragment="1">Key uncertainty: physical-to-digital device association</li>
+      <li data-fragment="2">Interview a production data center operations expert: can a verifier with physical access check GPU identities? Time cost, access needed</li>
+      <li data-fragment="2">Model the number of samples needed to reach threshold confidence</li>
+      <li data-fragment="3">Intuition: “all declared are present” is very valuable for location via the continuity argument</li>
+      <li data-fragment="3">“All present are declared” matters less for the location claim, more for other claims</li>
+      <li data-fragment="4">Hypothesis: with physical access, an inventory procedure can detect at least X missing or undeclared GPUs with 99% probability</li>
+      <li data-fragment="4">Likelihood fairly high; importance moderate to high</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 27. Check frequency · priority 3 -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">04 — Premises</span></div>
+  <h2>Can we check frequently enough at acceptable cost?</h2>
+  <ul class="rows kv">
+    <li class="fragment fade-in" data-fragment-index="0"><span class="k"></span><span>Frequent checks may expose disconnection during diversion.</span></li>
+    <li class="fragment fade-in" data-fragment-index="1"><span class="k"></span><span>Useful frequency depends on the threat model.</span></li>
+    <li class="fragment fade-in" data-fragment-index="2"><span class="k">Investigation</span><span>Benchmark challenges under GPU load.</span></li>
+    <li class="fragment fade-in" data-fragment-index="3"><span class="k">Hypothesis</span><span>Sufficient frequency is possible at &lt;1% performance cost.</span></li>
+    <li class="fragment fade-in" data-fragment-index="4"><span class="k k--accent">Priority</span><span>3.</span></li>
+  </ul>
+  <aside class="notes">
+    <ul>
+      <li data-fragment="0">Some diversions need the chip disconnected for a transport period</li>
+      <li data-fragment="0">Detecting disconnection, plus an AN that is hard to move, makes transport considerably harder</li>
+      <li data-fragment="1">“Enough” is defined by the detection timeframe in the threat model</li>
+      <li data-fragment="2">Measure the performance impact of identification primitives while the GPU is under load</li>
+      <li data-fragment="3">Counterweight: if useful frequencies degrade performance, operators will strongly resist the loss of capital efficiency</li>
+      <li data-fragment="4">Likelihood fairly high</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 28. Assurance Node dependency -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">04 — Premises</span></div>
+  <h2>Critical dependency:<br />can we trust and locate the Assurance Node?</h2>
+  <ul class="rows kv">
+    <li class="fragment fade-in" data-fragment-index="0"><span class="k"></span><span>Challenges, timing, and evidence handling must remain secure.</span></li>
+    <li class="fragment fade-in" data-fragment-index="1"><span class="k"></span><span>Moving the AN and GPUs together must not preserve accepted evidence.</span></li>
+    <li class="fragment fade-in" data-fragment-index="2"><span class="k">Required</span><span>A named owner and convincing validation.</span></li>
+    <li class="fragment fade-in" data-fragment-index="3"><span class="k k--accent">Discussion</span><span>What exactly must be demonstrated?</span></li>
+    <li class="fragment fade-in" data-fragment-index="4"><span class="k k--accent">Priority</span><span>Very high, but currently outside scope.</span></li>
+  </ul>
+  <aside class="notes">
+    <ul>
+      <li>If this is not true, the design does not work</li>
+      <li data-fragment="0">The AN must issue unpredictable challenges, measure time, and store, process and serve evidence</li>
+      <li data-fragment="1">What prevents an operator moving the node and GPUs together while still producing accepted evidence?</li>
+      <li data-fragment="2">Needs an owner and evidence-based validation before I believe this dependency will be met</li>
+      <li data-fragment="3">“Design a secure AN and red team it” is not an investigation; what is the crux premise?</li>
+      <li data-fragment="4">We assumed this was out of scope; we should revisit that</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 29. Deployment requirements -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">04 — Premises</span></div>
+  <h2>Would the deployment requirements be workable?</h2>
+  <ul class="rows kv">
+    <li class="fragment fade-in" data-fragment-index="0"><span class="k"></span><span>AN placement affects access, security, and operator acceptance.</span></li>
+    <li class="fragment fade-in" data-fragment-index="1"><span class="k"></span><span>Performance cost, disruption, and disclosure may constrain deployment.</span></li>
+    <li class="fragment fade-in" data-fragment-index="2"><span class="k">Investigation</span><span>Operator interviews and comparable verification mandates.</span></li>
+    <li class="fragment fade-in" data-fragment-index="3"><span class="k k--accent">Discussion</span><span>Which deployment context are we designing for, and what counts as feasible enough?</span></li>
+  </ul>
+  <aside class="notes">
+    <ul>
+      <li>A policy question, but system design can inform policy design</li>
+      <li data-fragment="0">An AN outside the data center may provoke less resistance than one in a sensitive interior</li>
+      <li data-fragment="0">Industry may lobby hard against mandates for ANs inside firewalls; external landmarks may be more palatable and easier to secure</li>
+      <li data-fragment="1">Industry groups will lobby to minimize lost capital efficiency</li>
+      <li data-fragment="2">Interview DC operators and AI providers</li>
+      <li data-fragment="2">Find comparable mandates and the industry response; some may impose &lt;2% costs</li>
+      <li data-fragment="3">Political will depends on variables that move the Overton window</li>
+      <li data-fragment="3">Hard to judge without a projected upside; what measurable experiments, if any, can we run?</li>
+    </ul>
+  </aside>
+</section>
+
+<!-- 30. Decisions and next steps -->
+<section>
+  <div class="eyebrow"><span class="label label--accent">04 — Premises</span></div>
+  <h2>Decisions and next steps</h2>
+  <ol class="rows" style="max-width: 1000px">
+    <li class="fragment fade-in" data-fragment-index="0">Adopt a working threat scenario.</li>
+    <li class="fragment fade-in" data-fragment-index="1">Confirm or revise investigation priorities.</li>
+    <li class="fragment fade-in" data-fragment-index="2">Assign ownership, especially for AN security.</li>
+    <li class="fragment fade-in" data-fragment-index="3">Define what results would justify continuing, redesigning, or narrowing the claim.</li>
+  </ol>
+  <p class="prompt fragment fade-in" data-fragment-index="4">What evidence would change our assessment?</p>
+  <aside class="notes">
+    <ul>
+      <li data-fragment="0">Record the scenario numbers agreed, even provisional ones</li>
+      <li data-fragment="1">Current order: GPU binding, concealed delay, presence and frequency; AN outside scope but critical</li>
+      <li data-fragment="2">Do not assign commitments to people who are not in the room</li>
+      <li data-fragment="3">Continue, redesign, or narrow the claim</li>
+      <li data-fragment="4">Close on this question; capture answers in the notes</li>
+    </ul>
+  </aside>
+</section>
