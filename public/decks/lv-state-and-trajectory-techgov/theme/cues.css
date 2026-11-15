@@ -1,0 +1,8 @@
+/* Semantic cues for this deck: one class per recurring meaning, declared in the
+   outline. Pick a palette slot from the theme (warm, cool, good, bad); the theme
+   styles chips, accented words, legend swatches and SVG groups from --cue and
+   --cue-soft. Replace the two examples below with this deck's cues, or delete
+   them if the deck has none. */
+
+.cue-node     { --cue: var(--cue-warm); --cue-soft: var(--cue-warm-soft); }   /* example: Assurance Node */
+.cue-operator { --cue: var(--cue-cool); --cue-soft: var(--cue-cool-soft); }   /* example: operator-controlled */

@@ -1,0 +1,157 @@
+/* Deck-local styles: anything this deck needs that the theme and the
+   component contract do not cover. The look itself is theme/rebrand.css. */
+
+/* Status band (js/status-band.js): quiet strip on the bottom edge of every
+   slide. Carried over from lv-red-team-v0-1 unchanged. */
+.reveal .status-band { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; max-width: none; height: auto; display: block; opacity: 0.7; }
+.reveal .status-band rect { transition: fill 700ms ease; }
+.reveal .status-band rect.flip { animation: band-pulse 1200ms ease-out; }
+@keyframes band-pulse { 0% { opacity: 1; } 30% { opacity: 0.2; } 100% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .reveal .status-band rect { transition: none; animation: none !important; } }
+
+/* Diagram panes (the diagram skill's build-slide.py): paper ground instead of
+   the skill's white, and 28 px (of 720) left under the pane for the status
+   band. The doubled class outranks the <style> the generated partial injects. */
+.reveal .slides section.diagram.diagram { background: var(--paper-1); }
+.reveal .slides section.diagram.diagram > svg:not(.status-band) { height: calc(100% - 28px); }
+.reveal .slides section.diagram.diagram > svg.status-band { height: auto; }
+
+/* One header on every slide: the title, 40 px, in the same place. Text slides
+   start 48 px down. A diagram's title is an <h2> too (index.html makes it from
+   the SVG's <title>), set at the same spot over the pane; the title and Lucid
+   mark drawn in the SVG are hidden, so the file still opens whole in Figma.
+   No slide has a foot or a mark: the brand is on the cover. */
+.reveal .slides > section.top { padding-top: 48px; }
+.reveal .slides section.diagram > h2 { position: absolute; left: 88px; top: 48px; margin: 0; z-index: 1; }
+.reveal .slides section.diagram > svg #header, .reveal .slides section.diagram > svg #lucid-logo { display: none; }
+
+/* Bullet slides: a little more air between the title and the rows than the
+   theme's 44 px. */
+.reveal h2 + ul.rows, .reveal h2 + .grid-split.intro { margin-top: 64px; }
+
+/* Close: the cover again. The same block set low on the slide: the Lucid
+   lockup, a large Thank you, and the cover's ruled row under it, with John's
+   name and role on the left and how to reach him on the right. The QR code
+   (his Twitter profile) sits at the right above the rule, on a white card so
+   a phone reads it off any projector. */
+.reveal section.cover .close-head { display: flex; justify-content: space-between; align-items: flex-end; }
+.reveal section.cover .close-head + .cover-foot { margin-top: 40px; }
+.reveal .close-head .qr { margin: 0; width: 168px; }
+.reveal .close-head .qr svg { display: block; width: 100%; height: auto; padding: 14px; background: #ffffff; border: 1px solid var(--rule); box-sizing: border-box; }
+
+/* A named row: the name in medium weight, then what it is. */
+.reveal ul.rows > li > strong { font-weight: 600; margin-right: 16px; }
+
+/* Placeholder slides: a title and nothing else, for John to fill in. The tag
+   is there so a placeholder cannot be mistaken for a finished slide. */
+.reveal section.placeholder::after {
+  content: "Placeholder"; position: absolute; top: 44px; right: 88px;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3);
+}
+
+/* Section rail (js/section-rail.js): the main sections, small, down the left
+   margin, read bottom to top, feet toward the slide; the current one is in ink with a green edge.
+   It sits in the margin of text slides and diagram panes alike. */
+.reveal .section-rail {
+  position: absolute; left: 18px; top: 72px; z-index: 2;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 18px;
+  font-family: var(--font-mono); font-weight: 500; font-size: 10px; line-height: 1;
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+}
+.reveal .section-rail span { writing-mode: vertical-rl; transform: rotate(180deg); color: var(--ink-3); opacity: 0.55; padding-right: 5px; border-right: 2px solid transparent; }
+.reveal .section-rail span.on { color: var(--ink-1); opacity: 1; border-right-color: var(--amber); }
+
+/* A sub-list inside a row (the agenda): smaller, indented, no rules. */
+.reveal ul.rows ul.sub { margin: 10px 0 0 28px; }
+.reveal ul.rows ul.sub > li { border-bottom: none; padding: 4px 0; font-size: 19px; color: var(--ink-1); }
+
+/* Intro: the list beside a square portrait. */
+.reveal .grid-split.intro { grid-template-columns: 1fr 320px; }
+.reveal .grid-split.intro ul > li { font-size: 22px; padding: 14px 0; }
+
+/* Cover: one block set low on the slide. The Lucid mark and wordmark sit
+   directly above the title; the wordmark is set in type as on the website
+   (Nudica Medium), since there is no drawn one; under the title, the subtitle
+   is a mono label under a short green bar; the byline and venue are one ruled row
+   along the bottom. All text is ink; weight and face do the separating. */
+.reveal .slides section.cover { justify-content: flex-start; }
+.reveal section.cover .cover-brand { display: flex; align-items: center; gap: 16px; }
+.reveal section.cover .cover-brand img { display: block; width: 56px; height: auto; margin: 0; }
+@font-face { font-family: nudica; src: url(theme/fonts/nudica-medium.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+.reveal section.cover .cover-brand span { font-family: nudica, var(--font-sans); font-weight: 500; font-size: 34px; line-height: 1; letter-spacing: -0.02em; color: var(--ink-1); }
+.reveal section.cover .cover-brand { margin-top: auto; }
+.reveal section.cover .cover-head { margin-top: 36px; }
+.reveal section.cover h1 { font-size: 88px; line-height: 1; letter-spacing: -0.04em; max-width: none; }
+.reveal section.cover .cover-sub {
+  margin-top: 36px; padding-top: 16px; position: relative;
+  font-family: var(--font-mono); font-weight: 500; font-size: 22px; line-height: 1; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-1);
+}
+.reveal section.cover .cover-sub::before { content: ""; position: absolute; left: 0; top: 0; width: 40px; height: 4px; background: var(--amber); }
+.reveal section.cover .cover-foot {
+  margin-top: 92px; padding-top: 20px; border-top: 1px solid var(--ink-1);
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.reveal section.cover .cover-foot p { margin: 0; font-size: 18px; line-height: 1.45; color: var(--ink-1); white-space: nowrap; }
+.reveal section.cover .cover-foot p + p { text-align: right; }
+
+/* Boxes in the look of the Model diagram's boxes (diagrams/operating-model.svg):
+   card fill, 1 px rule, 5 px corners, medium-weight name. One idea each. The
+   theme zeroes every radius with !important, so the corners need it too. */
+.reveal .slides .box, .reveal .slides .nest-outer, .reveal .slides .nest-inner { border-radius: 5px !important; }
+.reveal .row-label {
+  margin: 30px 0 12px; font-family: var(--font-mono); font-weight: 500; font-size: 12px; line-height: 1;
+  letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--ink-3);
+}
+.reveal .boxes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.reveal .box, .reveal .nest-outer {
+  border: 1px solid var(--ink-2); background: var(--card-fill);
+  font-family: var(--font-sans); font-weight: 500; font-size: 18px; line-height: 1.25; color: var(--ink-1);
+}
+.reveal .box { display: flex; align-items: center; padding: 0 20px; min-height: 76px; }
+
+/* Two boxes enable a third: the pair is stacked, a bracket gathers it into one
+   line, and the line ends in a small arrow at the result, which has the
+   heavier rule the Model diagram gives its worked capability. */
+.reveal .enables { display: grid; grid-template-columns: 1fr 200px 1fr; align-items: stretch; }
+.reveal .enables .pair { display: grid; gap: 12px; }
+.reveal .enables .box { min-height: 64px; }
+.reveal .enables .join { position: relative; margin: 32px 0; border: 1px solid var(--ink-2); border-left: none; width: 24px; }
+.reveal .enables .join::after { content: ""; position: absolute; left: 24px; top: 50%; width: 168px; border-top: 1px solid var(--ink-2); }
+.reveal .enables .join::before {
+  content: ""; position: absolute; left: 190px; top: 50%; transform: translateY(calc(-50% + 0.5px));
+  border-left: 10px solid var(--ink-2); border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+}
+.reveal .enables .result { border: 1.5px solid var(--ink-1); font-weight: 600; font-size: 20px; }
+
+/* Nested boxes: a dark box, then a larger one that appears around it. The two
+   inner boxes share the larger one's width. Each carries a small mono tag
+   above its name, inside the box: Static arrives with the larger box, and the
+   last step adds the second, outlined box, tagged Mobile. Dark = the case this
+   talk is about; outline = the other one. */
+.reveal .nest { position: relative; height: 196px; }
+.reveal .nest-outer { position: absolute; inset: 0; padding: 20px; }
+.reveal .nest-inner {
+  position: absolute; left: 20px; bottom: 20px; width: calc(50% - 30px); height: 84px; box-sizing: border-box;
+  display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 0 20px;
+  background: var(--ink-1); color: var(--paper-1); font-family: var(--font-sans); font-weight: 500; font-size: 18px; line-height: 1.25;
+}
+.reveal .nest-inner.mobile { left: calc(50% + 10px); background: transparent; color: var(--ink-1); border: 1px solid var(--ink-2); }
+.reveal .nest-inner .tag {
+  font-family: var(--font-mono); font-weight: 500; font-size: 12px; line-height: 1; letter-spacing: var(--tracking-label); text-transform: uppercase; color: inherit; opacity: 0.7;
+}
+.reveal .slides section .nest-inner .tag.fragment.visible { opacity: 0.7; }
+
+/* Operating-model diagram: the capabilities row. The SVG is drawn in its
+   finished state (Location verification wide, the other two narrow and grey).
+   Until the empty `capabilities-squash` step is reached, the three sit level
+   and alike; reaching it lets them move to where they are drawn. A browser
+   that cannot style SVG geometry shows the finished state from the start. */
+#capabilities-squash ~ g rect { transition: x 500ms ease, width 500ms ease, fill 500ms ease, stroke 500ms ease; }
+#capabilities-squash ~ g text { transition: transform 500ms ease, font-size 500ms ease, fill 500ms ease; }
+.reveal #capabilities-squash:not(.visible) ~ #capability-location-verification rect { width: 448px; }
+.reveal #capabilities-squash:not(.visible) ~ #capability-inference-classification rect { x: 876px; width: 448px; fill: #ffffff; stroke: #575c53; }
+.reveal #capabilities-squash:not(.visible) ~ #capability-safety-classifier-verification rect { x: 1352px; width: 448px; fill: #ffffff; stroke: #575c53; }
+.reveal #capabilities-squash:not(.visible) ~ #capability-inference-classification text { transform: translate(-284px, 2px); font-size: 24px; font-weight: 500; fill: #191a17; }
+.reveal #capabilities-squash:not(.visible) ~ #capability-safety-classifier-verification text { transform: translate(-160px, 2px); font-size: 24px; font-weight: 500; fill: #191a17; }
+@media (prefers-reduced-motion: reduce) { #capabilities-squash ~ g rect, #capabilities-squash ~ g text { transition: none; } }
+@media print { #capabilities-squash ~ g rect, #capabilities-squash ~ g text { transition: none; } }

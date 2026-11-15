@@ -1,0 +1,23 @@
+{
+  "sections": [
+    { "label": "Intro", "start": "intro" },
+    { "label": "Lucid", "start": "lucid" },
+    { "label": "Location Verification", "start": "lv-requirements" },
+    { "start": "close" }
+  ],
+  "slides": [
+    "slides/00-open.html",
+    "slides/05-intro.html",
+    "slides/07-lucid.html",
+    "slides/08-lucid-labs.html",
+    "slides/09-lv-frame.html",
+    "slides/10-operating-model.html",
+    "slides/15-multilateration.html",
+    "slides/20-design-01.html",
+    "slides/30-signing-latency.html",
+    "slides/31-coarse-resolution.html",
+    "slides/85-red-team.html",
+    "slides/88-testbed.html",
+    "slides/90-close.html"
+  ]
+}

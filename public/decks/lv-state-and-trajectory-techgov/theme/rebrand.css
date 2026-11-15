@@ -1,0 +1,48 @@
+/* Rebrand: the new Lucid design system (claude.ai/design project ee0f4631)
+   laid over the lucid deck theme: its palette, fonts and type treatment,
+   mapped onto the theme's variables. Token values and rules are those in
+   lv-red-team-v0-1/deck.css, which copied them from the design system's
+   tokens/*.css. Deck-local for the TechGov talk; to be upstreamed to the deck
+   skill as the default Lucid look. The diagram palette for the same look is
+   theme/diagram.json. */
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap");
+@font-face { font-family: n27; src: url(fonts/n27-regular.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: n27; src: url(fonts/n27-medium.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: nudicaMono; src: url(fonts/nudicamono-regular.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: nudicaMono; src: url(fonts/nudicamono-medium.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+
+:root {
+  --paper-1: #f5f6f7;   /* --paper */
+  --paper-2: #e7e9dd;   /* --sage */
+  --paper-3: #e9ebe4;   /* --inset */
+  --card-fill: #ffffff;
+  --ink-1: #191a17;     /* --ink */
+  --ink-2: #575c53;     /* --graphite */
+  --ink-3: #666b62;     /* --muted-ink */
+  --amber: #1ed46a;     /* --brand: the one signal colour */
+  --amber-ink: #007a33; /* --hl-brand-edge: green that holds up as text */
+  --rule: #d6d8d0;      /* --line */
+  --rule-strong: #c6c9bf;
+  --destructive: #c2412d;
+  --background: var(--paper-1);
+  --muted: var(--paper-2);
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "nudicaMono", ui-monospace, monospace;
+  --font-display: "n27", "Geist", sans-serif;
+  --tracking-display: -0.05em;
+  --tracking-heading: -0.042em;
+  --tracking-label: 0.1em;
+  --cue-good: #007a33; --cue-good-soft: #d6f5e0;
+  --cue-cool: #1c6694; --cue-cool-soft: #dff0f5;   /* --support-2 */
+  --highlight: rgba(25, 26, 23, 0.07);
+}
+.reveal-viewport { background: var(--paper-1); }
+.reveal ::selection { background: var(--amber); color: var(--ink-1); }
+
+.reveal h1, .reveal h2 { font-weight: 400; }
+.reveal h2 { font-size: 40px; line-height: 1; }
+.reveal section.cover h1 { font-size: 76px; line-height: 1.02; }
+.reveal h3, .reveal h4, .reveal .card h3 { font-family: var(--font-sans); font-weight: 500; letter-spacing: -0.02em; }
+.reveal .label, .reveal .brand span { font-size: 12px; }
+.reveal .card, .reveal .chip { background: var(--card-fill); }
+.reveal ul > li, .reveal ol > li { font-size: 24px; padding: 16px 0; }

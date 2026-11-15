@@ -61,6 +61,14 @@ const nextConfig = {
         permanent: false,
       },
       {
+        // Short, speakable alias for the TechGov Forum talk deck (15 November
+        // 2026), same precedent. A redirect, not a rewrite, because the deck
+        // loads its files relative to its own directory.
+        source: '/techgov',
+        destination: '/decks/lv-state-and-trajectory-techgov',
+        permanent: false,
+      },
+      {
         // Short, speakable alias for the chip registry demo shown at UNGA.
         // Temporary so it can be repointed later. It needs no gate of its
         // own: the destination is passphrase-gated by the proxy.
@@ -76,6 +84,22 @@ const nextConfig = {
     // SPA's client routes fall through to an index.html.
     return {
       afterFiles: [
+        {
+          // TechGov Forum talk deck: clean URL for the deck itself. The two
+          // PDFs beside it (fully built, and one page per step) are real
+          // files under public/decks/ and need no rule.
+          source: '/decks/lv-state-and-trajectory-techgov',
+          destination: '/decks/lv-state-and-trajectory-techgov/index.html',
+        },
+        {
+          // The same two PDFs under the short alias.
+          source: '/techgov.pdf',
+          destination: '/decks/lv-state-and-trajectory-techgov.pdf',
+        },
+        {
+          source: '/techgov-fragments.pdf',
+          destination: '/decks/lv-state-and-trajectory-techgov-fragments.pdf',
+        },
         {
           source: '/presentations/ai-agents',
           destination: '/presentations/ai-agents/index.html',
