@@ -3154,7 +3154,7 @@ function createRenderer(canvas) {
   const ctx = canvas.getContext("2d");
 
   let theme = {};
-  let tileStyle = "light_all";
+  let tileStyle = "World_Light_Gray_Base";
   function refreshTheme() {
     const cs = getComputedStyle(document.body);
     const v = (name, fallback) => (cs.getPropertyValue(name) || fallback).trim();
@@ -3169,8 +3169,8 @@ function createRenderer(canvas) {
       halo: v("--surface", "#faf9f5"),
     };
     tileStyle = window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark_all"
-      : "light_all";
+      ? "World_Dark_Gray_Base"
+      : "World_Light_Gray_Base";
   }
   refreshTheme();
 
@@ -3413,7 +3413,6 @@ function createRenderer(canvas) {
 
   const TILE_CACHE_MAX = 400;
   const tileCache = new Map(); // key -> {img, loaded, failed}
-  const SUBDOMAINS = "abcd";
   let tileOk = 0;
   let tileFail = 0;
   let onRedraw = null;
@@ -3452,7 +3451,6 @@ function createRenderer(canvas) {
         }
       }
     }
-    const sub = SUBDOMAINS[Math.abs(x + y) % SUBDOMAINS.length];
     const img = new Image();
     img.onload = () => {
       entry.loaded = true;
@@ -3465,7 +3463,8 @@ function createRenderer(canvas) {
       tileFail++;
       if (!wasOffline && isOffline()) scheduleRedraw(); // flip to fallback promptly
     };
-    img.src = `https://${sub}.basemaps.cartocdn.com/${style}/${z}/${x}/${y}@2x.png`;
+    // Esri gray canvas: keyless raster tiles, addressed z/y/x
+    img.src = `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/${style}/MapServer/tile/${z}/${y}/${x}`;
     entry.img = img;
     return entry;
   }
@@ -4052,7 +4051,7 @@ function buildStory(root) {
   <div class="story">
     <div class="story-graphic">
       <canvas id="story-map"></canvas>
-      <div class="story-attribution">&copy; OpenStreetMap contributors &copy; CARTO</div>
+      <div class="story-attribution">Esri, HERE, Garmin, &copy; OpenStreetMap contributors</div>
     </div>
     <div class="story-steps">
       ${STEPS.map(
