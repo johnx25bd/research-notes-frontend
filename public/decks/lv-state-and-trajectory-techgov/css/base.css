@@ -1,0 +1,30 @@
+/* Theme-independent mechanics, loaded after reveal and before the theme.
+   Themes may override any of this; decks should not need to. */
+
+/* reveal's reset.css flattens sub, sup and em; technical decks need them. */
+.reveal sub, .reveal sup { font-size: 0.6em; line-height: 0; position: relative; vertical-align: baseline; }
+.reveal sup { top: -0.55em; }
+.reveal sub { bottom: -0.25em; }
+.reveal em, .reveal i { font-style: italic; }
+
+/* highlight-current is this skill's class, not reveal's: the element is
+   visible from the start and is marked while it is the current step. Themes
+   set the mark with --highlight (a background tint). */
+.reveal .slides section .fragment.highlight-current { opacity: 1; visibility: inherit; transition: background-color 150ms ease; }
+.reveal .slides section .fragment.highlight-current.current-fragment { background: var(--highlight, rgba(0, 0, 0, 0.07)); box-shadow: 0 0 0 0.12em var(--highlight, rgba(0, 0, 0, 0.07)); }
+
+/* mark is this skill's class too: the element is visible from the start and
+   takes the cue of its nearest cue-classed ancestor once its step is reached. */
+.reveal .slides section .fragment.mark { opacity: 1; visibility: inherit; transition: background-color 200ms ease, border-color 200ms ease; }
+.reveal .slides section .fragment.mark.visible { border-color: var(--cue); background: var(--cue-soft); }
+
+/* Hand-set math. Variables italic, functions upright, fractions stacked.
+     <span class="math"><span class="fn">softmax</span>(<span class="frac">
+       <span><i>QK</i><sup>T</sup></span><span>√<i>d</i><sub>k</sub></span></span>)<i>V</i></span>
+   Write variables as <i> everywhere they appear, in body text too. */
+.reveal .math { white-space: nowrap; font-variant-numeric: lining-nums; }
+.reveal .math .fn { font-style: normal; }
+.reveal .math i + sup, .reveal .math i + sub { margin-left: 0.08em; }
+.reveal .frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; line-height: 1.2; margin: 0 0.15em; }
+.reveal .frac > :first-child { border-bottom: 0.06em solid currentColor; padding: 0 0.2em 0.1em; }
+.reveal .frac > :last-child { padding: 0.1em 0.2em 0; }

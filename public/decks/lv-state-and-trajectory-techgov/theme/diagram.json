@@ -1,0 +1,31 @@
+{
+  "name": "lucid-rebrand",
+  "note": "The rebrand for diagrams, by the diagram skill's roles. Values are the design-system tokens in theme/rebrand.css (from lv-red-team-v0-1/deck.css); bad-soft is the one derived value (the bad red at about 15% on paper). Deck-local for the TechGov talk; to be upstreamed to the diagram skill as themes/lucid.json. Lint with scripts/lint-diagram.py, which measures labels with these fonts. crux is the crux mark and is used for nothing else.",
+  "fonts": {
+    "title": "n27, Geist, sans-serif",
+    "label": "Geist, sans-serif",
+    "mono": "nudicaMono, monospace"
+  },
+  "type": { "title-weight": 400, "title-tracking": "-0.05em", "bold-weight": 600 },
+  "color": {
+    "ground": "#f5f6f7",
+    "ink": "#191a17",
+    "body": "#575c53",
+    "note": "#666b62",
+    "hairline": "#d6d8d0",
+    "fill": "#ffffff",
+    "link": "#1c6694",
+    "warm": "#007a33",
+    "warm-soft": "#d6f5e0",
+    "warm-ink": "#007a33",
+    "cool": "#1c6694",
+    "cool-soft": "#dff0f5",
+    "cool-ink": "#1c6694",
+    "good": "#575c53",
+    "good-soft": "#e7e9dd",
+    "bad": "#c2412d",
+    "bad-soft": "#f6e3df",
+    "neutral-soft": "#e9ebe4",
+    "crux": "#c2412d"
+  }
+}

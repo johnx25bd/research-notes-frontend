@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <base href="/decks/lv-state-and-trajectory-techgov/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Location Verification for Compute Governance: State and Trajectory</title>
+    <link rel="icon" href="theme/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="lib/reveal/reset.css" />
+    <link rel="stylesheet" href="lib/reveal/reveal.css" />
+    <link rel="stylesheet" href="css/base.css?v=1" />
+    <!-- Theme: swap the directory to change the look. Bump ?v=N after editing
+         the CSS so a refresh picks it up (the dev server sends no-cache headers,
+         but the browser may still hold the old file). -->
+    <link rel="stylesheet" href="theme/theme.css?v=1" />
+    <!-- The rebrand (the new Lucid design system) laid over the lucid theme.
+         Deck-local until it is upstreamed to the deck skill. -->
+    <link rel="stylesheet" href="theme/rebrand.css?v=3" />
+    <link rel="stylesheet" href="theme/cues.css?v=1" />
+    <link rel="stylesheet" href="deck.css?v=17" />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides"></div>
+    </div>
+
+    <script src="lib/reveal/reveal.js"></script>
+    <script src="lib/reveal/plugin/notes.js"></script>
+    <script src="lib/reveal/plugin/highlight.js"></script>
+    <script src="js/review.js"></script>
+    <script src="js/status-band.js"></script>
+    <script src="js/notes-loader.js"></script>
+    <script src="js/section-rail.js"></script>
+    <script>
+      // Thin shell. slides.json lists partials in order; each partial is a plain
+      // HTML file whose top-level <section> elements are the slides (a top-level
+      // <style> in a partial is injected once). An entry is "slides/x.html" or
+      // {"file": "...", "sections": [0, 1]} to take some of a partial's sections
+      // by index, so one partial can be interleaved with others. A missing
+      // partial is skipped with a console warning so the deck renders while
+      // files are in progress. Needs an http server (python3 serve.py).
+      const DECK_FOOT = "Location Verification for Compute Governance";
+
+      (async () => {
+        const slidesEl = document.querySelector(".reveal .slides");
+        const theme = await (await fetch("theme/theme.json", { cache: "no-store" })).json();
+        const manifest = await (await fetch("slides.json", { cache: "no-store" })).json();
+        const cache = new Map();
+        const load = async (file) => {
+          if (!cache.has(file)) {
+            const res = await fetch(file, { cache: "no-store" });
+            if (!res.ok) throw new Error(`${res.status}`);
+            const tpl = document.createElement("template");
+            tpl.innerHTML = await res.text();
+            cache.set(file, {
+              styles: [...tpl.content.children].filter((el) => el.tagName === "STYLE"),
+              sections: [...tpl.content.children].filter((el) => el.tagName === "SECTION"),
+            });
+          }
+          return cache.get(file);
+        };
+
+        const styled = new Set();
+        for (const entry of manifest.slides) {
+          const spec = typeof entry === "string" ? { file: entry } : entry;
+          let part;
+          try {
+            part = await load(spec.file);
+          } catch (err) {
+            console.warn("[deck] partial not available:", spec.file, err.message);
+            continue;
+          }
+          if (!styled.has(spec.file)) {
+            part.styles.forEach((s) => document.head.appendChild(s));
+            styled.add(spec.file);
+          }
+          const sections = Array.isArray(spec.sections)
+            ? spec.sections.map((i) => part.sections[i]).filter(Boolean)
+            : part.sections;
+          for (const section of sections) {
+            section.dataset.partial = spec.file;
+            slidesEl.appendChild(section);
+          }
+        }
+
+        // Section rail (js/section-rail.js): the main sections down the left
+        // margin, the current one marked. Idempotent, like the foot.
+        if (window.SectionRail) SectionRail.install(manifest.sections);
+
+        // Foot. "fixed": one running footer for the deck. "slide": a per-slide
+        // foot with the theme's brand mark left and a label right; a slide's
+        // data-foot overrides the deck label; figure, stack and no-foot slides
+        // get none. Idempotent, because the speaker view loads this page twice.
+        const foot = theme.foot || {};
+        if (foot.mode === "fixed" && DECK_FOOT) {
+          const el = document.createElement("div");
+          el.className = "deck-footer";
+          el.textContent = DECK_FOOT;
+          document.querySelector(".reveal").appendChild(el);
+        } else if (foot.mode === "slide") {
+          document.querySelectorAll(".reveal .slides section").forEach((s) => {
+            if (s.classList.contains("stack") || s.classList.contains("figure") ||
+                s.classList.contains("no-foot") || s.querySelector(":scope > .slide-foot")) return;
+            if (s.parentElement !== slidesEl && !s.parentElement.classList.contains("stack")) return;
+            const f = document.createElement("div");
+            f.className = "slide-foot";
+            const brand = foot.brand
+              ? `<div class="brand"><img src="${foot.brand.logo}" alt=""><span>${foot.brand.name}</span></div>`
+              : "<span></span>";
+            f.innerHTML = brand + '<span class="label"></span>';
+            f.querySelector(".label").textContent = s.dataset.foot || DECK_FOOT;
+            s.appendChild(f);
+          });
+        }
+
+        // Diagram slides get the same <h2> title as every other slide, taken
+        // from the SVG's <title> (deck.css places it and hides the drawn one).
+        // Idempotent, like the foot.
+        document.querySelectorAll(".reveal .slides section.diagram").forEach((s) => {
+          const t = s.querySelector(":scope > svg > title");
+          if (!t || s.querySelector(":scope > h2")) return;
+          const h = document.createElement("h2");
+          h.textContent = t.textContent;
+          s.prepend(h);
+        });
+
+        // Speaker notes come from NOTES.md (js/notes-loader.js), injected into
+        // each slide's <aside class="notes"> before reveal starts. All of a
+        // slide's notes show for as long as the slide is up; nothing is tied
+        // to fragments (fragment-notes.js is deliberately not installed).
+        if (window.NotesLoader) await NotesLoader.load("NOTES.md");
+        else console.error("[notes] js/notes-loader.js did not load");
+
+        await Reveal.initialize(Object.assign(
+          { hash: true, plugins: [RevealNotes, RevealHighlight] },
+          theme.reveal || {},
+          { progress: false },   // the status band shows progress
+        ));
+        if (window.DeckReview) DeckReview.install(Reveal);
+        if (window.StatusBand) StatusBand.install(Reveal);
+      })();
+    </script>
+  </body>
+</html>

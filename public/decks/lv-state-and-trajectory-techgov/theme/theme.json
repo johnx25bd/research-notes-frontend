@@ -1,0 +1,6 @@
+{
+  "name": "lucid",
+  "reveal": { "width": 1280, "height": 720, "margin": 0, "minScale": 0.2, "maxScale": 2.0, "center": false, "display": "flex", "transition": "fade", "transitionSpeed": "fast", "controls": false, "progress": true, "slideNumber": false },
+  "foot": { "mode": "none" },
+  "eyebrows": false
+}
